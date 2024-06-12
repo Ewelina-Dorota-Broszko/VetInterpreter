@@ -1,0 +1,113 @@
+.front-elements {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+
+  .welcome-container {
+    width: 100%;
+    height: 500px;
+    // background-color: rgb(186, 247, 247);
+    border-bottom: 0.5px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .front-conatainer {
+      max-width: 1080px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+    }
+
+    .welcome-text {
+      display: flex;
+      flex-direction: column;
+      width: 55%;
+
+      p {
+        font-size: 19px;
+        font-family: "Dosis", sans-serif;
+        // margin: 0;
+      }
+
+      .vet-text {
+        font-size: 50px;
+        color: rgb(23, 46, 164);
+        font-family: "Work Sans", sans-serif;
+        font-weight: 800;
+      }
+
+      .app-text {
+        font-size: 25px;
+        color: rgb(209, 205, 8);
+        font-family: "Work Sans", sans-serif;
+        font-weight: 600;
+        font-family: "Dosis", sans-serif;
+        margin: 20px 0;
+      }
+
+      .get-start-button {
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        button {
+          width: 30%;
+          height: 40px;
+          margin-top: 15px;
+          border: none;
+          border-radius: 13px;
+          background-color: #4f6dcd;
+          border-radius: 999px;
+          box-shadow: #5E5DF0 0 10px 10px -10px;
+          box-sizing: border-box;
+          color: #FFFFFF;
+          cursor: pointer;
+          font-size: 16px;
+
+          &:hover {
+            background: #4b4bd5;
+          }
+        }
+
+      }
+    }
+
+
+    .welcome-photo {
+      img {
+        width: 350px;
+      }
+    }
+  }
+}
+
+.front-container {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+
+@media (min-width: 1080px) {
+  .front-container {
+    max-width: 1080px;
+  }
+}
+
+@media (min-width: 960px) and (max-width: 1080px) {
+  .front-container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .front-container {
+    max-width: 640px;
+  }
+}
