@@ -10,7 +10,7 @@
       <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
       <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
-      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Contact</a></div>
+      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontact</a></div>
       <div class="menu-item login"><a routerLink="/login" >Logowanie</a></div>
       <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
     </div>
@@ -26,6 +26,7 @@
       <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
       <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
+      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontact</a></div>
       <div class="menu-item login"><a routerLink="/login">Logowanie</a></div>
       <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
       <div class="close" (click)="toggleMenu()"><img src="../assets/images/close.png" alt="close" /></div>
@@ -42,11 +43,10 @@
       <p>Copyright &copy; 2024 VetInterpreter. All Rights Reserved.</p>
       <nav class="footer-nav">
         <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">O nas</a></li>
-          <li><a href="#">Usługi</a></li>
-          <li><a href="#">Kontakt</a></li>
-          <li><a href="#">Blog</a></li>
+          <li><a routerLink="/">Strona głowna</a></li>
+          <li><a routerLink="/about">O nas</a></li>
+          <li><a routerLink="/blog">Blog</a></li>
+          <li><a routerLink="/contact">Kontakt</a></li>
         </ul>
       </nav>
     </div>
