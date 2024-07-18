@@ -1,0 +1,167 @@
+.about-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('../../assets/images/services-left-dec.jpg');
+  background-size: cover;
+  background-position: top;
+  width: 100vw;
+
+  .photo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: calc(50% - 60px);
+    padding: 60px;
+
+    img {
+      width: 100%;
+      padding: 15px;
+      border: 5px solid #4da6e7;
+    }
+  }
+
+
+  .departemnts-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+
+    .text-our {
+      font-size: 15px;
+      font-weight: 700;
+      color: #4da6e7;
+      margin-bottom: 15px;
+    }
+
+    .text-what {
+      color: #2a2a2a;
+      font-size: 35px;
+      font-weight: 700;
+      margin: 0 0 25px 0;
+      text-align: center;
+    }
+
+    .line-dec {
+      width: 50px;
+      height: 2px;
+      background-color: #4da6e7;
+    }
+  }
+
+  .text {
+    width: 50%;
+
+    p {
+      font-size: 17px;
+    }
+
+    .links {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 60px;
+      margin-top: 60px;
+      flex-wrap: wrap;
+
+      .link {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 20px;
+        cursor: pointer;
+        text-decoration: none;
+
+        img {
+          width: 30px;
+          height: 30px;
+        }
+
+        p {
+          font-size: 17px;
+          color: #2a2a2a;
+
+          &:hover {
+            color: black;
+          }
+        }
+      }
+    }
+  }
+
+}
+
+.column {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  gap: 60px;
+}
+
+.bold-text {
+  font-weight: 600;
+  font-size: 30px;
+}
+
+.name {
+  color: #4b8ef1;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 100px 1.5rem;
+}
+
+@media (min-width: 1080px) {
+  .container {
+    max-width: 1080px;
+  }
+}
+
+@media (min-width: 960px) and (max-width: 1080px) {
+  .container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 960px) {
+  .container {
+    padding: 100px 2.5rem;
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .container {
+    max-width: 640px;
+    padding: 100px 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .column {
+    flex-direction: column;
+  }
+
+  .about-container .departemnts-text .text-what {
+    font-size: 30px;
+  }
+
+  .about-container .photo,
+  .about-container .text {
+    padding: 0 60px;
+    width: auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: 100px 1.5rem;
+  }
+}

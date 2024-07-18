@@ -1,20 +1,161 @@
 <div class="front-elements">
 
   <div class="welcome-container">
-    <div class="front-conatainer">
+    <div class="front-container padding-photo">
       <div class="welcome-text">
         <p class="vet-text">VetInterpreter</p>
-        <!-- <p class="app-text">Aplikacja weterynaryjna</p> -->
+        <p class="app-text">Aplikacja weterynaryjna</p>
         <p>
           Wykorzystuje zaawansowaną sztuczną inteligencję do analizy i
           interpretacji wyników badań. Dzięki temu klientom i weterynarzom jest łatwiej zrozumieć diagnozy i zalecenia.
           System generuje precyzyjne raporty z wynikami badań, co przekłada się na skuteczną opiekę nad zwierzętami.
         </p>
-        <div class="get-start-button"><button>Zaczynam</button></div>
+        <div class="get-start-button"><a routerLink="/login">Zaczynam</a></div>
       </div>
-      <div class="welcome-photo"><img alt="cat" src="../../assets/images/IMG_1352.png" /></div>
+      <!-- <div class="welcome-photo"><img alt="cat" src="../../assets/images/IMG_1352.png" /></div> -->
     </div>
   </div>
-  <div class="departemnts-conatiner"></div>
-  <div></div>
+
+
+  <div class="departemnts-conatiner">
+    <div class="front-container center-container">
+      <div class="departemnts-text">
+        <p class="text-our">NASZE USŁUGI</p>
+        <p class="text-what">Co Nasza Aplikacja Oferuje</p>
+        <div class="line-dec"></div>
+      </div>
+      <div class="menu-panel">
+        <div class="element-panel" (click)="selectService('ai')" [class.active]="selectedService === services.ai">
+          <div class="img-container"><img src="../../assets/images/artificial-intelligence.png" /></div>
+          <p>Analiza wyników badań przez AI</p>
+        </div>
+        <div class="element-panel" (click)="selectService('data-management')"
+          [class.active]="selectedService === services['data-management']">
+          <div class="img-container"><img src="../../assets/images/analytics.png" /></div>
+          <p>Zarządzanie danymi</p>
+        </div>
+        <div class="element-panel" (click)="selectService('report-generation')"
+          [class.active]="selectedService === services['report-generation']">
+          <div class="img-container"><img src="../../assets/images/system-integration.png" /></div>
+          <p>Generowanie raportów / statystyk</p>
+        </div>
+        <div class="element-panel" (click)="selectService('appointment-creation')"
+          [class.active]="selectedService === services['appointment-creation']">
+          <div class="img-container"><img src="../../assets/images/schedule.png" /></div>
+          <p>Tworzenie i edycja wizyt</p>
+        </div>
+        <div class="element-panel" (click)="selectService('vet-panel')"
+          [class.active]="selectedService === services['vet-panel']">
+          <div class="img-container"><img src="../../assets/images/working-hours.png" /></div>
+          <p>Panel dla weterynarzy</p>
+        </div>
+      </div>
+      <div class="departemnts-elements">
+        <div class="text-container">
+          <p class="titile">{{ selectedService.title }}</p>
+          <p class="normal-text">{{ selectedService.text }}</p>
+          <div class="ticks-list">
+            <p *ngFor="let tick of selectedService.ticks">{{ tick }}</p>
+          </div>
+          <p class="normal-text">{{ selectedService.additionalText }}</p>
+        </div>
+        <div class="img-container">
+          <img [src]="selectedService.image" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <div class="departemnts-conatiner">
+    <div class="front-container center-container">
+      <div class="departemnts-text">
+        <p class="text-our">RECENT NEWS</p>
+        <p class="text-what">Check Our Blog Posts</p>
+        <div class="line-dec"></div>
+      </div>
+      <div class="blog-container">
+        <div class="big-post">
+          <div routerLink="/blog" class="big-blog-photo"></div>
+          <div class="post-text">
+            <div class="date-topic">
+              <div class="topic">
+                <p>Seo Analist</p>
+              </div>
+              <p>22 Lipca 2024</p>
+            </div>
+            <div>
+              <a routerLink="/blog" class="title">Lorem Ipsum Dolor Sit Amet, Consectetur Adelore Eiusmod Tempor Incididunt</a>
+              <p class="text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doers itii eiumod deis tempor
+                incididunt ut labore.</p>
+            </div>
+            <div class="by-who">
+              <div class="who">
+                <a routerLink="/blog"><img src="../../assets/images/author-post.jpg" /></a>
+                Jaś Fasola
+              </div>
+              <a routerLink="/blog" class="more">
+                <p>Czytaj</p>
+                <p> więcej</p>
+              </a>
+            </div>
+          </div>
+
+
+        </div>
+        <a class="small-posts" routerLink="/blog">
+          <div class="post">
+            <div class="small-post-photo"></div>
+            <div class="post-text small-post">
+              <div class="date-topic">
+                <div class="topic">
+                  <p>Seo Analist</p>
+                </div>
+                <p>22 Lipca 2024</p>
+              </div>
+              <div>
+                <p class="title">Lorem Ipsum Dolor Sit Ame</p>
+                <p class="text">Lorem ipsum dolor sit amet,</p>
+              </div>
+            </div>
+          </div>
+          <div class="post">
+            <div class="small-post-photo"></div>
+            <div class="post-text small-post">
+              <div class="date-topic">
+                <div class="topic">
+                  <p>Seo Analist</p>
+                </div>
+                <p>22 Lipca 2024</p>
+              </div>
+              <div>
+                <p class="title">Lorem Ipsum Dolor Sit Ame</p>
+                <p class="text">Lorem ipsum dolor sit amet,</p>
+              </div>
+            </div>
+          </div>
+          <div class="post">
+            <div class="small-post-photo"></div>
+            <div class="post-text small-post">
+              <div class="date-topic">
+                <div class="topic">
+                  <p>Seo Analist</p>
+                </div>
+                <p>22 Lipca 2024</p>
+              </div>
+              <div>
+                <p class="title">Lorem Ipsum Dolor Sit Ame</p>
+                <p class="text">Lorem ipsum dolor sit amet,</p>
+              </div>
+            </div>
+          </div>
+
+        </a>
+      </div>
+
+    </div>
+  </div>
+  <div>
 </div>
