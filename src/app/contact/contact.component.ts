@@ -40,7 +40,7 @@ export class ContactComponent implements OnInit {
 
   onSubmit() {
     if (this.contactForm.invalid) {
-      this.contactForm.markAllAsTouched(); // Zaznacza wszystkie pola jako dotknięte, aby pokazać błędy
+      this.contactForm.markAllAsTouched();
       return;
     }
 
