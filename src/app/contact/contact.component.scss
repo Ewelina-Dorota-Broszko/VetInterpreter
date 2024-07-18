@@ -1,0 +1,166 @@
+$form-gap: 50px;
+$button-color: #247eba;
+$label-color: #247eba;
+$input-border-color: rgb(225, 226, 229);
+$focus-border-color: red;
+
+form {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: $form-gap;
+}
+
+.container-area {
+  display: flex;
+  justify-content: center;
+  padding: 0 1.5em;
+  width: 100vw;
+}
+
+.container-box-input {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: $form-gap;
+  width: 100%;
+  /* flex-wrap: wrap; */
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+.container-input {
+  flex-direction: column;
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  height: 90px;
+}
+
+.text-form {
+  font-size: 30px;
+  color: $button-color;
+  margin-top: 100px;
+}
+
+label {
+  color: $label-color;
+}
+
+.container-box-input .cont-label  label {
+  color: black;
+}
+
+.button-reset,
+.button-submit {
+  button {
+    padding: 10px 20px;
+    background: linear-gradient(105deg, #5b68eb 0%, #28e1fd 100%);
+    border-radius: 25px;
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+/* contact.component.scss */
+
+/* Styl dla obramowania nieprawidłowych pól */
+.invalid {
+  border: 2px solid red;
+}
+
+/* Styl dla komunikatów o błędach */
+.error-message {
+  color: red;
+}
+
+
+.button-reset {
+  width: 40%;
+}
+
+.button-submit {
+  width: 60%;
+}
+
+.cont {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 0 1.5rem;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  height: 30px;
+  border-radius: 3px;
+  border: 1px solid $input-border-color;
+
+  &:focus {
+    border: 1px solid $focus-border-color;
+  }
+}
+
+.red-border {
+  border: 2px solid red;
+}
+
+.dark-label {
+  width: 13px;
+  height: 13px;
+}
+
+
+@media (min-width: 1080px) {
+  .cont {
+    max-width: 1080px;
+  }
+}
+
+@media all and (max-width: 687px) {
+  .container-box-input {
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 1080px) {
+  .cont {
+    max-width: 1080px;
+  }
+}
+
+@media (min-width: 960px) and (max-width: 1080px) {
+  .cont {
+    max-width: 960px;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 960px) {
+  .cont {
+    max-width: 768px;
+    padding: 0 2.5rem;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 768px) {
+  .cont {
+    max-width: 640px;
+    padding: 0 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .cont {
+    padding: 0 1.5rem;
+  }
+}

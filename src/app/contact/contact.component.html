@@ -1,0 +1,194 @@
+<div class="container-area">
+  <div class="cont">
+    <form [formGroup]="contactForm" (ngSubmit)="onSubmit()">
+      <div class="text-ham">
+        <p class="text-form">Formularz kontaktowy</p>
+      </div>
+      <div class="container-box-input">
+        <div class="container-input">
+          <label for="first-name">Imię</label>
+          <input 
+            type="text" 
+            id="first-name" 
+            formControlName="first_name" 
+            [class.invalid]="!getFormControl('first_name').valid && getFormControl('first_name').touched"
+            required>
+          <div *ngIf="!getFormControl('first_name').valid && getFormControl('first_name').touched" class="error-message">
+            Imię jest wymagane.
+          </div>
+        </div>
+        <div class="container-input">
+          <label for="last-name">Nazwisko</label>
+          <input 
+            type="text" 
+            id="last-name" 
+            formControlName="last_name" 
+            [class.invalid]="!getFormControl('last_name').valid && getFormControl('last_name').touched"
+            required>
+          <div *ngIf="!getFormControl('last_name').valid && getFormControl('last_name').touched" class="error-message">
+            Nazwisko jest wymagane.
+          </div>
+        </div>
+      </div>
+      <div class="container-box-input">
+        <div class="container-input">
+          <label for="email">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            formControlName="email" 
+            [class.invalid]="!getFormControl('email').valid && getFormControl('email').touched"
+            required>
+          <div *ngIf="!getFormControl('email').valid && getFormControl('email').touched" class="error-message">
+            Proszę podać prawidłowy adres e-mail.
+          </div>
+        </div>
+        <div class="container-input">
+          <label for="phone">Telefon</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            formControlName="phone" 
+            [class.invalid]="!getFormControl('phone').valid && getFormControl('phone').touched"
+            required>
+          <div *ngIf="!getFormControl('phone').valid && getFormControl('phone').touched" class="error-message">
+            Numer telefonu jest wymagany i powinien zawierać tylko cyfry.
+          </div>
+        </div>
+      </div>
+      <div class="container-input">
+        <label>Temat</label>
+        <div class="container-box-input wrap">
+          <div class="cont-label">
+            <input 
+              type="radio" 
+              id="resultsInterpretation" 
+              formControlName="subject" 
+              value="Interpretacja wyników" 
+              class="dark-label">
+            <label for="resultsInterpretation">Interpretacja wyników</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="radio" 
+              id="dataManagement" 
+              formControlName="subject" 
+              value="Zarządzanie danymi" 
+              class="dark-label">
+            <label for="dataManagement">Zarządzanie danymi</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="radio" 
+              id="animalQuery" 
+              formControlName="subject" 
+              value="Pytanie o zwierze" 
+              class="dark-label">
+            <label for="animalQuery">Pytanie o zwierze</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="radio" 
+              id="other" 
+              formControlName="subject" 
+              value="Inne" 
+              class="dark-label">
+            <label for="other">Inne</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="radio" 
+              id="collaboration" 
+              formControlName="subject" 
+              value="Współpraca" 
+              class="dark-label">
+            <label for="collaboration">Współpraca</label>
+          </div>
+        </div>
+        <div *ngIf="!getFormControl('subject').valid && getFormControl('subject').touched" class="error-message">
+          Temat jest wymagany.
+        </div>
+      </div>
+      <div class="container-input">
+        <label for="hasPet">Czy masz zwierzę?</label>
+        <select 
+          id="hasPet" 
+          formControlName="has_pet" 
+          [class.invalid]="!getFormControl('has_pet').valid && getFormControl('has_pet').touched"
+          required>
+          <option value="Tak">Tak</option>
+          <option value="Nie">Nie</option>
+        </select>
+      </div>
+      <div class="container-input" *ngIf="hasPet === 'Tak'">
+        <label>Wybierz zwierzaka, o którego masz zapytanie</label>
+        <div class="container-box-input wrap">
+          <div class="cont-label">
+            <input 
+              type="checkbox" 
+              id="dog" 
+              formControlName="pets.dog" 
+              class="dark-label">
+            <label for="dog">Pies</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="checkbox" 
+              id="cat" 
+              formControlName="pets.cat" 
+              class="dark-label">
+            <label for="cat">Kot</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="checkbox" 
+              id="reptile" 
+              formControlName="pets.reptile" 
+              class="dark-label">
+            <label for="reptile">Gad</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="checkbox" 
+              id="rodent" 
+              formControlName="pets.rodent" 
+              class="dark-label">
+            <label for="rodent">Grzyzoń</label>
+          </div>
+          <div class="cont-label">
+            <input 
+              type="checkbox" 
+              id="bird" 
+              formControlName="pets.bird" 
+              class="dark-label">
+            <label for="bird">Ptak</label>
+          </div>
+        </div>
+      </div>
+      <div class="container-input">
+        <label for="message">Treść wiadomości</label>
+        <textarea 
+          id="message" 
+          formControlName="message" 
+          placeholder="Napisz wiadomość tutaj"
+          [class.invalid]="!getFormControl('message').valid && getFormControl('message').touched"
+          required>
+        </textarea>
+        <div *ngIf="!getFormControl('message').valid && getFormControl('message').touched" class="error-message">
+          Treść wiadomości jest wymagana.
+        </div>
+      </div>
+      <div class="container-box-input">
+        <div class="button-reset">
+          <button type="button" (click)="contactForm.reset()">Reset</button>
+        </div>
+        <div class="button-submit">
+          <button type="submit">Wyślij</button>
+        </div>
+      </div>
+      <div *ngIf="successMessage" style="color: green; font-weight: bold;">
+        {{ successMessage }}
+      </div>
+    </form>
+  </div>
+</div>

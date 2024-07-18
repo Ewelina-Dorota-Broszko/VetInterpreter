@@ -7,11 +7,16 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'VetInpreter';
+  title = 'VetInterpreter';
+  isMenuOpen = false;
 
   constructor(private router: Router) {}
 
   isActive(url: string): boolean {
     return this.router.url === url;
+  }
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
   }
 }
