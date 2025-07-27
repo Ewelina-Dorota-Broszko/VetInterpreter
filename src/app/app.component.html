@@ -1,6 +1,6 @@
 <!-- Toolbar -->
 
-<div class="toolbar-container" role="banner">
+<div class="toolbar-container" role="banner" *ngIf="isLogin">
   <div class="menu-container desktop">
     <div class="logo-container">
       <img src="../assets/images/logo.jpg" alt="Logo" />
@@ -11,7 +11,7 @@
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
       <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
       <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontact</a></div>
-      <div class="menu-item login"><a routerLink="/login" >Logowanie</a></div>
+      <div class="menu-item login"><a routerLink="/login">Logowanie</a></div>
       <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
     </div>
   </div>
@@ -21,13 +21,141 @@
       <img src="../assets/images/logo.jpg" alt="Logo" />
       <p>VetInterpreter</p>
     </div>
-   <div class="open-menu" (click)="toggleMenu()"><img src="../assets/images/menu.png" alt="menu" /></div>
+    <div class="open-menu" (click)="toggleMenu()"><img src="../assets/images/menu.png" alt="menu" /></div>
     <div class="menu-items" *ngIf="isMenuOpen" [ngClass]="{ 'active': isMenuOpen }">
       <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
       <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
       <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontact</a></div>
-      <div class="menu-item login"><a routerLink="/login">Logowanie</a></div>
+      <div class="menu-item login" (click)="Login()"><a routerLink="/login">Logowanie</a></div>
+      <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
+      <div class="close" (click)="toggleMenu()"><img src="../assets/images/close.png" alt="close" /></div>
+    </div>
+  </div>
+</div>
+
+<!-- navbar -->
+
+<div class="navbar-container" role="banner" *ngIf="!isLogin">
+  <div class="navbar-menu">
+    <div class="logo-container-login">
+      <img src="../assets/images/logo.jpg" alt="Logo" />
+      <p>VetInterpreterTEST</p>
+    </div>
+    <div class="menu">
+      <div class="menu-elements">
+        <p>Animals</p>
+        <div class="menu-element">
+          <div class="photo-name"><img src="../assets/images/pawprint.png">
+            <p>My Pets</p>
+          </div>
+          <img *ngIf="pets===0" class="plus-img" src="../assets/images/plus.png">
+          <img *ngIf="pets!==0" src="../assets/images/down-arrow.png">
+        </div>
+      </div>
+      <div class="menu-elements">
+        <p>2</p>
+        <div class="menu-element"><img src="">
+          <p></p>
+        </div>
+      </div>
+      <div class="menu-elements">
+        <p>3</p>
+        <div class="menu-element"><img src="">
+          <p></p>
+        </div>
+      </div>
+      <div class="menu-elements">
+        <p>Documents</p>
+
+
+        <div class="menu-element">
+          <div class="photo-name"><img src="../assets/images/blood.png">
+            <p>Blood tests</p>
+          </div>
+          <img *ngIf="blood_tests===0" class="plus-img" src="../assets/images/plus.png">
+          <img *ngIf="blood_tests!==0" src="../assets/images/down-arrow.png">
+        </div>
+
+
+        <div class="menu-element">
+          <div class="photo-name"><img src="../assets/images/blood-test.png">
+            <p>General examinations</p>
+          </div>
+          <img *ngIf="general_examinations===0" class="plus-img" src="../assets/images/plus.png">
+          <img *ngIf="general_examinations!==0" src="../assets/images/down-arrow.png">
+        </div>
+
+
+        <div class="menu-element">
+          <div class="photo-name"><img src="../assets/images/blood-test.png">
+            <p>Notes</p>
+          </div>
+          <img *ngIf="notes===0" class="plus-img" src="../assets/images/plus.png">
+          <img *ngIf="notes!==0" src="../assets/images/down-arrow.png">
+        </div>
+
+        <div class="menu-element">
+          <div class="photo-name"><img src="../assets/images/blood-test.png">
+            <p>General examinations</p>
+          </div>
+          <img *ngIf="general_examinations===0" class="plus-img" src="../assets/images/plus.png">
+          <img *ngIf="general_examinations!==0" src="../assets/images/down-arrow.png">
+        </div>
+
+
+        <div class="menu-element">
+          <div class="photo-name"><img src="../assets/images/blood-test.png">
+            <p>Notes</p>
+          </div>
+          <img *ngIf="notes===0" class="plus-img" src="../assets/images/plus.png">
+          <img *ngIf="notes!==0" src="../assets/images/down-arrow.png">
+        </div>
+
+      </div>
+      <div class="menu-elements">
+        <p>5</p>
+        <div class="menu-element"><img src="">
+          <p></p>
+        </div>
+      </div>
+      <div class="menu-elements">
+        <p>6</p>
+        <div class="menu-element"><img src="">
+          <p></p>
+        </div>
+      </div>
+    </div>
+    <div class="exit">Exit</div>
+  </div>
+</div>
+
+
+<!-- menu login  -->
+<div class="toolbar-container-login" role="banner" *ngIf="!isLogin">
+  <div class="menu-container desktop">
+    <div class="menu-items">
+      <!-- <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')"></a></div>
+      <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
+      <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
+      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontact</a></div>
+      <div class="menu-item login"><a routerLink="/login" >Logowanie</a></div> -->
+      <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Wyloguj</a></div>
+    </div>
+  </div>
+
+  <div class="menu-container mobile">
+    <div class="logo-container">
+      <img src="../assets/images/logo.jpg" alt="Logo" />
+      <p>VetInterpreter</p>
+    </div>
+    <div class="open-menu" (click)="toggleMenu()"><img src="../assets/images/menu.png" alt="menu" /></div>
+    <div class="menu-items" *ngIf="isMenuOpen" [ngClass]="{ 'active': isMenuOpen }">
+      <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
+      <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
+      <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
+      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontact</a></div>
+      <div class="menu-item login" (click)="Login()"><a routerLink="/login">Logowanie</a></div>
       <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
       <div class="close" (click)="toggleMenu()"><img src="../assets/images/close.png" alt="close" /></div>
     </div>
@@ -35,9 +163,11 @@
 </div>
 
 
-<router-outlet></router-outlet>
+<div [ngClass]="{'move-80': !isLogin}">
+  <router-outlet></router-outlet>
+</div>
 
-<footer>
+<footer [ngClass]="{'footer-login': !isLogin}" *ngIf="isLogin">
   <div class="footer-container">
     <div class="footer-content">
       <p>Copyright &copy; 2024 VetInterpreter. All Rights Reserved.</p>
