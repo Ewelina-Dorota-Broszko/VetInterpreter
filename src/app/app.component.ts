@@ -9,6 +9,13 @@ import { Router } from '@angular/router';
 export class AppComponent {
   title = 'VetInterpreter';
   isMenuOpen = false;
+  isLogin = false;
+
+  pets = 2;
+  documents = 0;
+  blood_tests = 0;
+  general_examinations = 0
+  notes = 0; 
 
   constructor(private router: Router) {}
 
@@ -18,5 +25,9 @@ export class AppComponent {
 
   toggleMenu() {
     this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  Login() {
+    this.isLogin = !this.isLogin;
   }
 }
