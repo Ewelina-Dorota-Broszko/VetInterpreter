@@ -12,6 +12,14 @@ import { ContactComponent } from './contact/contact.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { AddDocumentComponent } from './add-document/add-document.component';
+import { AnimalProfileComponent } from './animal-profile/animal-profile.component';
+import { BloodFormComponent } from './blood-form/blood-form.component';
+import { StoolFormComponent } from './stool-form/stool-form.component';
+import { UrineFormComponent } from './urine-form/urine-form.component';
+import { DiabetesFormComponent } from './diabetes-form/diabetes-form.component';
+import { TemperatureFormComponent } from './temperature-form/temperature-form.component';
+import { VisitNotesComponent } from './visit-notes/visit-notes.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +31,15 @@ import { NavbarComponent } from './navbar/navbar.component';
     BlogComponent,
     ContactComponent,
     DashboardComponent,
-    NavbarComponent
+    NavbarComponent,
+    AddDocumentComponent,
+    AnimalProfileComponent,
+    BloodFormComponent,
+    StoolFormComponent,
+    UrineFormComponent,
+    DiabetesFormComponent,
+    TemperatureFormComponent,
+    VisitNotesComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,35 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+        <h2>Diabetes Monitoring Form</h2>
+
+        <form (ngSubmit)="submitForm()">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="formData.date" name="date" required />
+
+            <label>Time</label>
+            <input type="time" [(ngModel)]="formData.time" name="time" required />
+
+            <label>Blood Glucose (mg/dL)</label>
+            <input type="number" [(ngModel)]="formData.glucose" name="glucose" required />
+
+            <label>Measurement Type</label>
+            <select [(ngModel)]="formData.measurementType" name="measurementType" required>
+                <option value="">-- Select --</option>
+                <option value="fasting">Fasting</option>
+                <option value="postMeal">Post-meal</option>
+                <option value="random">Random</option>
+            </select>
+
+            <label>Insulin Type (optional)</label>
+            <input type="text" [(ngModel)]="formData.insulinType" name="insulinType" />
+
+            <label>Insulin Dose (IU)</label>
+            <input type="number" step="0.1" [(ngModel)]="formData.insulinDose" name="insulinDose" />
+
+            <label>Comments</label>
+            <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+
+            <button type="submit">Submit Diabetes Log</button>
+        </form>
+    </div>
+</div>

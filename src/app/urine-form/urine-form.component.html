@@ -1,0 +1,97 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+        <h2>Urine Test Form</h2>
+
+        <form (ngSubmit)="submitForm()">
+
+            <!-- Section 1: Physical & Chemical -->
+            <fieldset>
+                <legend>Physical & Chemical Properties</legend>
+
+                <label>Color</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.color" name="color" />
+
+                <label>Clarity</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.clarity" name="clarity" />
+
+                <label>Specific Gravity</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.specificGravity" name="specificGravity" />
+
+                <label>pH</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.pH" name="pH" />
+
+                <label>Protein</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.protein" name="protein" />
+
+                <label>Glucose</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.glucose" name="glucose" />
+
+                <label>Ketones</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.ketones" name="ketones" />
+
+                <label>Bilirubin</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.bilirubin" name="bilirubin" />
+
+                <label>Urobilinogen</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.urobilinogen" name="urobilinogen" />
+
+                <label>Blood</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.blood" name="blood" />
+
+                <label>Nitrites</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.nitrites" name="nitrites" />
+
+                <label>Leukocyte esterase</label>
+                <input type="text" [(ngModel)]="formData.physicalChemical.leukocyteEsterase" name="leukocyteEsterase" />
+            </fieldset>
+
+            <!-- Section 2: Microscopic analysis -->
+            <fieldset>
+                <legend>Microscopic Analysis</legend>
+
+                <label>WBC (per HPF)</label>
+                <input type="text" [(ngModel)]="formData.microscopic.wbc" name="wbc" />
+
+                <label>RBC (per HPF)</label>
+                <input type="text" [(ngModel)]="formData.microscopic.rbc" name="rbc" />
+
+                <label>Epithelial cells</label>
+                <input type="text" [(ngModel)]="formData.microscopic.epithelialCells" name="epithelialCells" />
+
+                <label>Crystals</label>
+                <input type="text" [(ngModel)]="formData.microscopic.crystals" name="crystals" />
+
+                <label>Casts</label>
+                <input type="text" [(ngModel)]="formData.microscopic.casts" name="casts" />
+
+                <label>Bacteria</label>
+                <input type="text" [(ngModel)]="formData.microscopic.bacteria" name="bacteria" />
+
+                <label>Yeasts</label>
+                <input type="text" [(ngModel)]="formData.microscopic.yeast" name="yeast" />
+
+                <label>Sperm</label>
+                <input type="text" [(ngModel)]="formData.microscopic.sperm" name="sperm" />
+
+                <label>Mucus threads</label>
+                <input type="text" [(ngModel)]="formData.microscopic.mucus" name="mucus" />
+
+                <label>Parasites</label>
+                <input type="text" [(ngModel)]="formData.microscopic.parasites" name="parasites" />
+            </fieldset>
+
+            <!-- Other -->
+            <fieldset>
+                <legend>Additional Information</legend>
+
+                <label>Date of test</label>
+                <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
+
+                <label>Comments</label>
+                <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+            </fieldset>
+
+            <button type="submit">Submit Urine Test</button>
+        </form>
+    </div>
+</div>

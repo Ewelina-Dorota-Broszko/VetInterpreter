@@ -1,0 +1,38 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+        <h2>Daily Temperature Record</h2>
+
+        <form (ngSubmit)="submitForm()">
+            <label>Date</label>
+            <input type="date" [(ngModel)]="formData.date" name="date" required />
+
+            <label>Time</label>
+            <input type="time" [(ngModel)]="formData.time" name="time" required />
+
+            <label>Temperature (°C)</label>
+            <input type="number" step="0.1" [(ngModel)]="formData.temperature" name="temperature" required />
+
+            <label>Behavior</label>
+            <select [(ngModel)]="formData.behavior" name="behavior">
+                <option value="">-- Select --</option>
+                <option value="normal">Normal</option>
+                <option value="lethargic">Lethargic</option>
+                <option value="agitated">Agitated</option>
+                <option value="unresponsive">Unresponsive</option>
+            </select>
+
+            <label>Appetite</label>
+            <select [(ngModel)]="formData.appetite" name="appetite">
+                <option value="">-- Select --</option>
+                <option value="normal">Normal</option>
+                <option value="reduced">Reduced</option>
+                <option value="none">None</option>
+            </select>
+
+            <label>Comments</label>
+            <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+
+            <button type="submit">Submit Temperature</button>
+        </form>
+    </div>
+</div>
