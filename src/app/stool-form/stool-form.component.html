@@ -1,0 +1,44 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+<h2>Stool Examination Form</h2>
+
+<form (ngSubmit)="submitForm()" #stoolForm="ngForm">
+
+  <label>Consistency</label>
+  <select [(ngModel)]="formData.consistency" name="consistency">
+    <option value="solid">Solid</option>
+    <option value="soft">Soft</option>
+    <option value="watery">Watery</option>
+  </select>
+
+  <label>Color</label>
+  <input type="text" [(ngModel)]="formData.color" name="color" />
+
+  <label>
+    <input type="checkbox" [(ngModel)]="formData.mucus" name="mucus" />
+    Mucus present
+  </label>
+
+  <label>
+    <input type="checkbox" [(ngModel)]="formData.blood" name="blood" />
+    Blood present
+  </label>
+
+  <label>Odor description</label>
+  <input type="text" [(ngModel)]="formData.odor" name="odor" />
+
+  <label>
+    <input type="checkbox" [(ngModel)]="formData.parasites" name="parasites" />
+    Parasites observed
+  </label>
+
+  <label>Date of test</label>
+  <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
+
+  <label>Additional comments</label>
+  <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+
+  <button type="submit">Submit Stool Test</button>
+</form>
+</div>
+</div>

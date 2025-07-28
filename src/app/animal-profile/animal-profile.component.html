@@ -1,0 +1,256 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <!-- Visit History -->
+    <section class="visit-history">
+      <h3>Visit History</h3>
+
+      <div *ngFor="let visit of animal.visitHistory" class="visit-card">
+        <div class="visit-summary" (click)="toggleDetails(visit)">
+          <strong>{{ visit.visitDate }}</strong> – {{ visit.clinicName }} ({{ visit.vetName }})
+          <span *ngIf="visit.nextVisitDate"> | Next: {{ visit.nextVisitDate }}</span>
+        </div>
+
+        <div class="visit-details" *ngIf="visit.expanded">
+          <p><strong>Symptoms:</strong> {{ visit.symptoms || '—' }}</p>
+          <p><strong>Treatments:</strong> {{ visit.treatments || '—' }}</p>
+
+          <div *ngIf="visit.medications?.length">
+            <strong>Medications:</strong>
+            <ul>
+              <li *ngFor="let med of visit.medications">
+                {{ med.name }} – {{ med.dosage }} – {{ med.frequency }}
+              </li>
+            </ul>
+          </div>
+
+          <p><strong>Notes:</strong> {{ visit.notes || '—' }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Profile -->
+    <div class="profile-wrapper" *ngIf="animal">
+      <header class="header">
+        <div class="info">
+          <h1>{{ animal.name }}</h1>
+          <p>Owner: <strong>{{ animal.ownerName }}</strong></p>
+          <p>Species: <strong>{{ animal.species }}</strong> | Breed: <strong>{{ animal.breed }}</strong></p>
+          <p>Sex: <strong>{{ animal.sex }}</strong> | Weight: <strong>{{ animal.weightKg }} kg</strong></p>
+          <p *ngIf="getAgeYears() !== null">Age: <strong>{{ getAgeYears() }} years</strong></p>
+        </div>
+
+        <div class="actions">
+          <button (click)="addNewDocument()">Add new document</button>
+        </div>
+      </header>
+
+      <!-- Tabs -->
+      <nav class="tabs">
+        <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Overview</button>
+        <button [class.active]="activeTab === 'blood'" (click)="setTab('blood')">Blood</button>
+        <button [class.active]="activeTab === 'urine'" (click)="setTab('urine')">Urine</button>
+        <button [class.active]="activeTab === 'stool'" (click)="setTab('stool')">Stool</button>
+        <button [class.active]="activeTab === 'temperature'" (click)="setTab('temperature')">Temperature</button>
+        <button [class.active]="activeTab === 'diabetes'" (click)="setTab('diabetes')">Diabetes</button>
+      </nav>
+
+      <!-- Overview -->
+      <section *ngIf="activeTab === 'overview'" class="tab-content">
+        <h2>Overview</h2>
+        <div class="cards">
+          <div class="card" *ngIf="latest(animal.bloodTests) as lastBlood">
+            <h3>Last Blood Test</h3>
+            <p>Date: {{ lastBlood.date }}</p>
+            <p>HGB: {{ lastBlood.hemoglobin }} g/dL</p>
+            <p>WBC: {{ lastBlood.wbc }} 10⁹/L</p>
+            <p>Glucose: {{ lastBlood.glucose }} mg/dL</p>
+          </div>
+          <div class="card" *ngIf="latest(animal.urineTests) as lastUrine">
+            <h3>Last Urine Test</h3>
+            <p>Date: {{ lastUrine.date }}</p>
+            <p>SG: {{ lastUrine.specificGravity }}</p>
+            <p>pH: {{ lastUrine.pH }}</p>
+            <p>Protein: {{ lastUrine.protein }}</p>
+          </div>
+          <div class="card" *ngIf="latest(animal.temperatureLogs) as lastTemp">
+            <h3>Last Temperature</h3>
+            <p>Date: {{ lastTemp.date }} {{ lastTemp.time }}</p>
+            <p>Temp: {{ lastTemp.temperature }} °C</p>
+          </div>
+          <div class="card" *ngIf="latest(animal.diabetesLogs) as lastDiab">
+            <h3>Last Diabetes Record</h3>
+            <p>Date: {{ lastDiab.date }} {{ lastDiab.time }}</p>
+            <p>Glucose: {{ lastDiab.glucose }} mg/dL</p>
+            <p>Type: {{ lastDiab.measurementType }}</p>
+            <p *ngIf="lastDiab.insulinType">Insulin: {{ lastDiab.insulinType }} ({{ lastDiab.insulinDose || 0 }} IU)</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blood -->
+     <section *ngIf="activeTab === 'blood'" class="tab-content">
+  <h2>Blood tests</h2>
+
+  <!-- Wykres liniowy -->
+  <canvas id="bloodChart" *ngIf="animal.bloodTests.length"></canvas>
+
+  <!-- Tabela -->
+  <table *ngIf="animal.bloodTests.length; else noBlood">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>HGB</th>
+        <th>RBC</th>
+        <th>WBC</th>
+        <th>Glucose</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let test of animal.bloodTests; trackBy: trackByIndex">
+        <td>{{ test.date }}</td>
+        <td [ngClass]="getValueStatus(test.hemoglobin, 'hemoglobin')">
+          {{ test.hemoglobin }}<br>
+          <small class="ref-range">{{ getRangeText('hemoglobin') }}</small>
+        </td>
+        <td [ngClass]="getValueStatus(test.rbc, 'rbc')">
+          {{ test.rbc }}<br>
+          <small class="ref-range">{{ getRangeText('rbc') }}</small>
+        </td>
+        <td [ngClass]="getValueStatus(test.wbc, 'wbc')">
+          {{ test.wbc }}<br>
+          <small class="ref-range">{{ getRangeText('wbc') }}</small>
+        </td>
+        <td [ngClass]="getValueStatus(test.glucose, 'glucose')">
+          {{ test.glucose }}<br>
+          <small class="ref-range">{{ getRangeText('glucose') }}</small>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #noBlood>
+    <p>No blood tests yet.</p>
+  </ng-template>
+</section>
+
+
+      <!-- Urine -->
+      <section *ngIf="activeTab === 'urine'" class="tab-content">
+        <h2>Urine tests</h2>
+        <table *ngIf="animal.urineTests.length; else noUrine">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Color</th>
+              <th>SG</th>
+              <th>pH</th>
+              <th>Protein</th>
+              <th>Glucose</th>
+              <th>Ketones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let test of animal.urineTests; trackBy: trackByIndex">
+              <td>{{ test.date }}</td>
+              <td>{{ test.color }}</td>
+              <td>{{ test.specificGravity }}</td>
+              <td>{{ test.pH }}</td>
+              <td>{{ test.protein }}</td>
+              <td>{{ test.glucose }}</td>
+              <td>{{ test.ketones }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noUrine>
+          <p>No urine tests yet.</p>
+        </ng-template>
+      </section>
+
+      <!-- Stool -->
+      <section *ngIf="activeTab === 'stool'" class="tab-content">
+        <h2>Stool tests</h2>
+        <table *ngIf="animal.stoolTests.length; else noStool">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Consistency</th>
+              <th>Color</th>
+              <th>Blood</th>
+              <th>Mucus</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let test of animal.stoolTests; trackBy: trackByIndex">
+              <td>{{ test.date }}</td>
+              <td>{{ test.consistency }}</td>
+              <td>{{ test.color }}</td>
+              <td>{{ test.blood ? 'yes' : 'no' }}</td>
+              <td>{{ test.mucus ? 'yes' : 'no' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noStool>
+          <p>No stool tests yet.</p>
+        </ng-template>
+      </section>
+
+      <!-- Temperature -->
+      <section *ngIf="activeTab === 'temperature'" class="tab-content">
+        <h2>Temperature logs</h2>
+        <table *ngIf="animal.temperatureLogs.length; else noTemp">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Temperature (°C)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let t of animal.temperatureLogs; trackBy: trackByIndex">
+              <td>{{ t.date }}</td>
+              <td>{{ t.time }}</td>
+              <td>{{ t.temperature }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noTemp>
+          <p>No temperature logs yet.</p>
+        </ng-template>
+      </section>
+
+      <!-- Diabetes -->
+      <section *ngIf="activeTab === 'diabetes'" class="tab-content">
+        <h2>Diabetes logs</h2>
+        <table *ngIf="animal.diabetesLogs.length; else noDiab">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Glucose (mg/dL)</th>
+              <th>Type</th>
+              <th>Insulin</th>
+              <th>Dose (IU)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of animal.diabetesLogs; trackBy: trackByIndex">
+              <td>{{ d.date }}</td>
+              <td>{{ d.time }}</td>
+              <td>{{ d.glucose }}</td>
+              <td>{{ d.measurementType }}</td>
+              <td>{{ d.insulinType || '-' }}</td>
+              <td>{{ d.insulinDose || '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template #noDiab>
+          <p>No diabetes logs yet.</p>
+        </ng-template>
+      </section>
+    </div>
+  </div>
+</div>

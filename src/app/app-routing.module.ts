@@ -7,6 +7,14 @@ import { FrontPageComponent } from './front-page/front-page.component'
 import { BlogComponent } from './blog/blog.component';
 import { ContactComponent } from './contact/contact.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DiabetesFormComponent } from './diabetes-form/diabetes-form.component';
+import { TemperatureFormComponent } from './temperature-form/temperature-form.component';
+import { StoolFormComponent } from './stool-form/stool-form.component';
+import { AddDocumentComponent } from './add-document/add-document.component';
+import { AnimalProfileComponent } from './animal-profile/animal-profile.component';
+import { BloodFormComponent } from './blood-form/blood-form.component';
+import { UrineFormComponent } from './urine-form/urine-form.component';
+import { VisitNotesComponent } from './visit-notes/visit-notes.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -16,6 +24,15 @@ const routes: Routes = [
   { path: 'blog', component: BlogComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'dashboard', component: DashboardComponent },
+  { path: 'add-document', component: AddDocumentComponent },
+  { path: 'animal/:id', component: AnimalProfileComponent },
+  { path: 'form/blood', component: BloodFormComponent },
+  { path: 'form/stool', component: StoolFormComponent },
+  { path: 'form/urine', component: UrineFormComponent },
+  { path: 'form/temperature', component: TemperatureFormComponent },
+  { path: 'form/diabetes', component: DiabetesFormComponent },
+  { path: 'form/visit-notes', component: VisitNotesComponent },
+
 ]
 
 @NgModule({

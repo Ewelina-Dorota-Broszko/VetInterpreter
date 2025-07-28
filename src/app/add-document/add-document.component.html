@@ -1,0 +1,21 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+        <h2>Add new medical record</h2>
+
+        <label for="animal">Select animal:</label>
+        <select id="animal" [(ngModel)]="selectedAnimal">
+            <option *ngFor="let animal of animals" [value]="animal.id">{{ animal.name }}</option>
+        </select>
+
+        <label for="type">Select document type:</label>
+        <select id="type" [(ngModel)]="selectedType">
+            <option value="blood">Blood test</option>
+            <option value="stool">Stool test</option>
+            <option value="urine">Urine test</option>
+            <option value="temperature">Daily temperature</option>
+            <option value="diabetes">Diabetes – glucose</option>
+        </select>
+
+        <button (click)="navigateToForm()">Continue</button>
+    </div>
+</div>

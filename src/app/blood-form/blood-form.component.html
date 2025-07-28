@@ -1,0 +1,90 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Blood Test Form</h2>
+
+    <form (ngSubmit)="submitForm()" #bloodForm="ngForm">
+      <!-- Morphology Section -->
+      <fieldset>
+        <legend>Morphology</legend>
+
+        <label>Hemoglobin (g/dL)</label>
+        <input type="number" [(ngModel)]="formData.morphology.hemoglobin" name="hemoglobin" min="0" step="0.1" />
+
+        <label>RBC (10¹²/L)</label>
+        <input type="number" [(ngModel)]="formData.morphology.rbc" name="rbc" min="0" step="0.01" />
+
+        <label>WBC (10⁹/L)</label>
+        <input type="number" [(ngModel)]="formData.morphology.wbc" name="wbc" min="0" step="0.01" />
+
+        <label>Hematocrit (%)</label>
+        <input type="number" [(ngModel)]="formData.morphology.hematocrit" name="hematocrit" min="0" step="0.1" />
+
+        <label>Platelets (10⁹/L)</label>
+        <input type="number" [(ngModel)]="formData.morphology.platelets" name="platelets" min="0" step="1" />
+
+        <label>MCV (fL)</label>
+        <input type="number" [(ngModel)]="formData.morphology.mcv" name="mcv" min="0" step="0.1" />
+
+        <label>MCH (pg)</label>
+        <input type="number" [(ngModel)]="formData.morphology.mch" name="mch" min="0" step="0.1" />
+
+        <label>MCHC (g/dL)</label>
+        <input type="number" [(ngModel)]="formData.morphology.mchc" name="mchc" min="0" step="0.1" />
+      </fieldset>
+
+      <!-- Biochemistry Section -->
+      <fieldset>
+        <legend>Biochemistry</legend>
+
+        <label>Glucose (mg/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.glucose" name="glucose" min="0" step="1" />
+
+        <label>Urea (mg/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.urea" name="urea" min="0" step="1" />
+
+        <label>Creatinine (mg/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.creatinine" name="creatinine" min="0" step="0.1" />
+
+        <label>ALT (GPT)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.alt" name="alt" min="0" step="1" />
+
+        <label>AST (GOT)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.ast" name="ast" min="0" step="1" />
+
+        <label>ALP</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.alp" name="alp" min="0" step="1" />
+
+        <label>Total protein (g/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.totalProtein" name="totalProtein" min="0" step="0.1" />
+
+        <label>Albumin (g/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.albumin" name="albumin" min="0" step="0.1" />
+
+        <label>Globulin (g/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.globulin" name="globulin" min="0" step="0.1" />
+
+        <label>Total bilirubin (mg/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.bilirubinTotal" name="bilirubinTotal" min="0" step="0.1" />
+
+        <label>Direct bilirubin (mg/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.bilirubinDirect" name="bilirubinDirect" min="0" step="0.1" />
+
+        <label>Indirect bilirubin (mg/dL)</label>
+        <input type="number" [(ngModel)]="formData.biochemistry.bilirubinIndirect" name="bilirubinIndirect" min="0" step="0.1" />
+      </fieldset>
+
+      <!-- Other Section -->
+      <fieldset>
+        <legend>Other</legend>
+
+        <label>Test date</label>
+        <input type="date" [(ngModel)]="formData.other.testDate" name="testDate" />
+
+        <label>Comments</label>
+        <textarea [(ngModel)]="formData.other.comments" name="comments" rows="3"></textarea>
+      </fieldset>
+
+      <button type="submit">Submit Blood Test</button>
+    </form>
+  </div>
+</div>

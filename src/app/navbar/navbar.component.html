@@ -1,1 +1,30 @@
-<p>navbar works!</p>
+<div class="navbar-container">
+  <div class="navbar-menu">
+    <div class="logo-container-login">
+      <img src="assets/images/logo.jpg" alt="Logo" />
+      <p>VetInterpreter</p>
+    </div>
+
+    <div class="menu">
+      <div class="menu-elements">
+        <p>Animals</p>
+        <div class="menu-element" *ngFor="let animal of animals">
+          <div class="photo-name">
+            <img src="assets/images/pawprint.png">
+            <p (click)="selectAnimal(animal)">{{ animal.name }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-elements">
+        <p>Documents</p>
+        <div class="menu-element" (click)="goToAddDocument()">
+          <div class="photo-name">
+            <img src="assets/images/add.png">
+            <p>Add Document</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
