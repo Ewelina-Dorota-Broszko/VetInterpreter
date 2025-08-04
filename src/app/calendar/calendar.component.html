@@ -1,0 +1,15 @@
+<div class="mini-calendar-wrapper">
+  <full-calendar #fullcalendar [options]="calendarOptions"></full-calendar>
+</div>
+
+<div class="note-section" *ngIf="selectedDate">
+  <h4>Notatki dla {{ selectedDate }}:</h4>
+
+  <ul *ngIf="getNotesForSelectedDate().length > 0; else noNotes">
+    <li *ngFor="let note of getNotesForSelectedDate()">{{ note }}</li>
+  </ul>
+
+  <ng-template #noNotes>
+    <p>Brak notatek na ten dzień dla tego psa.</p>
+  </ng-template>
+</div>

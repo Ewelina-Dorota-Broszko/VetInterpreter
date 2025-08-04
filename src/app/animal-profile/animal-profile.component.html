@@ -88,50 +88,50 @@
       </section>
 
       <!-- Blood -->
-     <section *ngIf="activeTab === 'blood'" class="tab-content">
-  <h2>Blood tests</h2>
+      <section *ngIf="activeTab === 'blood'" class="tab-content">
+        <h2>Blood tests</h2>
 
-  <!-- Wykres liniowy -->
-  <canvas id="bloodChart" *ngIf="animal.bloodTests.length"></canvas>
+        <!-- Wykres liniowy -->
+        <canvas id="bloodChart" *ngIf="animal.bloodTests.length"></canvas>
 
-  <!-- Tabela -->
-  <table *ngIf="animal.bloodTests.length; else noBlood">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>HGB</th>
-        <th>RBC</th>
-        <th>WBC</th>
-        <th>Glucose</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let test of animal.bloodTests; trackBy: trackByIndex">
-        <td>{{ test.date }}</td>
-        <td [ngClass]="getValueStatus(test.hemoglobin, 'hemoglobin')">
-          {{ test.hemoglobin }}<br>
-          <small class="ref-range">{{ getRangeText('hemoglobin') }}</small>
-        </td>
-        <td [ngClass]="getValueStatus(test.rbc, 'rbc')">
-          {{ test.rbc }}<br>
-          <small class="ref-range">{{ getRangeText('rbc') }}</small>
-        </td>
-        <td [ngClass]="getValueStatus(test.wbc, 'wbc')">
-          {{ test.wbc }}<br>
-          <small class="ref-range">{{ getRangeText('wbc') }}</small>
-        </td>
-        <td [ngClass]="getValueStatus(test.glucose, 'glucose')">
-          {{ test.glucose }}<br>
-          <small class="ref-range">{{ getRangeText('glucose') }}</small>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+        <!-- Tabela -->
+        <table *ngIf="animal.bloodTests.length; else noBlood">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>HGB</th>
+              <th>RBC</th>
+              <th>WBC</th>
+              <th>Glucose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let test of animal.bloodTests; trackBy: trackByIndex">
+              <td>{{ test.date }}</td>
+              <td [ngClass]="getValueStatus(test.hemoglobin, 'hemoglobin')">
+                {{ test.hemoglobin }}<br>
+                <small class="ref-range">{{ getRangeText('hemoglobin') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.rbc, 'rbc')">
+                {{ test.rbc }}<br>
+                <small class="ref-range">{{ getRangeText('rbc') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.wbc, 'wbc')">
+                {{ test.wbc }}<br>
+                <small class="ref-range">{{ getRangeText('wbc') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.glucose, 'glucose')">
+                {{ test.glucose }}<br>
+                <small class="ref-range">{{ getRangeText('glucose') }}</small>
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-  <ng-template #noBlood>
-    <p>No blood tests yet.</p>
-  </ng-template>
-</section>
+        <ng-template #noBlood>
+          <p>No blood tests yet.</p>
+        </ng-template>
+      </section>
 
 
       <!-- Urine -->
@@ -199,6 +199,8 @@
       <!-- Temperature -->
       <section *ngIf="activeTab === 'temperature'" class="tab-content">
         <h2>Temperature logs</h2>
+               <canvas id="temperatureChart" *ngIf="animal.temperatureLogs.length"></canvas>
+
         <table *ngIf="animal.temperatureLogs.length; else noTemp">
           <thead>
             <tr>
@@ -252,5 +254,8 @@
         </ng-template>
       </section>
     </div>
+
+    <app-calendar></app-calendar>
+
   </div>
 </div>
