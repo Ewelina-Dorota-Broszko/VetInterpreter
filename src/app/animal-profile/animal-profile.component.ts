@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 
+// Typy
+
 type Sex = 'male' | 'female';
 
 interface BloodTest {
@@ -91,6 +93,7 @@ export class AnimalProfileComponent {
   activeTab: 'overview' | 'blood' | 'urine' | 'stool' | 'temperature' | 'diabetes' = 'overview';
 
   private chartInstance: Chart | null = null;
+  private chartTempInstance: Chart | null = null;
 
   constructor(private route: ActivatedRoute, private router: Router) {
     this.route.params.subscribe(p => {
@@ -130,7 +133,9 @@ export class AnimalProfileComponent {
       ownerName: 'John Doe',
       bloodTests: [
         { date: '2025-07-20', hemoglobin: 14.1, rbc: 6.2, wbc: 9.8, glucose: 95 },
-        { date: '2025-06-15', hemoglobin: 13.9, rbc: 6.0, wbc: 10.1, glucose: 102 }
+        { date: '2025-06-15', hemoglobin: 13.9, rbc: 6.0, wbc: 10.1, glucose: 102 },
+        { date: '2025-07-20', hemoglobin: 144.1, rbc: 3.2, wbc: 9.8, glucose: 85 },
+        { date: '2025-06-15', hemoglobin: 12.9, rbc: 2.0, wbc: 5.1, glucose: 92 }
       ],
       urineTests: [
         { date: '2025-07-18', color: 'yellow', specificGravity: 1.030, pH: 6.0, protein: 'trace', glucose: 'negative', ketones: 'negative' }
@@ -140,7 +145,10 @@ export class AnimalProfileComponent {
       ],
       temperatureLogs: [
         { date: '2025-07-26', time: '08:00', temperature: 38.5 },
-        { date: '2025-07-25', time: '20:00', temperature: 38.8 }
+        { date: '2025-07-25', time: '20:00', temperature: 38.8 },
+        { date: '2025-07-24', time: '18:00', temperature: 36.5 },
+        { date: '2025-07-23', time: '10:00', temperature: 35.8 },
+        
       ],
       diabetesLogs: [
         { date: '2025-07-26', time: '07:30', glucose: 165, measurementType: 'fasting', insulinType: 'Caninsulin', insulinDose: 4 },
@@ -246,6 +254,57 @@ export class AnimalProfileComponent {
     });
   }
 
+  renderTemperatureChart() {
+    const canvas = document.getElementById('temperatureChart') as HTMLCanvasElement;
+    const ctx = canvas?.getContext('2d');
+    if (!ctx) return;
+
+    if (this.chartTempInstance) {
+      this.chartTempInstance.destroy();
+    }
+
+    const labels = this.animal.temperatureLogs.map(t => `${t.date} ${t.time}`);
+    const temps = this.animal.temperatureLogs.map(t => t.temperature);
+
+    this.chartTempInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Temperature (°C)',
+            data: temps,
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: 'Temperature Trends' }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Temperature (°C)'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Date & Time'
+            }
+          }
+        }
+      }
+    });
+  }
+
   loadAnimal() {
     const found = this.mockAnimals.find(a => a.id === this.animalId);
     if (!found) {
@@ -257,11 +316,13 @@ export class AnimalProfileComponent {
 
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
-
-    // poczekaj aż DOM z canvasem się zrenderuje
-    if (tab === 'blood') {
-      setTimeout(() => this.renderBloodChart(), 0);
-    }
+    setTimeout(() => {
+      if (tab === 'blood') {
+        this.renderBloodChart();
+      } else if (tab === 'temperature') {
+        this.renderTemperatureChart();
+      }
+    }, 0);
   }
 
   addNewDocument() {

@@ -20,6 +20,11 @@ import { UrineFormComponent } from './urine-form/urine-form.component';
 import { DiabetesFormComponent } from './diabetes-form/diabetes-form.component';
 import { TemperatureFormComponent } from './temperature-form/temperature-form.component';
 import { VisitNotesComponent } from './visit-notes/visit-notes.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import { Calendar } from '@fullcalendar/core';
+import { CalendarComponent } from './calendar/calendar.component';
+
 
 @NgModule({
   declarations: [
@@ -39,13 +44,15 @@ import { VisitNotesComponent } from './visit-notes/visit-notes.component';
     UrineFormComponent,
     DiabetesFormComponent,
     TemperatureFormComponent,
-    VisitNotesComponent
+    VisitNotesComponent,
+    CalendarComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FullCalendarModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

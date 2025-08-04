@@ -1,0 +1,49 @@
+.container {
+  padding: 40px;
+  background: #212631;
+  color: white;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  ::ng-deep .fc {
+    background-color: white;
+    color: black;
+    border-radius: 6px;
+    padding: 10px;
+  }
+}
+.mini-calendar-wrapper {
+  max-width: 500px;
+//   max-height: 400px;
+  overflow: hidden;
+  margin: 0 auto;
+    color: white;
+
+  .fc {
+    font-size: 0.75rem; // zmniejsz czcionki
+    color: white;
+  }
+
+  .fc-toolbar {
+    font-size: 0.8rem;
+    flex-wrap: wrap;
+    color: white;
+  }
+
+  .fc-daygrid-day-number {
+    font-size: 0.7rem;
+    color: white;
+  }
+
+  .fc-event-title {
+    font-size: 0.65rem;
+    color: white;
+  }
+}
+
+
+.note-section {
+    color: white;
+}
