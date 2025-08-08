@@ -99,15 +99,40 @@
           <thead>
             <tr>
               <th>Date</th>
+
+              <!-- Morphology -->
               <th>HGB</th>
               <th>RBC</th>
               <th>WBC</th>
+              <th>Hematocrit</th>
+              <th>Platelets</th>
+              <th>MCV</th>
+              <th>MCH</th>
+              <th>MCHC</th>
+
+              <!-- Biochemistry -->
               <th>Glucose</th>
+              <th>Urea</th>
+              <th>Creatinine</th>
+              <th>ALT (GPT)</th>
+              <th>AST (GOT)</th>
+              <th>ALP</th>
+              <th>Total Protein</th>
+              <th>Albumin</th>
+              <th>Globulin</th>
+              <th>Total Bilirubin</th>
+              <th>Direct Bilirubin</th>
+              <th>Indirect Bilirubin</th>
+
+              <!-- Other -->
+              <th>Comments</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let test of animal.bloodTests; trackBy: trackByIndex">
               <td>{{ test.date }}</td>
+
+              <!-- Morphology -->
               <td [ngClass]="getValueStatus(test.hemoglobin, 'hemoglobin')">
                 {{ test.hemoglobin }}<br>
                 <small class="ref-range">{{ getRangeText('hemoglobin') }}</small>
@@ -120,11 +145,81 @@
                 {{ test.wbc }}<br>
                 <small class="ref-range">{{ getRangeText('wbc') }}</small>
               </td>
+              <td [ngClass]="getValueStatus(test.hematocrit, 'hematocrit')">
+                {{ test.hematocrit }}<br>
+                <small class="ref-range">{{ getRangeText('hematocrit') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.platelets, 'platelets')">
+                {{ test.platelets }}<br>
+                <small class="ref-range">{{ getRangeText('platelets') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.mcv, 'mcv')">
+                {{ test.mcv }}<br>
+                <small class="ref-range">{{ getRangeText('mcv') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.mch, 'mch')">
+                {{ test.mch }}<br>
+                <small class="ref-range">{{ getRangeText('mch') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.mchc, 'mchc')">
+                {{ test.mchc }}<br>
+                <small class="ref-range">{{ getRangeText('mchc') }}</small>
+              </td>
+
+              <!-- Biochemistry -->
               <td [ngClass]="getValueStatus(test.glucose, 'glucose')">
                 {{ test.glucose }}<br>
                 <small class="ref-range">{{ getRangeText('glucose') }}</small>
               </td>
+              <td [ngClass]="getValueStatus(test.urea, 'urea')">
+                {{ test.urea }}<br>
+                <small class="ref-range">{{ getRangeText('urea') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.creatinine, 'creatinine')">
+                {{ test.creatinine }}<br>
+                <small class="ref-range">{{ getRangeText('creatinine') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.alt, 'alt')">
+                {{ test.alt }}<br>
+                <small class="ref-range">{{ getRangeText('alt') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.ast, 'ast')">
+                {{ test.ast }}<br>
+                <small class="ref-range">{{ getRangeText('ast') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.alp, 'alp')">
+                {{ test.alp }}<br>
+                <small class="ref-range">{{ getRangeText('alp') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.totalProtein, 'totalProtein')">
+                {{ test.totalProtein }}<br>
+                <small class="ref-range">{{ getRangeText('totalProtein') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.albumin, 'albumin')">
+                {{ test.albumin }}<br>
+                <small class="ref-range">{{ getRangeText('albumin') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.globulin, 'globulin')">
+                {{ test.globulin }}<br>
+                <small class="ref-range">{{ getRangeText('globulin') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.bilirubinTotal, 'bilirubinTotal')">
+                {{ test.bilirubinTotal }}<br>
+                <small class="ref-range">{{ getRangeText('bilirubinTotal') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.bilirubinDirect, 'bilirubinDirect')">
+                {{ test.bilirubinDirect }}<br>
+                <small class="ref-range">{{ getRangeText('bilirubinDirect') }}</small>
+              </td>
+              <td [ngClass]="getValueStatus(test.bilirubinIndirect, 'bilirubinIndirect')">
+                {{ test.bilirubinIndirect }}<br>
+                <small class="ref-range">{{ getRangeText('bilirubinIndirect') }}</small>
+              </td>
+
+              <!-- Comments -->
+              <td>{{ test.comments || '—' }}</td>
             </tr>
+
           </tbody>
         </table>
 
@@ -199,7 +294,7 @@
       <!-- Temperature -->
       <section *ngIf="activeTab === 'temperature'" class="tab-content">
         <h2>Temperature logs</h2>
-               <canvas id="temperatureChart" *ngIf="animal.temperatureLogs.length"></canvas>
+        <canvas id="temperatureChart" *ngIf="animal.temperatureLogs.length"></canvas>
 
         <table *ngIf="animal.temperatureLogs.length; else noTemp">
           <thead>
