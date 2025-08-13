@@ -1,97 +1,97 @@
 <div class="dashboard-menu-container">
     <div class="container">
-        <h2>Urine Test Form</h2>
+        <h2>Formularz badania moczu</h2>
 
         <form (ngSubmit)="submitForm()">
 
-            <!-- Section 1: Physical & Chemical -->
+            <!-- Sekcja 1: Właściwości fizyczne i chemiczne -->
             <fieldset>
-                <legend>Physical & Chemical Properties</legend>
+                <legend>Właściwości fizyczne i chemiczne</legend>
 
-                <label>Color</label>
+                <label>Kolor</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.color" name="color" />
 
-                <label>Clarity</label>
+                <label>Przejrzystość</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.clarity" name="clarity" />
 
-                <label>Specific Gravity</label>
+                <label>Ciężar właściwy</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.specificGravity" name="specificGravity" />
 
                 <label>pH</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.pH" name="pH" />
 
-                <label>Protein</label>
+                <label>Białko</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.protein" name="protein" />
 
-                <label>Glucose</label>
+                <label>Glukoza</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.glucose" name="glucose" />
 
-                <label>Ketones</label>
+                <label>Ciała ketonowe</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.ketones" name="ketones" />
 
-                <label>Bilirubin</label>
+                <label>Bilirubina</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.bilirubin" name="bilirubin" />
 
                 <label>Urobilinogen</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.urobilinogen" name="urobilinogen" />
 
-                <label>Blood</label>
+                <label>Krew</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.blood" name="blood" />
 
-                <label>Nitrites</label>
+                <label>Azotyny</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.nitrites" name="nitrites" />
 
-                <label>Leukocyte esterase</label>
+                <label>Esteraza leukocytowa</label>
                 <input type="text" [(ngModel)]="formData.physicalChemical.leukocyteEsterase" name="leukocyteEsterase" />
             </fieldset>
 
-            <!-- Section 2: Microscopic analysis -->
+            <!-- Sekcja 2: Analiza mikroskopowa -->
             <fieldset>
-                <legend>Microscopic Analysis</legend>
+                <legend>Analiza mikroskopowa</legend>
 
-                <label>WBC (per HPF)</label>
+                <label>Leukocyty (WBC) / pole widzenia</label>
                 <input type="text" [(ngModel)]="formData.microscopic.wbc" name="wbc" />
 
-                <label>RBC (per HPF)</label>
+                <label>Erytrocyty (RBC) / pole widzenia</label>
                 <input type="text" [(ngModel)]="formData.microscopic.rbc" name="rbc" />
 
-                <label>Epithelial cells</label>
+                <label>Komórki nabłonkowe</label>
                 <input type="text" [(ngModel)]="formData.microscopic.epithelialCells" name="epithelialCells" />
 
-                <label>Crystals</label>
+                <label>Kryształy</label>
                 <input type="text" [(ngModel)]="formData.microscopic.crystals" name="crystals" />
 
-                <label>Casts</label>
+                <label>Wałeczki</label>
                 <input type="text" [(ngModel)]="formData.microscopic.casts" name="casts" />
 
-                <label>Bacteria</label>
+                <label>Bakterie</label>
                 <input type="text" [(ngModel)]="formData.microscopic.bacteria" name="bacteria" />
 
-                <label>Yeasts</label>
+                <label>Drożdżaki</label>
                 <input type="text" [(ngModel)]="formData.microscopic.yeast" name="yeast" />
 
-                <label>Sperm</label>
+                <label>Plemniki</label>
                 <input type="text" [(ngModel)]="formData.microscopic.sperm" name="sperm" />
 
-                <label>Mucus threads</label>
+                <label>Pasma śluzu</label>
                 <input type="text" [(ngModel)]="formData.microscopic.mucus" name="mucus" />
 
-                <label>Parasites</label>
+                <label>Pasożyty</label>
                 <input type="text" [(ngModel)]="formData.microscopic.parasites" name="parasites" />
             </fieldset>
 
-            <!-- Other -->
+            <!-- Inne -->
             <fieldset>
-                <legend>Additional Information</legend>
+                <legend>Dodatkowe informacje</legend>
 
-                <label>Date of test</label>
+                <label>Data badania</label>
                 <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
 
-                <label>Comments</label>
+                <label>Komentarze</label>
                 <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
             </fieldset>
 
-            <button type="submit">Submit Urine Test</button>
+            <button type="submit">Zapisz badanie moczu</button>
         </form>
     </div>
 </div>
