@@ -1,52 +1,52 @@
 <div class="dashboard-menu-container">
   <div class="container">
-    <h2>Veterinary Visit Record</h2>
+    <h2>Rekord wizyty weterynaryjnej</h2>
 
     <form (ngSubmit)="submitForm()">
-      <label for="visitDate">Visit Date</label>
+      <label for="visitDate">Data wizyty</label>
       <input type="date" id="visitDate" name="visitDate" [(ngModel)]="formData.visitDate" required />
 
-      <label for="clinicName">Clinic Name</label>
+      <label for="clinicName">Nazwa kliniki</label>
       <input type="text" id="clinicName" name="clinicName" [(ngModel)]="formData.clinicName" />
 
-      <label for="vetName">Veterinarian</label>
+      <label for="vetName">Lekarz weterynarii</label>
       <input type="text" id="vetName" name="vetName" [(ngModel)]="formData.vetName" />
 
       <label>
         <input type="checkbox" name="vaccinations" [(ngModel)]="formData.vaccinations" />
-        Vaccinations administered
+        Podano szczepienia
       </label>
 
-      <label for="symptoms">Symptoms Observed</label>
+      <label for="symptoms">Zaobserwowane objawy</label>
       <textarea id="symptoms" name="symptoms" [(ngModel)]="formData.symptoms" rows="2"></textarea>
 
-      <label for="treatments">Treatments Performed</label>
+      <label for="treatments">Wykonane zabiegi/leczone</label>
       <textarea id="treatments" name="treatments" [(ngModel)]="formData.treatments" rows="2"></textarea>
 
       <div *ngFor="let med of formData.medications; let i = index" class="medication-entry">
         <fieldset>
-          <legend>Medication {{ i + 1 }}</legend>
+          <legend>Lek {{ i + 1 }}</legend>
 
-          <label>Name</label>
+          <label>Nazwa</label>
           <input type="text" [(ngModel)]="med.name" name="medName{{i}}" />
 
-          <label>Dosage</label>
+          <label>Dawka</label>
           <input type="text" [(ngModel)]="med.dosage" name="medDosage{{i}}" />
 
-          <label>Frequency</label>
+          <label>Częstotliwość</label>
           <input type="text" [(ngModel)]="med.frequency" name="medFrequency{{i}}" />
         </fieldset>
       </div>
 
-      <button type="button" (click)="addMedication()">+ Add Medication</button>
+      <button type="button" (click)="addMedication()">+ Dodaj lek</button>
 
-      <label for="notes">Additional Notes</label>
+      <label for="notes">Dodatkowe uwagi</label>
       <textarea id="notes" name="notes" [(ngModel)]="formData.notes" rows="3"></textarea>
 
-      <label for="nextVisitDate">Next Visit Date</label>
+      <label for="nextVisitDate">Data następnej wizyty</label>
       <input type="date" id="nextVisitDate" name="nextVisitDate" [(ngModel)]="formData.nextVisitDate" />
 
-      <button type="submit">Save Visit Record</button>
+      <button type="submit">Zapisz wizytę</button>
     </form>
   </div>
 </div>

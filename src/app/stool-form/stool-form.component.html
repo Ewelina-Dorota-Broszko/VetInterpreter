@@ -1,44 +1,44 @@
 <div class="dashboard-menu-container">
     <div class="container">
-<h2>Stool Examination Form</h2>
+        <h2>Formularz badania kału</h2>
 
-<form (ngSubmit)="submitForm()" #stoolForm="ngForm">
+        <form (ngSubmit)="submitForm()" #stoolForm="ngForm">
 
-  <label>Consistency</label>
-  <select [(ngModel)]="formData.consistency" name="consistency">
-    <option value="solid">Solid</option>
-    <option value="soft">Soft</option>
-    <option value="watery">Watery</option>
-  </select>
+            <label>Konsystencja</label>
+            <select [(ngModel)]="formData.consistency" name="consistency">
+                <option value="solid">Stała</option>
+                <option value="soft">Miękka</option>
+                <option value="watery">Wodnista</option>
+            </select>
 
-  <label>Color</label>
-  <input type="text" [(ngModel)]="formData.color" name="color" />
+            <label>Kolor</label>
+            <input type="text" [(ngModel)]="formData.color" name="color" />
 
-  <label>
-    <input type="checkbox" [(ngModel)]="formData.mucus" name="mucus" />
-    Mucus present
-  </label>
+            <label>
+                <input type="checkbox" [(ngModel)]="formData.mucus" name="mucus" />
+                Obecność śluzu
+            </label>
 
-  <label>
-    <input type="checkbox" [(ngModel)]="formData.blood" name="blood" />
-    Blood present
-  </label>
+            <label>
+                <input type="checkbox" [(ngModel)]="formData.blood" name="blood" />
+                Obecność krwi
+            </label>
 
-  <label>Odor description</label>
-  <input type="text" [(ngModel)]="formData.odor" name="odor" />
+            <label>Opis zapachu</label>
+            <input type="text" [(ngModel)]="formData.odor" name="odor" />
 
-  <label>
-    <input type="checkbox" [(ngModel)]="formData.parasites" name="parasites" />
-    Parasites observed
-  </label>
+            <label>
+                <input type="checkbox" [(ngModel)]="formData.parasites" name="parasites" />
+                Obecność pasożytów
+            </label>
 
-  <label>Date of test</label>
-  <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
+            <label>Data badania</label>
+            <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
 
-  <label>Additional comments</label>
-  <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+            <label>Dodatkowe uwagi</label>
+            <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
 
-  <button type="submit">Submit Stool Test</button>
-</form>
-</div>
+            <button type="submit">Zapisz badanie kału</button>
+        </form>
+    </div>
 </div>

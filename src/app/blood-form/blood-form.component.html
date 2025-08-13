@@ -1,13 +1,13 @@
 <div class="dashboard-menu-container">
   <div class="container">
-    <h2>Blood Test Form</h2>
+    <h2>Formularz badania krwi</h2>
 
     <form (ngSubmit)="submitForm()" #bloodForm="ngForm">
-      <!-- Morphology Section -->
+      <!-- Sekcja morfologii -->
       <fieldset>
-        <legend>Morphology</legend>
+        <legend>Morfologia</legend>
 
-        <label>Hemoglobin (g/dL)</label>
+        <label>Hemoglobina (g/dL)</label>
         <input type="number" [(ngModel)]="formData.morphology.hemoglobin" name="hemoglobin" min="0" step="0.1" />
 
         <label>RBC (10¹²/L)</label>
@@ -16,10 +16,10 @@
         <label>WBC (10⁹/L)</label>
         <input type="number" [(ngModel)]="formData.morphology.wbc" name="wbc" min="0" step="0.01" />
 
-        <label>Hematocrit (%)</label>
+        <label>Hematokryt (%)</label>
         <input type="number" [(ngModel)]="formData.morphology.hematocrit" name="hematocrit" min="0" step="0.1" />
 
-        <label>Platelets (10⁹/L)</label>
+        <label>Płytki krwi (10⁹/L)</label>
         <input type="number" [(ngModel)]="formData.morphology.platelets" name="platelets" min="0" step="1" />
 
         <label>MCV (fL)</label>
@@ -32,17 +32,17 @@
         <input type="number" [(ngModel)]="formData.morphology.mchc" name="mchc" min="0" step="0.1" />
       </fieldset>
 
-      <!-- Biochemistry Section -->
+      <!-- Sekcja biochemii -->
       <fieldset>
-        <legend>Biochemistry</legend>
+        <legend>Biochemia</legend>
 
-        <label>Glucose (mg/dL)</label>
+        <label>Glukoza (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.glucose" name="glucose" min="0" step="1" />
 
-        <label>Urea (mg/dL)</label>
+        <label>Mocznik (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.urea" name="urea" min="0" step="1" />
 
-        <label>Creatinine (mg/dL)</label>
+        <label>Kreatynina (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.creatinine" name="creatinine" min="0" step="0.1" />
 
         <label>ALT (GPT)</label>
@@ -54,37 +54,37 @@
         <label>ALP</label>
         <input type="number" [(ngModel)]="formData.biochemistry.alp" name="alp" min="0" step="1" />
 
-        <label>Total protein (g/dL)</label>
+        <label>Białko całkowite (g/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.totalProtein" name="totalProtein" min="0" step="0.1" />
 
-        <label>Albumin (g/dL)</label>
+        <label>Albuminy (g/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.albumin" name="albumin" min="0" step="0.1" />
 
-        <label>Globulin (g/dL)</label>
+        <label>Globuliny (g/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.globulin" name="globulin" min="0" step="0.1" />
 
-        <label>Total bilirubin (mg/dL)</label>
+        <label>Bilirubina całkowita (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.bilirubinTotal" name="bilirubinTotal" min="0" step="0.1" />
 
-        <label>Direct bilirubin (mg/dL)</label>
+        <label>Bilirubina bezpośrednia (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.bilirubinDirect" name="bilirubinDirect" min="0" step="0.1" />
 
-        <label>Indirect bilirubin (mg/dL)</label>
+        <label>Bilirubina pośrednia (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.bilirubinIndirect" name="bilirubinIndirect" min="0" step="0.1" />
       </fieldset>
 
-      <!-- Other Section -->
+      <!-- Sekcja inne -->
       <fieldset>
-        <legend>Other</legend>
+        <legend>Inne</legend>
 
-        <label>Test date</label>
+        <label>Data badania</label>
         <input type="date" [(ngModel)]="formData.other.testDate" name="testDate" />
 
-        <label>Comments</label>
+        <label>Komentarze</label>
         <textarea [(ngModel)]="formData.other.comments" name="comments" rows="3"></textarea>
       </fieldset>
 
-      <button type="submit">Submit Blood Test</button>
+      <button type="submit">Zapisz badanie krwi</button>
     </form>
   </div>
 </div>

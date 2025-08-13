@@ -1,35 +1,35 @@
 <div class="dashboard-menu-container">
     <div class="container">
-        <h2>Diabetes Monitoring Form</h2>
+        <h2>Formularz monitorowania cukrzycy</h2>
 
         <form (ngSubmit)="submitForm()">
-            <label>Date</label>
+            <label>Data</label>
             <input type="date" [(ngModel)]="formData.date" name="date" required />
 
-            <label>Time</label>
+            <label>Godzina</label>
             <input type="time" [(ngModel)]="formData.time" name="time" required />
 
-            <label>Blood Glucose (mg/dL)</label>
+            <label>Poziom glukozy (mg/dL)</label>
             <input type="number" [(ngModel)]="formData.glucose" name="glucose" required />
 
-            <label>Measurement Type</label>
+            <label>Rodzaj pomiaru</label>
             <select [(ngModel)]="formData.measurementType" name="measurementType" required>
-                <option value="">-- Select --</option>
-                <option value="fasting">Fasting</option>
-                <option value="postMeal">Post-meal</option>
-                <option value="random">Random</option>
+                <option value="">-- Wybierz --</option>
+                <option value="fasting">Na czczo</option>
+                <option value="postMeal">Po posiłku</option>
+                <option value="random">Przypadkowy</option>
             </select>
 
-            <label>Insulin Type (optional)</label>
+            <label>Rodzaj insuliny (opcjonalnie)</label>
             <input type="text" [(ngModel)]="formData.insulinType" name="insulinType" />
 
-            <label>Insulin Dose (IU)</label>
+            <label>Dawka insuliny (j.)</label>
             <input type="number" step="0.1" [(ngModel)]="formData.insulinDose" name="insulinDose" />
 
-            <label>Comments</label>
+            <label>Komentarze</label>
             <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
 
-            <button type="submit">Submit Diabetes Log</button>
+            <button type="submit">Zapisz wpis cukrzycy</button>
         </form>
     </div>
 </div>
