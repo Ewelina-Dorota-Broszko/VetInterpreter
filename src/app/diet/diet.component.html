@@ -1,0 +1,168 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+
+    <div class="diet-container">
+      <div class="container">
+        <header class="header">
+          <div>
+            <h1>Dieta</h1>
+
+            <!-- WYBÓR ZWIERZĘCIA -->
+            <div class="animal-select">
+              <label for="animalSel">Zwierzę:</label>
+              <select id="animalSel" [(ngModel)]="selectedAnimalId" name="animalSel" (change)="onAnimalChange()">
+                <option *ngFor="let a of animals" [value]="a.id">{{ a.name }} ({{ a.species }})</option>
+              </select>
+            </div>
+
+            <p>
+              Aktywne: <strong>{{ animal.name }}</strong> |
+              Gatunek: <strong>{{ animal.species }}</strong> |
+              Waga: <strong>{{ animal.weightKg }} kg</strong>
+            </p>
+          </div>
+          <button class="btn" (click)="router.navigate(['/animal', animal.id])">⟵ Powrót do profilu</button>
+        </header>
+
+        <!-- Karty podsumowania -->
+        <section class="summary-cards">
+          <div class="card">
+            <h3>RER</h3>
+            <p class="big">{{ getRER(settings.targetWeightKg || animal.weightKg) }} kcal/d</p>
+            <small>70 × masa^0.75</small>
+          </div>
+          <div class="card">
+            <h3>DER (cel)</h3>
+            <p class="big">{{ getDER() }} kcal/d</p>
+            <small>Uwzględnia cel/aktywność lub ręczne nadpisanie</small>
+          </div>
+          <div class="card">
+            <h3>Dzisiejsza suma</h3>
+            <p class="big">{{ getTotalKcalForDate((feedingForm.date || '') ) }} kcal</p>
+            <small>dla daty formularza</small>
+          </div>
+        </section>
+
+        <!-- Ustawienia diety -->
+        <section class="panel">
+          <h2>Ustawienia diety</h2>
+          <form class="form-grid" (ngSubmit)="$event.preventDefault()">
+            <div class="field">
+              <label>Cel</label>
+              <select [(ngModel)]="settings.goal" name="goal" (change)="renderChart()">
+                <option value="maintenance">Utrzymanie</option>
+                <option value="weightLoss">Odchudzanie</option>
+                <option value="weightGain">Przytycie</option>
+                <option value="growth">Wzrost (młode)</option>
+                <option value="other">Inny</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label>Waga docelowa (kg)</label>
+              <input type="number" step="0.1" [(ngModel)]="settings.targetWeightKg" name="targetWeight" (input)="renderChart()" />
+            </div>
+
+            <div class="field">
+              <label>Dzienny cel kcal (nadpisz DER)</label>
+              <input type="number" step="1" [(ngModel)]="settings.dailyEnergyTargetKcal" name="manualDER" (input)="renderChart()" />
+            </div>
+
+            <div class="field field--wide">
+              <label>Notatka dot. aktywności</label>
+              <input type="text" [(ngModel)]="settings.activityNote" name="activityNote" />
+            </div>
+          </form>
+        </section>
+
+        <!-- Dodawanie posiłku -->
+        <section class="panel">
+          <h2>Dodaj posiłek</h2>
+          <form class="form-grid" (ngSubmit)="addFeeding()">
+            <div class="field">
+              <label>Data</label>
+              <input type="date" [(ngModel)]="feedingForm.date" name="fDate" required />
+            </div>
+
+            <div class="field">
+              <label>Godzina</label>
+              <input type="time" [(ngModel)]="feedingForm.time" name="fTime" required />
+            </div>
+
+            <div class="field field--wide">
+              <label>Produkt (z biblioteki)</label>
+              <select [(ngModel)]="feedingForm.foodName" name="fFoodLib" (change)="onFoodSelect(feedingForm.foodName!)">
+                <option value="">-- wybierz --</option>
+                <option *ngFor="let f of foodLibrary" [value]="f.name">
+                  {{ f.name }} ({{ f.kcalPer100g }} kcal/100g)
+                </option>
+              </select>
+            </div>
+
+            <div class="field field--wide">
+              <label>lub produkt niestandardowy</label>
+              <input type="text" [(ngModel)]="feedingForm.foodName" name="fFoodCustom" placeholder="np. indyk gotowany" (input)="updateKcalPreview()" />
+            </div>
+
+            <div class="field">
+              <label>kcal / 100 g (dla niestandardowych)</label>
+              <input type="number" step="1" [(ngModel)]="feedingForm.customKcalPer100" name="fKcal100" (input)="updateKcalPreview()" />
+            </div>
+
+            <div class="field">
+              <label>Ilość (g)</label>
+              <input type="number" step="1" [(ngModel)]="feedingForm.amountGrams" name="fAmount" required (input)="updateKcalPreview()" />
+            </div>
+
+            <div class="field">
+              <label>Obliczone kcal</label>
+              <input type="number" [value]="feedingForm.kcal || 0" name="fKcal" readonly />
+            </div>
+
+            <div class="field field--wide">
+              <label>Notatki</label>
+              <input type="text" [(ngModel)]="feedingForm.notes" name="fNotes" />
+            </div>
+
+            <div class="field field--actions">
+              <button type="submit">Dodaj posiłek</button>
+            </div>
+          </form>
+
+          <canvas id="dietCaloriesChart" *ngIf="feedings.length"></canvas>
+
+          <table *ngIf="feedings.length; else noFeedings">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Godzina</th>
+                <th>Produkt</th>
+                <th>Ilość (g)</th>
+                <th>kcal</th>
+                <th>Notatki</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let f of feedings; let i=index">
+                <td>{{ f.date }}</td>
+                <td>{{ f.time }}</td>
+                <td>{{ f.foodName }}</td>
+                <td>{{ f.amountGrams }}</td>
+                <td>{{ f.kcal }}</td>
+                <td>{{ f.notes || '—' }}</td>
+                <td><button type="button" class="remove" (click)="removeFeeding(i)">Usuń</button></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <ng-template #noFeedings>
+            <p>Brak posiłków — dodaj pierwszy powyżej.</p>
+          </ng-template>
+        </section>
+
+      </div>
+    </div>
+
+  </div>
+</div>

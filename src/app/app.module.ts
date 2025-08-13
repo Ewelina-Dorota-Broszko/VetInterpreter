@@ -24,6 +24,7 @@ import { FullCalendarModule } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import { CalendarComponent } from './calendar/calendar.component';
+import { DietComponent } from './diet/diet.component';
 
 
 @NgModule({
@@ -45,7 +46,8 @@ import { CalendarComponent } from './calendar/calendar.component';
     DiabetesFormComponent,
     TemperatureFormComponent,
     VisitNotesComponent,
-    CalendarComponent
+    CalendarComponent,
+    DietComponent
   ],
   imports: [
     BrowserModule,
