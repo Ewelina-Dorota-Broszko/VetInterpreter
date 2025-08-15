@@ -11,11 +11,11 @@
         </div>
 
         <div class="visit-details" *ngIf="visit.expanded">
-            <p><strong>Objawy:</strong> {{ visit.symptoms || '—' }}</p>
+          <p><strong>Objawy:</strong> {{ visit.symptoms || '—' }}</p>
           <p><strong>Leczenie:</strong> {{ visit.treatments || '—' }}</p>
 
           <div *ngIf="visit.medications?.length">
-            <strong>eki:</strong>
+            <strong>Leki:</strong>
             <ul>
               <li *ngFor="let med of visit.medications">
                 {{ med.name }} – {{ med.dosage }} – {{ med.frequency }}
@@ -45,15 +45,20 @@
       </header>
 
       <!-- Tabs -->
-    <nav class="tabs">
+      <nav class="tabs">
         <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Podsumowanie</button>
         <button [class.active]="activeTab === 'blood'" (click)="setTab('blood')">Krew</button>
         <button [class.active]="activeTab === 'urine'" (click)="setTab('urine')">Mocz</button>
         <button [class.active]="activeTab === 'stool'" (click)="setTab('stool')">Kał</button>
         <button [class.active]="activeTab === 'temperature'" (click)="setTab('temperature')">Temperatura</button>
         <button [class.active]="activeTab === 'diabetes'" (click)="setTab('diabetes')">Cukrzyca</button>
+        <button [class.active]="activeTab === 'weight'" (click)="setTab('weight')">Waga & BCS</button>
+        <!-- NOWE -->
+        <button [class.active]="activeTab === 'vaccinations'" (click)="setTab('vaccinations')">Szczepienia</button>
+        <button [class.active]="activeTab === 'meds'" (click)="setTab('meds')">Leki</button>
+        <button [class.active]="activeTab === 'symptoms'" (click)="setTab('symptoms')">Objawy</button>
       </nav>
-      
+
       <!-- Podsumowanie -->
       <section *ngIf="activeTab === 'overview'" class="tab-content">
         <h2>Podsumowanie</h2>
@@ -87,19 +92,16 @@
         </div>
       </section>
 
-      <!-- Blood -->
+      <!-- Badania krwi -->
       <section *ngIf="activeTab === 'blood'" class="tab-content">
         <h2>Badania krwi</h2>
 
-        <!-- Wykres liniowy -->
         <canvas id="bloodChart" *ngIf="animal.bloodTests.length"></canvas>
 
-        <!-- Tabela -->
         <table *ngIf="animal.bloodTests.length; else noBlood">
           <thead>
             <tr>
               <th>Data</th>
-
               <!-- Morfologia -->
               <th>HGB</th>
               <th>RBC</th>
@@ -109,7 +111,6 @@
               <th>MCV</th>
               <th>MCH</th>
               <th>MCHC</th>
-
               <!-- Biochemia -->
               <th>Glukoza</th>
               <th>Mocznik</th>
@@ -123,7 +124,6 @@
               <th>Bilirubina całkowita</th>
               <th>Bilirubina bezpośrednia</th>
               <th>Bilirubina pośrednia</th>
-
               <!-- Inne -->
               <th>Komentarz</th>
             </tr>
@@ -219,17 +219,15 @@
               <!-- Comments -->
               <td>{{ test.comments || '—' }}</td>
             </tr>
-
           </tbody>
         </table>
 
         <ng-template #noBlood>
-            <p>Brak badań krwi.</p>
+          <p>Brak badań krwi.</p>
         </ng-template>
       </section>
 
-
-      <!-- Urine -->
+      <!-- Badania moczu -->
       <section *ngIf="activeTab === 'urine'" class="tab-content">
         <h2>Badania moczu</h2>
         <table *ngIf="animal.urineTests.length; else noUrine">
@@ -262,9 +260,9 @@
         </ng-template>
       </section>
 
-      <!-- Stool -->
+      <!-- Badania kału -->
       <section *ngIf="activeTab === 'stool'" class="tab-content">
-       <h2>Badania kału</h2>
+        <h2>Badania kału</h2>
         <table *ngIf="animal.stoolTests.length; else noStool">
           <thead>
             <tr>
@@ -280,8 +278,8 @@
               <td>{{ test.date }}</td>
               <td>{{ test.consistency }}</td>
               <td>{{ test.color }}</td>
-              <td>{{ test.blood ? 'yes' : 'no' }}</td>
-              <td>{{ test.mucus ? 'yes' : 'no' }}</td>
+              <td>{{ test.blood ? 'tak' : 'nie' }}</td>
+              <td>{{ test.mucus ? 'tak' : 'nie' }}</td>
             </tr>
           </tbody>
         </table>
@@ -291,9 +289,9 @@
         </ng-template>
       </section>
 
-      <!-- Temperature -->
+      <!-- Pomiary temperatury -->
       <section *ngIf="activeTab === 'temperature'" class="tab-content">
-         <h2>Pomiary temperatury</h2>
+        <h2>Pomiary temperatury</h2>
         <canvas id="temperatureChart" *ngIf="animal.temperatureLogs.length"></canvas>
 
         <table *ngIf="animal.temperatureLogs.length; else noTemp">
@@ -318,9 +316,9 @@
         </ng-template>
       </section>
 
-      <!-- Diabetes -->
+      <!-- Cukrzyca -->
       <section *ngIf="activeTab === 'diabetes'" class="tab-content">
-        <h2>Diabetes logs</h2>
+        <h2>Zapisy cukrzycy</h2>
         <table *ngIf="animal.diabetesLogs.length; else noDiab">
           <thead>
             <tr>
@@ -345,12 +343,224 @@
         </table>
 
         <ng-template #noDiab>
-           <p>Brak zapisów cukrzycy.</p>
+          <p>Brak zapisów cukrzycy.</p>
         </ng-template>
       </section>
+
+      <!-- Waga & BCS -->
+      <section *ngIf="activeTab === 'weight'" class="tab-content">
+        <h2>Waga i kondycja (BCS)</h2>
+
+        <form (ngSubmit)="addWeight()">
+          <label>Data</label>
+          <input type="date" [(ngModel)]="weightForm.date" name="wDate" required />
+
+          <label>Waga (kg)</label>
+          <input type="number" step="0.01" [(ngModel)]="weightForm.weightKg" name="wWeight" required />
+
+          <label>BCS (1–9)</label>
+          <input type="number" min="1" max="9" [(ngModel)]="weightForm.bcs" name="wBcs" />
+
+          <label>Notatka</label>
+          <input type="text" [(ngModel)]="weightForm.note" name="wNote" />
+
+          <button type="submit">Dodaj wpis</button>
+        </form>
+
+        <table *ngIf="animal.weightHistory?.length">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Waga (kg)</th>
+              <th>BCS</th>
+              <th>Notatka</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let w of animal.weightHistory; let i = index">
+              <td>{{ w.date }}</td>
+              <td>{{ w.weightKg }}</td>
+              <td>{{ w.bcs || '—' }}</td>
+              <td>{{ w.note || '—' }}</td>
+              <td><button type="button" (click)="removeWeight(i)">Usuń</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template [ngIf]="!(animal.weightHistory?.length)">
+          <p>Brak wpisów wagi.</p>
+        </ng-template>
+      </section>
+
+      <!-- SZCZEPIENIA -->
+      <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
+        <h2>Szczepienia / profilaktyka</h2>
+
+        <form (ngSubmit)="addVaccination()">
+          <label>Rodzaj</label>
+          <input type="text" [(ngModel)]="vaxForm.type" name="vType" placeholder="np. Wścieklizna" required />
+          <label>Data podania</label>
+          <input type="date" [(ngModel)]="vaxForm.date" name="vDate" required />
+          <label>Następny termin</label>
+          <input type="date" [(ngModel)]="vaxForm.dueDate" name="vDue" />
+          <label>Preparat</label>
+          <input type="text" [(ngModel)]="vaxForm.product" name="vProd" />
+          <label>Seria</label>
+          <input type="text" [(ngModel)]="vaxForm.batch" name="vBatch" />
+          <label>Lekarz</label>
+          <input type="text" [(ngModel)]="vaxForm.vet" name="vVet" />
+          <label>Uwagi</label>
+          <input type="text" [(ngModel)]="vaxForm.notes" name="vNotes" />
+          <button type="submit">Dodaj szczepienie</button>
+        </form>
+
+        <table *ngIf="animal.vaccinations?.length">
+          <thead>
+            <tr>
+              <th>Rodzaj</th>
+              <th>Data</th>
+              <th>Następny termin</th>
+              <th>Preparat</th>
+              <th>Seria</th>
+              <th>Lekarz</th>
+              <th>Uwagi</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of animal.vaccinations; let i=index">
+              <td>{{ v.type }}</td>
+              <td>{{ v.date }}</td>
+              <td>{{ v.dueDate || '—' }}</td>
+              <td>{{ v.product || '—' }}</td>
+              <td>{{ v.batch || '—' }}</td>
+              <td>{{ v.vet || '—' }}</td>
+              <td>{{ v.notes || '—' }}</td>
+              <td>
+                <span [ngClass]="getDueStatus(v.dueDate)">{{ getDueStatus(v.dueDate) }}</span>
+              </td>
+              <td><button type="button" (click)="removeVaccination(i)">Usuń</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template [ngIf]="!(animal.vaccinations?.length)">
+          <p>Brak szczepień.</p>
+        </ng-template>
+      </section>
+
+      <!-- LEKI -->
+      <section *ngIf="activeTab === 'meds'" class="tab-content">
+        <h2>Plan leków</h2>
+
+        <form (ngSubmit)="addMedication()">
+          <label>Nazwa leku</label>
+          <input type="text" [(ngModel)]="medForm.name" name="mName" required />
+          <label>Dawka</label>
+          <input type="text" [(ngModel)]="medForm.dose" name="mDose" placeholder="np. 5 mg" required />
+          <label>Częstotliwość</label>
+          <input type="text" [(ngModel)]="medForm.frequency" name="mFreq" placeholder="np. 2x dziennie" required />
+          <label>Godziny podania (przecinkami)</label>
+          <input type="text" [(ngModel)]="medForm.times" name="mTimes" placeholder="08:00,20:00" />
+          <label>Data startu</label>
+          <input type="date" [(ngModel)]="medForm.startDate" name="mStart" required />
+          <label>Data zakończenia (opcjonalnie)</label>
+          <input type="date" [(ngModel)]="medForm.endDate" name="mEnd" />
+          <label>Aktywna?</label>
+          <input type="checkbox" [(ngModel)]="medForm.isActive" name="mActive" />
+          <label>Uwagi</label>
+          <input type="text" [(ngModel)]="medForm.notes" name="mNotes" />
+          <button type="submit">Dodaj lek</button>
+        </form>
+
+        <table *ngIf="animal.medications?.length">
+          <thead>
+            <tr>
+              <th>Nazwa</th>
+              <th>Dawka</th>
+              <th>Częstotliwość</th>
+              <th>Godziny</th>
+              <th>Start</th>
+              <th>Koniec</th>
+              <th>Aktywna</th>
+              <th>Uwagi</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of animal.medications; let i=index">
+              <td>{{ m.name }}</td>
+              <td>{{ m.dose }}</td>
+              <td>{{ m.frequency }}</td>
+              <td>{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
+              <td>{{ m.startDate }}</td>
+              <td>{{ m.endDate || '—' }}</td>
+              <td>{{ m.isActive ? 'Tak' : 'Nie' }}</td>
+              <td>{{ m.notes || '—' }}</td>
+              <td><button type="button" (click)="removeMedication(i)">Usuń</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template [ngIf]="!(animal.medications?.length)">
+          <p>Brak aktywnych leków.</p>
+        </ng-template>
+      </section>
+
+      <!-- OBJAWY -->
+      <section *ngIf="activeTab === 'symptoms'" class="tab-content">
+        <h2>Rejestr objawów</h2>
+
+        <form (ngSubmit)="addSymptom()">
+          <label>Data</label>
+          <input type="date" [(ngModel)]="symForm.date" name="sDate" required />
+          <label>Tagi objawów (przecinkami)</label>
+          <input type="text" [(ngModel)]="symForm.symptomTags" name="sTags" placeholder="kaszel, biegunka"/>
+          <label>Skala bólu (0–10)</label>
+          <input type="number" min="0" max="10" [(ngModel)]="symForm.painScore" name="sPain"/>
+          <label>Energia (1–5)</label>
+          <input type="number" min="1" max="5" [(ngModel)]="symForm.energy" name="sEnergy"/>
+          <label>Apetyt (1–5)</label>
+          <input type="number" min="1" max="5" [(ngModel)]="symForm.appetite" name="sAppetite"/>
+          <label>Notatki</label>
+          <input type="text" [(ngModel)]="symForm.notes" name="sNotes"/>
+          <button type="submit">Dodaj wpis</button>
+        </form>
+
+        <table *ngIf="animal.symptoms?.length">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Objawy</th>
+              <th>Ból</th>
+              <th>Energia</th>
+              <th>Apetyt</th>
+              <th>Notatki</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of animal.symptoms; let i=index">
+              <td>{{ s.date }}</td>
+              <td>{{ s.symptomTags.join(', ') }}</td>
+              <td>{{ s.painScore ?? '—' }}</td>
+              <td>{{ s.energy ?? '—' }}</td>
+              <td>{{ s.appetite ?? '—' }}</td>
+              <td>{{ s.notes || '—' }}</td>
+              <td><button type="button" (click)="removeSymptom(i)">Usuń</button></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <ng-template [ngIf]="!(animal.symptoms?.length)">
+          <p>Brak wpisów objawów.</p>
+        </ng-template>
+      </section>
+
     </div>
 
     <app-calendar></app-calendar>
-
   </div>
 </div>

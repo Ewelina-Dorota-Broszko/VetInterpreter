@@ -30,4 +30,8 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['/add-document']);
   }
 
+   goToDiet() {
+    this.router.navigate(['/diet']);
+  }
+
 }

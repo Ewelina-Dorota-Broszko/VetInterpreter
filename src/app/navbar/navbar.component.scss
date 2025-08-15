@@ -72,6 +72,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            img {
+              height: 24px;
+              width: 24px;
+            }
           }
 
           .plus-img {
