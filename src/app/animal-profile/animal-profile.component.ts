@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Chart from 'chart.js/auto';
+import { BloodTabComponent } from '../blood-tab/blood-tab.component';
 
 // Typy
 type Sex = 'male' | 'female';
