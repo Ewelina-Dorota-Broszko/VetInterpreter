@@ -25,6 +25,15 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import { CalendarComponent } from './calendar/calendar.component';
 import { DietComponent } from './diet/diet.component';
+import { BloodTabComponent } from './blood-tab/blood-tab.component';
+import { TemperatureTabComponent } from './temperature-tab/temperature-tab.component';
+import { UrineTabComponent } from './urine-tab/urine-tab.component';
+import { StoolTabComponent } from './stool-tab/stool-tab.component';
+import { DiabetesTabComponent } from './diabetes-tab/diabetes-tab.component';
+import { WeightTabComponent } from './weight-tab/weight-tab.component';
+import { VaccinationsTabComponent } from './vaccinations-tab/vaccinations-tab.component';
+import { MedsTabComponent } from './meds-tab/meds-tab.component';
+import { SymptomsTabComponent } from './symptoms-tab/symptoms-tab.component';
 
 
 @NgModule({
@@ -47,7 +56,16 @@ import { DietComponent } from './diet/diet.component';
     TemperatureFormComponent,
     VisitNotesComponent,
     CalendarComponent,
-    DietComponent
+    DietComponent,
+    BloodTabComponent,
+    TemperatureTabComponent,
+    UrineTabComponent,
+    StoolTabComponent,
+    DiabetesTabComponent,
+    WeightTabComponent,
+    VaccinationsTabComponent,
+    MedsTabComponent,
+    SymptomsTabComponent
   ],
   imports: [
     BrowserModule,
