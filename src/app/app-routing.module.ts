@@ -16,6 +16,7 @@ import { BloodFormComponent } from './blood-form/blood-form.component';
 import { UrineFormComponent } from './urine-form/urine-form.component';
 import { VisitNotesComponent } from './visit-notes/visit-notes.component';
 import { DietComponent } from './diet/diet.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -35,6 +36,8 @@ const routes: Routes = [
   { path: 'form/visit-notes', component: VisitNotesComponent },
   { path: 'animal/:id/diet', component: DietComponent },
   { path: 'diet', component: DietComponent },
+  { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent }
+
 ]
 
 @NgModule({

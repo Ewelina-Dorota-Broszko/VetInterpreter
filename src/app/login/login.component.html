@@ -1,19 +1,26 @@
 <div class="login-container">
-<div class="login-container-cont">
-  <div class="login-form">
-    <div class="photo-login"><img src="../assets/images/logo.jpg" alt="Logo" /></div>
-    <form>
-      <h2>Login</h2>
-      <div class="form-group">
-        <label for="username">Nazwa użytkownika:</label>
-        <input type="text" id="username" name="username" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Hasło:</label>
-        <input type="password" id="password" name="password" required>
-      </div>
-      <div class="login-button"><a routerLink="/dashboard" type="submit">Zaloguj</a></div>
-    </form>
+  <div class="login-container-cont">
+    <div class="login-form">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <h2>Login</h2>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" formControlName="email" required autocomplete="email" />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Hasło</label>
+          <input id="password" [type]="showPass ? 'text' : 'password'" formControlName="password" required autocomplete="current-password" />
+          <button type="button" class="link" (click)="showPass = !showPass">{{ showPass ? 'Ukryj' : 'Pokaż' }} hasło</button>
+        </div>
+
+        <button type="submit" [disabled]="form.invalid || loading">
+          {{ loading ? 'Logowanie…' : 'Zaloguj' }}
+        </button>
+
+        <p class="error" *ngIf="error">{{ error }}</p>
+      </form>
+    </div>
   </div>
-</div>
 </div>

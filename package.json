@@ -22,7 +22,9 @@
     "@fullcalendar/core": "^6.1.18",
     "@fullcalendar/daygrid": "^6.1.18",
     "@fullcalendar/interaction": "^6.1.18",
+    "bcryptjs": "^3.0.2",
     "chart.js": "^4.5.0",
+    "jsonwebtoken": "^9.0.2",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

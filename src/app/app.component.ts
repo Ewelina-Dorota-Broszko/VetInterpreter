@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,11 @@ export class AppComponent {
   general_examinations = 0
   notes = 0; 
 
-  constructor(private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 
   isActive(url: string): boolean {
     return this.router.url === url;

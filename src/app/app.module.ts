@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FrontPageComponent } from './front-page/front-page.component';
@@ -34,6 +34,8 @@ import { WeightTabComponent } from './weight-tab/weight-tab.component';
 import { VaccinationsTabComponent } from './vaccinations-tab/vaccinations-tab.component';
 import { MedsTabComponent } from './meds-tab/meds-tab.component';
 import { SymptomsTabComponent } from './symptoms-tab/symptoms-tab.component';
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { AuthGuard } from './auth/auth.guard';
 
 
 @NgModule({
@@ -73,8 +75,12 @@ import { SymptomsTabComponent } from './symptoms-tab/symptoms-tab.component';
     FormsModule,
     ReactiveFormsModule,
     FullCalendarModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
