@@ -1,1 +1,32 @@
-<p>urine-tab works!</p>
+<h2>Badania moczu</h2>
+
+<canvas #urineChart *ngIf="urineTests?.length"></canvas>
+
+<table *ngIf="urineTests?.length; else noUrine">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Kolor</th>
+      <th>SG</th>
+      <th>pH</th>
+      <th>Białko</th>
+      <th>Glukoza</th>
+      <th>Ciała ketonowe</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let test of urineTests; trackBy: trackByIndex">
+      <td>{{ test.date }}</td>
+      <td>{{ test.color }}</td>
+      <td>{{ test.specificGravity }}</td>
+      <td>{{ test.pH }}</td>
+      <td>{{ test.protein }}</td>
+      <td>{{ test.glucose }}</td>
+      <td>{{ test.ketones }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noUrine>
+  <p>Brak badań moczu.</p>
+</ng-template>

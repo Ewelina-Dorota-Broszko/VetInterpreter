@@ -1,1 +1,28 @@
-<p>stool-tab works!</p>
+<h2>Badania kału</h2>
+
+<canvas #stoolChart *ngIf="stoolTests?.length"></canvas>
+
+<table *ngIf="stoolTests?.length; else noStool">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Konsystencja</th>
+      <th>Kolor</th>
+      <th>Krew</th>
+      <th>Śluz</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let test of stoolTests; trackBy: trackByIndex">
+      <td>{{ test.date }}</td>
+      <td>{{ test.consistency }}</td>
+      <td>{{ test.color }}</td>
+      <td>{{ test.blood ? 'tak' : 'nie' }}</td>
+      <td>{{ test.mucus ? 'tak' : 'nie' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noStool>
+  <p>Brak badań kału.</p>
+</ng-template>

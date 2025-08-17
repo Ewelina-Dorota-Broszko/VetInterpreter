@@ -1,1 +1,36 @@
-<p>meds-tab works!</p>
+<h2>Plan leków</h2>
+
+<table *ngIf="medications?.length; else noMeds">
+  <thead>
+    <tr>
+      <th>Nazwa</th>
+      <th>Dawka</th>
+      <th>Częstotliwość</th>
+      <th>Godziny</th>
+      <th>Start</th>
+      <th>Koniec</th>
+      <th>Aktywna</th>
+      <th>Uwagi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let m of medications; trackBy: trackByIndex">
+      <td>{{ m.name }}</td>
+      <td>{{ m.dose }}</td>
+      <td>{{ m.frequency }}</td>
+      <td>{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
+      <td>{{ m.startDate }}</td>
+      <td>{{ m.endDate || '—' }}</td>
+      <td>
+        <span class="pill" [ngClass]="m.isActive ? 'active' : 'inactive'">
+          {{ m.isActive ? 'Tak' : 'Nie' }}
+        </span>
+      </td>
+      <td>{{ m.notes || '—' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noMeds>
+  <p>Brak aktywnych leków.</p>
+</ng-template>

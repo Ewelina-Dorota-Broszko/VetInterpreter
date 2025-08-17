@@ -12,4 +12,8 @@ export class OwnerService {
   getMyAnimals() {
     return this.http.get<any[]>(`${this.api}/owners/me/animals`);
   }
+  getMyFullProfile() {
+    return this.http.get<{ owner: any; animals: any[] }>(`${this.api}/owners/me/full`);
+  }
+  
 }

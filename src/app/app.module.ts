@@ -36,6 +36,7 @@ import { MedsTabComponent } from './meds-tab/meds-tab.component';
 import { SymptomsTabComponent } from './symptoms-tab/symptoms-tab.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { AuthGuard } from './auth/auth.guard';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 
 @NgModule({
@@ -67,7 +68,8 @@ import { AuthGuard } from './auth/auth.guard';
     WeightTabComponent,
     VaccinationsTabComponent,
     MedsTabComponent,
-    SymptomsTabComponent
+    SymptomsTabComponent,
+    UserProfileComponent
   ],
   imports: [
     BrowserModule,

@@ -1,1 +1,28 @@
-<p>symptoms-tab works!</p>
+<h2>Rejestr objawów</h2>
+
+<table *ngIf="symptoms?.length; else noSymptoms">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Objawy</th>
+      <th>Ból</th>
+      <th>Energia</th>
+      <th>Apetyt</th>
+      <th>Notatki</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let s of symptoms; trackBy: trackByIndex">
+      <td>{{ s.date }}</td>
+      <td>{{ (s.symptomTags || []).join(', ') }}</td>
+      <td>{{ s.painScore ?? '—' }}</td>
+      <td>{{ s.energy ?? '—' }}</td>
+      <td>{{ s.appetite ?? '—' }}</td>
+      <td>{{ s.notes || '—' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noSymptoms>
+  <p>Brak wpisów objawów.</p>
+</ng-template>

@@ -1,12 +1,14 @@
-<div class="dashboard-menu-container">
+<div class="dashboard-menu-container" *ngIf="animal">
   <div class="container">
-    <!-- Visit History -->
-    <section class="visit-history">
+
+    <!-- ===== Historia wizyt ===== -->
+    <section class="visit-history" *ngIf="animal.visitHistory?.length">
       <h3>Historia wizyt</h3>
 
-      <div *ngFor="let visit of animal.visitHistory" class="visit-card">
+      <div *ngFor="let visit of animal.visitHistory; trackBy: trackByIndex" class="visit-card">
         <div class="visit-summary" (click)="toggleDetails(visit)">
-          <strong>{{ visit.visitDate }}</strong> – {{ visit.clinicName }} ({{ visit.vetName }})
+          <strong>{{ visit.visitDate }}</strong>
+          – {{ visit.clinicName }} ({{ visit.vetName }})
           <span *ngIf="visit.nextVisitDate"> | Następna: {{ visit.nextVisitDate }}</span>
         </div>
 
@@ -28,23 +30,29 @@
       </div>
     </section>
 
-    <!-- Profile -->
-    <div class="profile-wrapper" *ngIf="animal">
+    <!-- ===== Nagłówek profilu ===== -->
+    <div class="profile-wrapper">
       <header class="header">
         <div class="info">
           <h1>{{ animal.name }}</h1>
-          <p>Właściciel: <strong>{{ animal.ownerName }}</strong></p>
-          <p>Gatunek: <strong>{{ animal.species }}</strong> | Rasa: <strong>{{ animal.breed }}</strong></p>
-          <p>Płeć: <strong>{{ animal.sex }}</strong> | Waga: <strong>{{ animal.weightKg }} kg</strong></p>
+          <p *ngIf="animal.ownerName">Właściciel: <strong>{{ animal.ownerName }}</strong></p>
+          <p>
+            Gatunek: <strong>{{ animal.species }}</strong>
+            <span *ngIf="animal.breed"> | Rasa: <strong>{{ animal.breed }}</strong></span>
+          </p>
+          <p>
+            Płeć: <strong>{{ animal.sex }}</strong>
+            <span *ngIf="animal.weightKg"> | Waga: <strong>{{ animal.weightKg }} kg</strong></span>
+          </p>
           <p *ngIf="getAgeYears() !== null">Wiek: <strong>{{ getAgeYears() }} lat</strong></p>
         </div>
 
         <div class="actions">
-          <button (click)="addNewDocument()">Dodaj nowy dokument</button>
+          <button type="button" (click)="addNewDocument()">Dodaj nowy dokument</button>
         </div>
       </header>
 
-      <!-- Tabs -->
+      <!-- ===== Zakładki ===== -->
       <nav class="tabs">
         <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Podsumowanie</button>
         <button [class.active]="activeTab === 'blood'" (click)="setTab('blood')">Krew</button>
@@ -53,15 +61,15 @@
         <button [class.active]="activeTab === 'temperature'" (click)="setTab('temperature')">Temperatura</button>
         <button [class.active]="activeTab === 'diabetes'" (click)="setTab('diabetes')">Cukrzyca</button>
         <button [class.active]="activeTab === 'weight'" (click)="setTab('weight')">Waga & BCS</button>
-        <!-- NOWE -->
         <button [class.active]="activeTab === 'vaccinations'" (click)="setTab('vaccinations')">Szczepienia</button>
         <button [class.active]="activeTab === 'meds'" (click)="setTab('meds')">Leki</button>
         <button [class.active]="activeTab === 'symptoms'" (click)="setTab('symptoms')">Objawy</button>
       </nav>
 
-      <!-- Podsumowanie -->
-      <section *ngIf="activeTab === 'overview'" class="tab-content">
+      <!-- ===== Podsumowanie ===== -->
+      <!-- <section *ngIf="activeTab === 'overview'" class="tab-content">
         <h2>Podsumowanie</h2>
+
         <div class="cards">
           <div class="card" *ngIf="latest(animal.bloodTests) as lastBlood">
             <h3>Ostatnie badanie krwi</h3>
@@ -70,6 +78,7 @@
             <p>WBC: {{ lastBlood.wbc }} 10⁹/L</p>
             <p>Glukoza: {{ lastBlood.glucose }} mg/dL</p>
           </div>
+
           <div class="card" *ngIf="latest(animal.urineTests) as lastUrine">
             <h3>Ostatnie badanie moczu</h3>
             <p>Data: {{ lastUrine.date }}</p>
@@ -77,11 +86,13 @@
             <p>pH: {{ lastUrine.pH }}</p>
             <p>Białko: {{ lastUrine.protein }}</p>
           </div>
+
           <div class="card" *ngIf="latest(animal.temperatureLogs) as lastTemp">
             <h3>Ostatni pomiar temperatury</h3>
             <p>Data: {{ lastTemp.date }} {{ lastTemp.time }}</p>
             <p>Temp: {{ lastTemp.temperature }} °C</p>
           </div>
+
           <div class="card" *ngIf="latest(animal.diabetesLogs) as lastDiab">
             <h3>Ostatni zapis cukrzycy</h3>
             <p>Data: {{ lastDiab.date }} {{ lastDiab.time }}</p>
@@ -90,477 +101,76 @@
             <p *ngIf="lastDiab.insulinType">Insulina: {{ lastDiab.insulinType }} ({{ lastDiab.insulinDose || 0 }} j.)</p>
           </div>
         </div>
-      </section>
+      </section> -->
 
-      <!-- Badania krwi -->
+      <!-- ===== Badania krwi ===== -->
       <section *ngIf="activeTab === 'blood'" class="tab-content">
-        <h2>Badania krwi</h2>
-
-        <canvas id="bloodChart" *ngIf="animal.bloodTests.length"></canvas>
-
-        <table *ngIf="animal.bloodTests.length; else noBlood">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <!-- Morfologia -->
-              <th>HGB</th>
-              <th>RBC</th>
-              <th>WBC</th>
-              <th>Hematokryt</th>
-              <th>Płytki</th>
-              <th>MCV</th>
-              <th>MCH</th>
-              <th>MCHC</th>
-              <!-- Biochemia -->
-              <th>Glukoza</th>
-              <th>Mocznik</th>
-              <th>Kreatynina</th>
-              <th>ALT (GPT)</th>
-              <th>AST (GOT)</th>
-              <th>ALP</th>
-              <th>Białko całkowite</th>
-              <th>Albuminy</th>
-              <th>Globuliny</th>
-              <th>Bilirubina całkowita</th>
-              <th>Bilirubina bezpośrednia</th>
-              <th>Bilirubina pośrednia</th>
-              <!-- Inne -->
-              <th>Komentarz</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let test of animal.bloodTests; trackBy: trackByIndex">
-              <td>{{ test.date }}</td>
-
-              <!-- Morphology -->
-              <td [ngClass]="getValueStatus(test.hemoglobin, 'hemoglobin')">
-                {{ test.hemoglobin }}<br>
-                <small class="ref-range">{{ getRangeText('hemoglobin') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.rbc, 'rbc')">
-                {{ test.rbc }}<br>
-                <small class="ref-range">{{ getRangeText('rbc') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.wbc, 'wbc')">
-                {{ test.wbc }}<br>
-                <small class="ref-range">{{ getRangeText('wbc') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.hematocrit, 'hematocrit')">
-                {{ test.hematocrit }}<br>
-                <small class="ref-range">{{ getRangeText('hematocrit') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.platelets, 'platelets')">
-                {{ test.platelets }}<br>
-                <small class="ref-range">{{ getRangeText('platelets') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.mcv, 'mcv')">
-                {{ test.mcv }}<br>
-                <small class="ref-range">{{ getRangeText('mcv') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.mch, 'mch')">
-                {{ test.mch }}<br>
-                <small class="ref-range">{{ getRangeText('mch') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.mchc, 'mchc')">
-                {{ test.mchc }}<br>
-                <small class="ref-range">{{ getRangeText('mchc') }}</small>
-              </td>
-
-              <!-- Biochemistry -->
-              <td [ngClass]="getValueStatus(test.glucose, 'glucose')">
-                {{ test.glucose }}<br>
-                <small class="ref-range">{{ getRangeText('glucose') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.urea, 'urea')">
-                {{ test.urea }}<br>
-                <small class="ref-range">{{ getRangeText('urea') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.creatinine, 'creatinine')">
-                {{ test.creatinine }}<br>
-                <small class="ref-range">{{ getRangeText('creatinine') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.alt, 'alt')">
-                {{ test.alt }}<br>
-                <small class="ref-range">{{ getRangeText('alt') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.ast, 'ast')">
-                {{ test.ast }}<br>
-                <small class="ref-range">{{ getRangeText('ast') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.alp, 'alp')">
-                {{ test.alp }}<br>
-                <small class="ref-range">{{ getRangeText('alp') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.totalProtein, 'totalProtein')">
-                {{ test.totalProtein }}<br>
-                <small class="ref-range">{{ getRangeText('totalProtein') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.albumin, 'albumin')">
-                {{ test.albumin }}<br>
-                <small class="ref-range">{{ getRangeText('albumin') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.globulin, 'globulin')">
-                {{ test.globulin }}<br>
-                <small class="ref-range">{{ getRangeText('globulin') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.bilirubinTotal, 'bilirubinTotal')">
-                {{ test.bilirubinTotal }}<br>
-                <small class="ref-range">{{ getRangeText('bilirubinTotal') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.bilirubinDirect, 'bilirubinDirect')">
-                {{ test.bilirubinDirect }}<br>
-                <small class="ref-range">{{ getRangeText('bilirubinDirect') }}</small>
-              </td>
-              <td [ngClass]="getValueStatus(test.bilirubinIndirect, 'bilirubinIndirect')">
-                {{ test.bilirubinIndirect }}<br>
-                <small class="ref-range">{{ getRangeText('bilirubinIndirect') }}</small>
-              </td>
-
-              <!-- Comments -->
-              <td>{{ test.comments || '—' }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template #noBlood>
-          <p>Brak badań krwi.</p>
-        </ng-template>
+        <app-blood-tab
+          [active]="activeTab === 'blood'"
+          [bloodTests]="animal?.bloodTests || []"
+          [referenceRanges]="referenceRanges">
+        </app-blood-tab>
       </section>
 
-      <!-- Badania moczu -->
+
+      <!-- ===== Badania moczu ===== -->
       <section *ngIf="activeTab === 'urine'" class="tab-content">
-        <h2>Badania moczu</h2>
-        <table *ngIf="animal.urineTests.length; else noUrine">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Kolor</th>
-              <th>SG</th>
-              <th>pH</th>
-              <th>Białko</th>
-              <th>Glukoza</th>
-              <th>Ciała ketonowe</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let test of animal.urineTests; trackBy: trackByIndex">
-              <td>{{ test.date }}</td>
-              <td>{{ test.color }}</td>
-              <td>{{ test.specificGravity }}</td>
-              <td>{{ test.pH }}</td>
-              <td>{{ test.protein }}</td>
-              <td>{{ test.glucose }}</td>
-              <td>{{ test.ketones }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template #noUrine>
-          <p>Brak badań moczu.</p>
-        </ng-template>
+        <app-urine-tab [urineTests]="animal?.urineTests || []"></app-urine-tab>
       </section>
+      
 
-      <!-- Badania kału -->
+      <!-- ===== Badania kału ===== -->
       <section *ngIf="activeTab === 'stool'" class="tab-content">
-        <h2>Badania kału</h2>
-        <table *ngIf="animal.stoolTests.length; else noStool">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Konsystencja</th>
-              <th>Kolor</th>
-              <th>Krew</th>
-              <th>Śluz</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let test of animal.stoolTests; trackBy: trackByIndex">
-              <td>{{ test.date }}</td>
-              <td>{{ test.consistency }}</td>
-              <td>{{ test.color }}</td>
-              <td>{{ test.blood ? 'tak' : 'nie' }}</td>
-              <td>{{ test.mucus ? 'tak' : 'nie' }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template #noStool>
-          <p>Brak badań kału.</p>
-        </ng-template>
+        <app-stool-tab [stoolTests]="animal?.stoolTests || []"></app-stool-tab>
       </section>
+      
 
-      <!-- Pomiary temperatury -->
+      <!-- ===== Pomiary temperatury ===== -->
       <section *ngIf="activeTab === 'temperature'" class="tab-content">
-        <h2>Pomiary temperatury</h2>
-        <canvas id="temperatureChart" *ngIf="animal.temperatureLogs.length"></canvas>
-
-        <table *ngIf="animal.temperatureLogs.length; else noTemp">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Godzina</th>
-              <th>Temperatura (°C)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let t of animal.temperatureLogs; trackBy: trackByIndex">
-              <td>{{ t.date }}</td>
-              <td>{{ t.time }}</td>
-              <td>{{ t.temperature }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template #noTemp>
-          <p>Brak zapisów temperatury.</p>
-        </ng-template>
+        <app-temperature-tab [temperatureLogs]="animal?.temperatureLogs || []"></app-temperature-tab>
       </section>
+      
 
-      <!-- Cukrzyca -->
+      <!-- ===== Cukrzyca ===== -->
       <section *ngIf="activeTab === 'diabetes'" class="tab-content">
-        <h2>Zapisy cukrzycy</h2>
-        <table *ngIf="animal.diabetesLogs.length; else noDiab">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Godzina</th>
-              <th>Glukoza (mg/dL)</th>
-              <th>Typ</th>
-              <th>Insulina</th>
-              <th>Dawka (j.)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let d of animal.diabetesLogs; trackBy: trackByIndex">
-              <td>{{ d.date }}</td>
-              <td>{{ d.time }}</td>
-              <td>{{ d.glucose }}</td>
-              <td>{{ d.measurementType }}</td>
-              <td>{{ d.insulinType || '-' }}</td>
-              <td>{{ d.insulinDose || '-' }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template #noDiab>
-          <p>Brak zapisów cukrzycy.</p>
-        </ng-template>
+        <app-diabetes-tab [diabetesLogs]="animal?.diabetesLogs || []"></app-diabetes-tab>
       </section>
+      
 
-      <!-- Waga & BCS -->
+      <!-- ===== Waga & BCS ===== -->
       <section *ngIf="activeTab === 'weight'" class="tab-content">
-        <h2>Waga i kondycja (BCS)</h2>
-
-        <form (ngSubmit)="addWeight()">
-          <label>Data</label>
-          <input type="date" [(ngModel)]="weightForm.date" name="wDate" required />
-
-          <label>Waga (kg)</label>
-          <input type="number" step="0.01" [(ngModel)]="weightForm.weightKg" name="wWeight" required />
-
-          <label>BCS (1–9)</label>
-          <input type="number" min="1" max="9" [(ngModel)]="weightForm.bcs" name="wBcs" />
-
-          <label>Notatka</label>
-          <input type="text" [(ngModel)]="weightForm.note" name="wNote" />
-
-          <button type="submit">Dodaj wpis</button>
-        </form>
-
-        <table *ngIf="animal.weightHistory?.length">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Waga (kg)</th>
-              <th>BCS</th>
-              <th>Notatka</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let w of animal.weightHistory; let i = index">
-              <td>{{ w.date }}</td>
-              <td>{{ w.weightKg }}</td>
-              <td>{{ w.bcs || '—' }}</td>
-              <td>{{ w.note || '—' }}</td>
-              <td><button type="button" (click)="removeWeight(i)">Usuń</button></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template [ngIf]="!(animal.weightHistory?.length)">
-          <p>Brak wpisów wagi.</p>
-        </ng-template>
+        <app-weight-tab [weightHistory]="animal?.weightHistory || []"></app-weight-tab>
       </section>
+      
 
-      <!-- SZCZEPIENIA -->
+      <!-- ===== Szczepienia ===== -->
+  
       <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
-        <h2>Szczepienia / profilaktyka</h2>
-
-        <form (ngSubmit)="addVaccination()">
-          <label>Rodzaj</label>
-          <input type="text" [(ngModel)]="vaxForm.type" name="vType" placeholder="np. Wścieklizna" required />
-          <label>Data podania</label>
-          <input type="date" [(ngModel)]="vaxForm.date" name="vDate" required />
-          <label>Następny termin</label>
-          <input type="date" [(ngModel)]="vaxForm.dueDate" name="vDue" />
-          <label>Preparat</label>
-          <input type="text" [(ngModel)]="vaxForm.product" name="vProd" />
-          <label>Seria</label>
-          <input type="text" [(ngModel)]="vaxForm.batch" name="vBatch" />
-          <label>Lekarz</label>
-          <input type="text" [(ngModel)]="vaxForm.vet" name="vVet" />
-          <label>Uwagi</label>
-          <input type="text" [(ngModel)]="vaxForm.notes" name="vNotes" />
-          <button type="submit">Dodaj szczepienie</button>
-        </form>
-
-        <table *ngIf="animal.vaccinations?.length">
-          <thead>
-            <tr>
-              <th>Rodzaj</th>
-              <th>Data</th>
-              <th>Następny termin</th>
-              <th>Preparat</th>
-              <th>Seria</th>
-              <th>Lekarz</th>
-              <th>Uwagi</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let v of animal.vaccinations; let i=index">
-              <td>{{ v.type }}</td>
-              <td>{{ v.date }}</td>
-              <td>{{ v.dueDate || '—' }}</td>
-              <td>{{ v.product || '—' }}</td>
-              <td>{{ v.batch || '—' }}</td>
-              <td>{{ v.vet || '—' }}</td>
-              <td>{{ v.notes || '—' }}</td>
-              <td>
-                <span [ngClass]="getDueStatus(v.dueDate)">{{ getDueStatus(v.dueDate) }}</span>
-              </td>
-              <td><button type="button" (click)="removeVaccination(i)">Usuń</button></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template [ngIf]="!(animal.vaccinations?.length)">
-          <p>Brak szczepień.</p>
-        </ng-template>
+        <app-vaccinations-tab
+          [vaccinations]="animal?.vaccinations || []">
+        </app-vaccinations-tab>
       </section>
-
-      <!-- LEKI -->
+      
+      <!-- ===== Leki ===== -->
       <section *ngIf="activeTab === 'meds'" class="tab-content">
-        <h2>Plan leków</h2>
-
-        <form (ngSubmit)="addMedication()">
-          <label>Nazwa leku</label>
-          <input type="text" [(ngModel)]="medForm.name" name="mName" required />
-          <label>Dawka</label>
-          <input type="text" [(ngModel)]="medForm.dose" name="mDose" placeholder="np. 5 mg" required />
-          <label>Częstotliwość</label>
-          <input type="text" [(ngModel)]="medForm.frequency" name="mFreq" placeholder="np. 2x dziennie" required />
-          <label>Godziny podania (przecinkami)</label>
-          <input type="text" [(ngModel)]="medForm.times" name="mTimes" placeholder="08:00,20:00" />
-          <label>Data startu</label>
-          <input type="date" [(ngModel)]="medForm.startDate" name="mStart" required />
-          <label>Data zakończenia (opcjonalnie)</label>
-          <input type="date" [(ngModel)]="medForm.endDate" name="mEnd" />
-          <label>Aktywna?</label>
-          <input type="checkbox" [(ngModel)]="medForm.isActive" name="mActive" />
-          <label>Uwagi</label>
-          <input type="text" [(ngModel)]="medForm.notes" name="mNotes" />
-          <button type="submit">Dodaj lek</button>
-        </form>
-
-        <table *ngIf="animal.medications?.length">
-          <thead>
-            <tr>
-              <th>Nazwa</th>
-              <th>Dawka</th>
-              <th>Częstotliwość</th>
-              <th>Godziny</th>
-              <th>Start</th>
-              <th>Koniec</th>
-              <th>Aktywna</th>
-              <th>Uwagi</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let m of animal.medications; let i=index">
-              <td>{{ m.name }}</td>
-              <td>{{ m.dose }}</td>
-              <td>{{ m.frequency }}</td>
-              <td>{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
-              <td>{{ m.startDate }}</td>
-              <td>{{ m.endDate || '—' }}</td>
-              <td>{{ m.isActive ? 'Tak' : 'Nie' }}</td>
-              <td>{{ m.notes || '—' }}</td>
-              <td><button type="button" (click)="removeMedication(i)">Usuń</button></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template [ngIf]="!(animal.medications?.length)">
-          <p>Brak aktywnych leków.</p>
-        </ng-template>
+        <app-meds-tab [medications]="animal?.medications || []"></app-meds-tab>
       </section>
+      
 
-      <!-- OBJAWY -->
+      <!-- ===== Objawy ===== -->
       <section *ngIf="activeTab === 'symptoms'" class="tab-content">
-        <h2>Rejestr objawów</h2>
-
-        <form (ngSubmit)="addSymptom()">
-          <label>Data</label>
-          <input type="date" [(ngModel)]="symForm.date" name="sDate" required />
-          <label>Tagi objawów (przecinkami)</label>
-          <input type="text" [(ngModel)]="symForm.symptomTags" name="sTags" placeholder="kaszel, biegunka"/>
-          <label>Skala bólu (0–10)</label>
-          <input type="number" min="0" max="10" [(ngModel)]="symForm.painScore" name="sPain"/>
-          <label>Energia (1–5)</label>
-          <input type="number" min="1" max="5" [(ngModel)]="symForm.energy" name="sEnergy"/>
-          <label>Apetyt (1–5)</label>
-          <input type="number" min="1" max="5" [(ngModel)]="symForm.appetite" name="sAppetite"/>
-          <label>Notatki</label>
-          <input type="text" [(ngModel)]="symForm.notes" name="sNotes"/>
-          <button type="submit">Dodaj wpis</button>
-        </form>
-
-        <table *ngIf="animal.symptoms?.length">
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Objawy</th>
-              <th>Ból</th>
-              <th>Energia</th>
-              <th>Apetyt</th>
-              <th>Notatki</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let s of animal.symptoms; let i=index">
-              <td>{{ s.date }}</td>
-              <td>{{ s.symptomTags.join(', ') }}</td>
-              <td>{{ s.painScore ?? '—' }}</td>
-              <td>{{ s.energy ?? '—' }}</td>
-              <td>{{ s.appetite ?? '—' }}</td>
-              <td>{{ s.notes || '—' }}</td>
-              <td><button type="button" (click)="removeSymptom(i)">Usuń</button></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <ng-template [ngIf]="!(animal.symptoms?.length)">
-          <p>Brak wpisów objawów.</p>
-        </ng-template>
+        <app-symptoms-tab [symptoms]="animal?.symptoms || []"></app-symptoms-tab>
       </section>
+      
 
     </div>
 
+    <!-- (opcjonalnie) kalendarz ogólny aplikacji -->
     <app-calendar></app-calendar>
   </div>
+</div>
+
+<!-- Gdy brak danych zwierzaka -->
+<div *ngIf="!animal" class="empty-state">
+  Ładuję dane profilu…
 </div>

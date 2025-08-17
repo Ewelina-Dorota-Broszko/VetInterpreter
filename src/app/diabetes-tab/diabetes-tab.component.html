@@ -1,1 +1,30 @@
-<p>diabetes-tab works!</p>
+<h2>Zapisy cukrzycy</h2>
+
+<canvas #diabetesChart *ngIf="diabetesLogs?.length"></canvas>
+
+<table *ngIf="diabetesLogs?.length; else noDiab">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Godzina</th>
+      <th>Glukoza (mg/dL)</th>
+      <th>Typ</th>
+      <th>Insulina</th>
+      <th>Dawka (j.)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let d of diabetesLogs; trackBy: trackByIndex">
+      <td>{{ d.date }}</td>
+      <td>{{ d.time }}</td>
+      <td>{{ d.glucose }}</td>
+      <td>{{ d.measurementType }}</td>
+      <td>{{ d.insulinType || '-' }}</td>
+      <td>{{ d.insulinDose ?? '-' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noDiab>
+  <p>Brak zapisów cukrzycy.</p>
+</ng-template>
