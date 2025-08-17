@@ -1,1 +1,26 @@
-<p>weight-tab works!</p>
+<h2>Waga i kondycja (BCS)</h2>
+
+<canvas #weightChart *ngIf="weightHistory?.length"></canvas>
+
+<table *ngIf="weightHistory?.length; else noWeight">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Waga (kg)</th>
+      <th>BCS</th>
+      <th>Notatka</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let w of weightHistory; trackBy: trackByIndex">
+      <td>{{ w.date }}</td>
+      <td>{{ w.weightKg }}</td>
+      <td>{{ w.bcs ?? '—' }}</td>
+      <td>{{ w.note || '—' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noWeight>
+  <p>Brak wpisów wagi.</p>
+</ng-template>

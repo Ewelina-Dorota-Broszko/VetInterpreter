@@ -1,1 +1,24 @@
-<p>temperature-tab works!</p>
+<h2>Pomiary temperatury</h2>
+
+<canvas #temperatureChart *ngIf="temperatureLogs?.length"></canvas>
+
+<table *ngIf="temperatureLogs?.length; else noTemp">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Godzina</th>
+      <th>Temperatura (°C)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let t of temperatureLogs; trackBy: trackByIndex">
+      <td>{{ t.date }}</td>
+      <td>{{ t.time }}</td>
+      <td>{{ t.temperature }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noTemp>
+  <p>Brak zapisów temperatury.</p>
+</ng-template>

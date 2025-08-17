@@ -1,36 +1,59 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AnimalsService, Animal } from '../services/animals.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
 })
 export class NavbarComponent implements OnInit {
-
-  constructor(private router: Router) { }
-
-  pets = 0;
-  blood_tests = 0;
-  general_examinations = 0;
-  notes = 0;
+  animals: Animal[] = [];
   isLogin = false;
 
-  ngOnInit(): void {}
+  constructor(
+    private router: Router,
+    private animalService: AnimalsService,
+    private auth: AuthService
+  ) {}
 
-  animals = [
-    { id: 1, name: 'Max' },
-    { id: 2, name: 'Rex' }
-  ];
+  ngOnInit(): void {
+    const ownerId = this.auth.getOwnerId();
+    if (!ownerId) {
+      // jeśli brak danych, dociągnij /auth/me (np. po odświeżeniu strony)
+      this.auth.fetchMe().subscribe({
+        next: () => this.loadAnimals(),
+        error: () => {},
+      });
+    } else {
+      this.loadAnimals();
+    }
+  }
+
+  private loadAnimals() {
+    const ownerId = this.auth.getOwnerId();
+    if (!ownerId) return;
+    this.animalService.getForOwner(ownerId).subscribe({
+      next: (res: any) => (this.animals = res),
+      error: (err: any) => console.error('Błąd pobierania zwierząt', err),
+    });
+  }
 
   // --- Nawigacja główna ---
-  goToDashboard() { this.router.navigate(['/dashboard']); }
-  goToCalendar()  { this.router.navigate(['/calendar']); }
-  goToDocuments() { this.router.navigate(['/documents']); }
+  goToDashboard() {
+    this.router.navigate(['/dashboard']);
+  }
+  goToCalendar() {
+    this.router.navigate(['/calendar']);
+  }
+  goToDocuments() {
+    this.router.navigate(['/documents']);
+  }
 
   // --- Zwierzęta ---
-  selectAnimal(animal: any) {
-    this.router.navigate(['/animal', animal.id]);
+  selectAnimal(animal: Animal) {
+    this.router.navigate(['/animal', animal._id]);
   }
 
   // --- Dokumenty (dodawanie) ---
@@ -38,6 +61,5 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['/add-document']);
   }
 
-  // pomocniczo dla *ngFor
-  trackById = (_: number, a: any) => a.id;
+  trackById = (_: number, a: Animal) => a._id;
 }

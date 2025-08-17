@@ -6,6 +6,18 @@
     </div>
 
     <div class="menu">
+
+      <div class="menu-elements">
+        <!-- <p>Dashboard</p> -->
+        <div class="menu-element" routerLink="/profile" routerLinkActive="active">
+          <div class="photo-name">
+            <img src="assets/images/pawprint.png" alt="">
+            <p>Mój Profil</p>
+          </div>
+        </div>
+      </div>
+
+
       <!-- DASHBOARD -->
       <div class="menu-elements">
         <!-- <p>Dashboard</p> -->
@@ -31,10 +43,10 @@
       <!-- ZWIERZĘTA (lista) -->
       <div class="menu-elements">
         <p>Zwierzęta</p>
-        <div class="menu-element" *ngFor="let animal of animals; trackBy: trackById">
+        <div class="menu-element" *ngFor="let animal of animals; trackBy: trackById" (click)="selectAnimal(animal)">
           <div class="photo-name">
             <img src="assets/images/pawprint.png" alt="">
-            <p (click)="selectAnimal(animal)">{{ animal.name }}</p>
+            <p>{{ animal.name }}</p>
           </div>
         </div>
       </div>
@@ -42,13 +54,6 @@
       <!-- DOKUMENTY -->
       <div class="menu-elements">
         <p>Dokumenty</p>
-
-        <!-- <div class="menu-element" (click)="goToDocuments()">
-          <div class="photo-name">
-            <img src="assets/images/add.png" alt="">
-            <p>Wszystkie dokumenty</p>
-          </div>
-        </div> -->
 
         <div class="menu-element" (click)="goToAddDocument()">
           <div class="photo-name">

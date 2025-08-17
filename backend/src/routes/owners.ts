@@ -87,4 +87,48 @@ router.get('/:id/animals', async (req: AuthedRequest, res) => {
   res.json(animals);
 });
 
+router.get('/me/full', async (req: AuthedRequest, res) => {
+  // upewnij się że owner istnieje (jak w /me)
+  let owner = await Owner.findOne({ userId: req.user!.id });
+  if (!owner) {
+    owner = await Owner.create({
+      userId: req.user!.id,
+      name: 'Nowy właściciel',
+      email: '',
+      phone: ''
+    });
+  }
+
+  const animals = await Animal.find({ ownerId: owner._id }).lean();
+
+  const mapped = animals.map(a => ({
+    id: a._id,
+    name: a.name,
+    species: a.species,
+    ageYears: (function calcAgeYears(b?: string | Date | null) {
+      if (!b) return null;
+      const d = new Date(b);
+      if (isNaN(d.getTime())) return null;
+      const now = new Date();
+      let age = now.getFullYear() - d.getFullYear();
+      const m = now.getMonth() - d.getMonth();
+      if (m < 0 || (m === 0 && now.getDate() < d.getDate())) age--;
+      return age < 0 ? 0 : age;
+    })(a.birthDate),
+    weightKg: a.weightKg ?? null
+  }));
+
+  res.json({
+    owner: {
+      id: owner._id,
+      name: owner.name,
+      email: owner.email,
+      phone: (owner as any).phone ?? ''
+    },
+    animals: mapped
+  });
+});
+
+
+
 export default router;
