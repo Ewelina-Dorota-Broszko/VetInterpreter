@@ -1,49 +1,50 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { firstValueFrom, tap } from 'rxjs';
-import { environment } from 'src/environments/environment';
+import { BehaviorSubject, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { LoginResponse, MeResponse } from './auth.models';
 
-export interface AuthUser {
-  id: string;
-  name: string;
-  email: string;
-  role: 'user' | 'admin';
-  isVet: boolean;
-}
+const TOKEN_KEY = 'auth_token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private api = environment.apiUrl; // np. http://localhost:4000
+  private api = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  private _isLoggedIn$ = new BehaviorSubject<boolean>(!!localStorage.getItem(TOKEN_KEY));
+  isLoggedIn$ = this._isLoggedIn$.asObservable();
 
-  get token(): string | null {
-    return localStorage.getItem('token');
-  }
+  private _me$ = new BehaviorSubject<MeResponse | null>(null);
+  me$ = this._me$.asObservable();
 
-  get user(): AuthUser | null {
-    const raw = localStorage.getItem('user');
-    return raw ? JSON.parse(raw) as AuthUser : null;
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.token;
+  constructor(private http: HttpClient) {
+    if (this._isLoggedIn$.value) {
+      this.fetchMe().subscribe({ error: () => this.logout() });
+    }
   }
 
   login(email: string, password: string) {
-    return firstValueFrom(
-      this.http.post<{ token: string; user: AuthUser }>(`${this.api}/auth/login`, { email, password })
-        .pipe(
-          tap((res) => {
-            localStorage.setItem('token', res.token);
-            localStorage.setItem('user', JSON.stringify(res.user));
-          })
-        )
-    );
+    return this.http.post<LoginResponse>(`${this.api}/auth/login`, { email, password })
+      .pipe(
+        tap(res => {
+          localStorage.setItem(TOKEN_KEY, res.token);
+          this._isLoggedIn$.next(true);
+        }),
+        tap(() => this.fetchMe().subscribe())
+      );
+  }
+
+  fetchMe() {
+    return this.http.get<MeResponse>(`${this.api}/auth/me`)
+      .pipe(tap(me => this._me$.next(me)));
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(TOKEN_KEY);
   }
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem(TOKEN_KEY);
+    this._isLoggedIn$.next(false);
+    this._me$.next(null);
   }
 }
