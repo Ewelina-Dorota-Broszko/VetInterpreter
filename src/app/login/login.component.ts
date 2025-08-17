@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../core/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,29 +15,26 @@ export class LoginComponent {
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]],
+    password: ['', [Validators.required]]
   });
 
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {}
 
   onSubmit() {
-    if (this.form.invalid || this.loading) return;
-    this.loading = true;
     this.error = '';
+    if (this.form.invalid) return;
     const { email, password } = this.form.value as { email: string; password: string };
 
+    this.loading = true;
     this.auth.login(email, password).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigateByUrl('/dashboard'); // zmień na swoją ścieżkę
+        this.router.navigate(['/dashboard']);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
-        this.error =
-          err?.error?.error ||
-          err?.error?.message ||
-          (err.status === 0 ? 'Brak połączenia z serwerem' : 'Nieprawidłowy email lub hasło');
-      },
+        this.error = err?.error?.error || 'Nie udało się zalogować';
+      }
     });
   }
 }

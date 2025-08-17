@@ -11,8 +11,10 @@
 
         <div class="form-group">
           <label for="password">Hasło</label>
-          <input id="password" [type]="showPass ? 'text' : 'password'" formControlName="password" required autocomplete="current-password" />
-          <button type="button" class="link" (click)="showPass = !showPass">{{ showPass ? 'Ukryj' : 'Pokaż' }} hasło</button>
+          <div class="pass-row">
+            <input id="password" [type]="showPass ? 'text' : 'password'" formControlName="password" required autocomplete="current-password" />
+            <button type="button" class="link" (click)="showPass = !showPass">{{ showPass ? 'Ukryj' : 'Pokaż' }} hasło</button>
+          </div>
         </div>
 
         <button type="submit" [disabled]="form.invalid || loading">
