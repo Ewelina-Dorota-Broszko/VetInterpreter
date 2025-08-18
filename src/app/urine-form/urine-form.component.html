@@ -1,97 +1,102 @@
 <div class="dashboard-menu-container">
-    <div class="container">
-        <h2>Formularz badania moczu</h2>
+  <div class="container">
+    <h2>Formularz badania moczu</h2>
 
-        <form (ngSubmit)="submitForm()">
+    <form (ngSubmit)="submitForm()" #form="ngForm">
 
-            <!-- Sekcja 1: Właściwości fizyczne i chemiczne -->
-            <fieldset>
-                <legend>Właściwości fizyczne i chemiczne</legend>
+      <!-- Sekcja 1: Właściwości fizyczne i chemiczne -->
+      <fieldset>
+        <legend>Właściwości fizyczne i chemiczne</legend>
 
-                <label>Kolor</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.color" name="color" />
+        <label>Kolor</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.color" name="color" required />
 
-                <label>Przejrzystość</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.clarity" name="clarity" />
+        <label>Przejrzystość</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.clarity" name="clarity" />
 
-                <label>Ciężar właściwy</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.specificGravity" name="specificGravity" />
+        <label>Ciężar właściwy</label>
+        <input type="number" step="0.001" [(ngModel)]="formData.physicalChemical.specificGravity" name="specificGravity" required />
 
-                <label>pH</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.pH" name="pH" />
+        <label>pH</label>
+        <input type="number" step="0.1" [(ngModel)]="formData.physicalChemical.pH" name="pH" required />
 
-                <label>Białko</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.protein" name="protein" />
+        <label>Białko</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.protein" name="protein" required />
 
-                <label>Glukoza</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.glucose" name="glucose" />
+        <label>Glukoza</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.glucose" name="glucose" required />
 
-                <label>Ciała ketonowe</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.ketones" name="ketones" />
+        <label>Ciała ketonowe</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.ketones" name="ketones" required />
 
-                <label>Bilirubina</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.bilirubin" name="bilirubin" />
+        <label>Bilirubina</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.bilirubin" name="bilirubin" />
 
-                <label>Urobilinogen</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.urobilinogen" name="urobilinogen" />
+        <label>Urobilinogen</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.urobilinogen" name="urobilinogen" />
 
-                <label>Krew</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.blood" name="blood" />
+        <label>Krew</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.blood" name="blood" />
 
-                <label>Azotyny</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.nitrites" name="nitrites" />
+        <label>Azotyny</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.nitrites" name="nitrites" />
 
-                <label>Esteraza leukocytowa</label>
-                <input type="text" [(ngModel)]="formData.physicalChemical.leukocyteEsterase" name="leukocyteEsterase" />
-            </fieldset>
+        <label>Esteraza leukocytowa</label>
+        <input type="text" [(ngModel)]="formData.physicalChemical.leukocyteEsterase" name="leukocyteEsterase" />
+      </fieldset>
 
-            <!-- Sekcja 2: Analiza mikroskopowa -->
-            <fieldset>
-                <legend>Analiza mikroskopowa</legend>
+      <!-- Sekcja 2: Analiza mikroskopowa -->
+      <fieldset>
+        <legend>Analiza mikroskopowa</legend>
 
-                <label>Leukocyty (WBC) / pole widzenia</label>
-                <input type="text" [(ngModel)]="formData.microscopic.wbc" name="wbc" />
+        <label>Leukocyty (WBC) / pole widzenia</label>
+        <input type="text" [(ngModel)]="formData.microscopic.wbc" name="wbc" />
 
-                <label>Erytrocyty (RBC) / pole widzenia</label>
-                <input type="text" [(ngModel)]="formData.microscopic.rbc" name="rbc" />
+        <label>Erytrocyty (RBC) / pole widzenia</label>
+        <input type="text" [(ngModel)]="formData.microscopic.rbc" name="rbc" />
 
-                <label>Komórki nabłonkowe</label>
-                <input type="text" [(ngModel)]="formData.microscopic.epithelialCells" name="epithelialCells" />
+        <label>Komórki nabłonkowe</label>
+        <input type="text" [(ngModel)]="formData.microscopic.epithelialCells" name="epithelialCells" />
 
-                <label>Kryształy</label>
-                <input type="text" [(ngModel)]="formData.microscopic.crystals" name="crystals" />
+        <label>Kryształy</label>
+        <input type="text" [(ngModel)]="formData.microscopic.crystals" name="crystals" />
 
-                <label>Wałeczki</label>
-                <input type="text" [(ngModel)]="formData.microscopic.casts" name="casts" />
+        <label>Wałeczki</label>
+        <input type="text" [(ngModel)]="formData.microscopic.casts" name="casts" />
 
-                <label>Bakterie</label>
-                <input type="text" [(ngModel)]="formData.microscopic.bacteria" name="bacteria" />
+        <label>Bakterie</label>
+        <input type="text" [(ngModel)]="formData.microscopic.bacteria" name="bacteria" />
 
-                <label>Drożdżaki</label>
-                <input type="text" [(ngModel)]="formData.microscopic.yeast" name="yeast" />
+        <label>Drożdżaki</label>
+        <input type="text" [(ngModel)]="formData.microscopic.yeast" name="yeast" />
 
-                <label>Plemniki</label>
-                <input type="text" [(ngModel)]="formData.microscopic.sperm" name="sperm" />
+        <label>Plemniki</label>
+        <input type="text" [(ngModel)]="formData.microscopic.sperm" name="sperm" />
 
-                <label>Pasma śluzu</label>
-                <input type="text" [(ngModel)]="formData.microscopic.mucus" name="mucus" />
+        <label>Pasma śluzu</label>
+        <input type="text" [(ngModel)]="formData.microscopic.mucus" name="mucus" />
 
-                <label>Pasożyty</label>
-                <input type="text" [(ngModel)]="formData.microscopic.parasites" name="parasites" />
-            </fieldset>
+        <label>Pasożyty</label>
+        <input type="text" [(ngModel)]="formData.microscopic.parasites" name="parasites" />
+      </fieldset>
 
-            <!-- Inne -->
-            <fieldset>
-                <legend>Dodatkowe informacje</legend>
+      <!-- Inne -->
+      <fieldset>
+        <legend>Dodatkowe informacje</legend>
 
-                <label>Data badania</label>
-                <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
+        <label>Data badania</label>
+        <input type="date" [(ngModel)]="formData.testDate" name="testDate" required />
 
-                <label>Komentarze</label>
-                <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
-            </fieldset>
+        <label>Komentarze</label>
+        <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+      </fieldset>
 
-            <button type="submit">Zapisz badanie moczu</button>
-        </form>
-    </div>
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz badanie moczu' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
 </div>

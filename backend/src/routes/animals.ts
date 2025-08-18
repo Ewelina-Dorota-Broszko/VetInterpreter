@@ -21,7 +21,7 @@ async function ensureOwnership(animalId: string, userId: string) {
 
 /* ========= Animals (CRUD) ========= */
 
-// POST /animals/owners/:ownerId/animals
+// POST /owners/:ownerId/animals
 router.post('/owners/:ownerId/animals', async (req: AuthedRequest, res) => {
   try {
     const { ownerId } = req.params;

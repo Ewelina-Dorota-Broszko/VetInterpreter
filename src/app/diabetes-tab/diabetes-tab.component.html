@@ -1,26 +1,37 @@
 <h2>Zapisy cukrzycy</h2>
 
-<canvas #diabetesChart *ngIf="diabetesLogs?.length"></canvas>
+<!-- Wykres -->
+<canvas #diabetesChart *ngIf="sorted?.length"></canvas>
 
-<table *ngIf="diabetesLogs?.length; else noDiab">
+<!-- Tabela -->
+<table *ngIf="sorted?.length; else noDiab" class="diabetes-table">
   <thead>
     <tr>
       <th>Data</th>
       <th>Godzina</th>
       <th>Glukoza (mg/dL)</th>
-      <th>Typ</th>
+      <th>Rodzaj pomiaru</th>
       <th>Insulina</th>
       <th>Dawka (j.)</th>
+      <th>Uwagi</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let d of diabetesLogs; trackBy: trackByIndex">
+    <tr *ngFor="let d of sorted; trackBy: trackByIndex">
       <td>{{ d.date }}</td>
       <td>{{ d.time }}</td>
       <td>{{ d.glucose }}</td>
-      <td>{{ d.measurementType }}</td>
+      <td>
+        <ng-container [ngSwitch]="d.measurementType">
+          <span *ngSwitchCase="'fasting'">Na czczo</span>
+          <span *ngSwitchCase="'postMeal'">Po posiłku</span>
+          <span *ngSwitchCase="'random'">Przypadkowy</span>
+          <span *ngSwitchDefault>-</span>
+        </ng-container>
+      </td>
       <td>{{ d.insulinType || '-' }}</td>
-      <td>{{ d.insulinDose ?? '-' }}</td>
+      <td>{{ d.insulinDose != null ? d.insulinDose : '-' }}</td>
+      <td>{{ d.comments || '-' }}</td>
     </tr>
   </tbody>
 </table>

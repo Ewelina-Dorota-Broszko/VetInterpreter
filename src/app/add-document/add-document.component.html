@@ -1,21 +1,55 @@
 <div class="dashboard-menu-container">
-    <div class="container">
-        <h2>Add new medical record</h2>
+  <div class="container">
+    <h2>Dodaj nowy wpis medyczny</h2>
 
-        <label for="animal">Select animal:</label>
-        <select id="animal" [(ngModel)]="selectedAnimal">
-            <option *ngFor="let animal of animals" [value]="animal.id">{{ animal.name }}</option>
-        </select>
+    <ng-container *ngIf="!loading; else loadingTpl">
+      <ng-container *ngIf="animals.length; else noAnimals">
+        <div class="form-grid">
+          <label for="animal">Wybierz zwierzę:</label>
+          <select
+            id="animal"
+            [(ngModel)]="selectedAnimal"
+            [disabled]="!animals.length">
+            <option *ngFor="let animal of animals; trackBy: trackById" [value]="animal._id">
+              {{ animal.name }} ({{ animal.species }})
+            </option>
+          </select>
 
-        <label for="type">Select document type:</label>
-        <select id="type" [(ngModel)]="selectedType">
-            <option value="blood">Blood test</option>
-            <option value="stool">Stool test</option>
-            <option value="urine">Urine test</option>
-            <option value="temperature">Daily temperature</option>
-            <option value="diabetes">Diabetes – glucose</option>
-        </select>
+          <label for="type">Wybierz rodzaj dokumentu:</label>
+          <select id="type" [(ngModel)]="selectedType">
+            <option value="blood">Badanie krwi</option>
+            <option value="stool">Badanie kału</option>
+            <option value="urine">Badanie moczu</option>
+            <option value="temperature">Dzienne pomiary temperatury</option>
+            <option value="diabetes">Cukrzyca – poziom glukozy</option>
+            <option value="weight">Historia wagi</option>
+            <option value="vaccination">Szczepienie</option>
+            <option value="medication">Leki</option>
+            <option value="symptom">Objawy</option>
+            <option value="visit">Wizyta u weterynarza</option>
+          </select>
+        </div>
 
-        <button (click)="navigateToForm()">Continue</button>
-    </div>
+        <div class="actions">
+          <button
+            class="primary"
+            (click)="navigateToForm()"
+            [disabled]="!selectedAnimal || !selectedType"
+            >
+            Kontynuuj
+          </button>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #loadingTpl>
+      <p>Ładowanie listy zwierząt…</p>
+    </ng-template>
+
+    <ng-template #noAnimals>
+      <p>Brak zwierząt przypisanych do tego właściciela.</p>
+    </ng-template>
+
+    <p *ngIf="error" class="error">{{ error }}</p>
+  </div>
 </div>

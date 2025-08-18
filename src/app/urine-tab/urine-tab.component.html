@@ -1,8 +1,8 @@
 <h2>Badania moczu</h2>
 
-<canvas #urineChart *ngIf="urineTests?.length"></canvas>
+<canvas #urineChart *ngIf="viewTests.length"></canvas>
 
-<table *ngIf="urineTests?.length; else noUrine">
+<table *ngIf="viewTests.length; else noUrine" class="urine-table">
   <thead>
     <tr>
       <th>Data</th>
@@ -11,22 +11,67 @@
       <th>pH</th>
       <th>Białko</th>
       <th>Glukoza</th>
-      <th>Ciała ketonowe</th>
+      <th>Ketony</th>
+      <th></th>
     </tr>
   </thead>
+
   <tbody>
-    <tr *ngFor="let test of urineTests; trackBy: trackByIndex">
-      <td>{{ test.date }}</td>
-      <td>{{ test.color }}</td>
-      <td>{{ test.specificGravity }}</td>
-      <td>{{ test.pH }}</td>
-      <td>{{ test.protein }}</td>
-      <td>{{ test.glucose }}</td>
-      <td>{{ test.ketones }}</td>
-    </tr>
+    <ng-container *ngFor="let t of viewTests; trackBy: trackByIndex">
+      <tr>
+        <td>{{ t.date }}</td>
+        <td>{{ t.color || '—' }}</td>
+        <td [class.out]="outSg(t.specificGravity)">{{ t.specificGravity ?? '—' }}</td>
+        <td [class.out]="outPh(t.pH)">{{ t.pH ?? '—' }}</td>
+        <td>{{ t.protein || '—' }}</td>
+        <td>{{ t.glucose || '—' }}</td>
+        <td>{{ t.ketones || '—' }}</td>
+        <td class="actions">
+          <button type="button" (click)="toggle(t)">{{ isExpanded(t) ? 'Schowaj' : 'Szczegóły' }}</button>
+        </td>
+      </tr>
+
+      <tr *ngIf="isExpanded(t)" class="details">
+        <td colspan="8">
+          <div class="details-grid">
+            <div>
+              <h4>Fizykochemia</h4>
+              <ul>
+                <li><strong>Przejrzystość:</strong> {{ t.clarity || '—' }}</li>
+                <li><strong>Bilirubina:</strong> {{ t.bilirubin || '—' }}</li>
+                <li><strong>Urobilinogen:</strong> {{ t.urobilinogen || '—' }}</li>
+                <li><strong>Krew:</strong> {{ t.blood || '—' }}</li>
+                <li><strong>Azotyny:</strong> {{ t.nitrites || '—' }}</li>
+                <li><strong>Esteraza leukocytowa:</strong> {{ t.leukocyteEsterase || '—' }}</li>
+              </ul>
+            </div>
+
+            <div>
+              <h4>Mikroskopia</h4>
+              <ul>
+                <li><strong>WBC / HPF:</strong> {{ t.wbc || '—' }}</li>
+                <li><strong>RBC / HPF:</strong> {{ t.rbc || '—' }}</li>
+                <li><strong>Komórki nabłonkowe:</strong> {{ t.epithelialCells || '—' }}</li>
+                <li><strong>Kryształy:</strong> {{ t.crystals || '—' }}</li>
+                <li><strong>Wałeczki:</strong> {{ t.casts || '—' }}</li>
+                <li><strong>Bakterie:</strong> {{ t.bacteria || '—' }}</li>
+                <li><strong>Drożdżaki:</strong> {{ t.yeast || '—' }}</li>
+                <li><strong>Plemniki:</strong> {{ t.sperm || '—' }}</li>
+                <li><strong>Pasma śluzu:</strong> {{ t.mucus || '—' }}</li>
+                <li><strong>Pasożyty:</strong> {{ t.parasites || '—' }}</li>
+              </ul>
+            </div>
+
+            <div *ngIf="t.comments">
+              <h4>Komentarze</h4>
+              <p>{{ t.comments }}</p>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
   </tbody>
 </table>
 
 <ng-template #noUrine>
-  <p>Brak badań moczu.</p>
-</ng-template>
+  <p>
