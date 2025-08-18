@@ -1,8 +1,8 @@
 <h2>Badania kału</h2>
 
-<canvas #stoolChart *ngIf="stoolTests?.length"></canvas>
+<canvas #stoolChart *ngIf="sorted?.length"></canvas>
 
-<table *ngIf="stoolTests?.length; else noStool">
+<table *ngIf="sorted?.length; else noStool" class="stool-table">
   <thead>
     <tr>
       <th>Data</th>
@@ -10,15 +10,21 @@
       <th>Kolor</th>
       <th>Krew</th>
       <th>Śluz</th>
+      <th>Zapach</th>
+      <th>Pasożyty</th>
+      <th>Uwagi</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let test of stoolTests; trackBy: trackByIndex">
+    <tr *ngFor="let test of sorted; trackBy: trackByIndex">
       <td>{{ test.date }}</td>
-      <td>{{ test.consistency }}</td>
+      <td>{{ prettyConsistency(test.consistency) }}</td>
       <td>{{ test.color }}</td>
       <td>{{ test.blood ? 'tak' : 'nie' }}</td>
       <td>{{ test.mucus ? 'tak' : 'nie' }}</td>
+      <td>{{ test.odor || '—' }}</td>
+      <td>{{ test.parasites ? 'tak' : 'nie' }}</td>
+      <td>{{ test.comments || '—' }}</td>
     </tr>
   </tbody>
 </table>

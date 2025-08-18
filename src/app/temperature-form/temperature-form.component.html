@@ -1,38 +1,56 @@
 <div class="dashboard-menu-container">
     <div class="container">
-        <h2>Dzienne zapisy temperatury</h2>
+        <h2>Dodaj pomiar temperatury</h2>
 
-        <form (ngSubmit)="submitForm()">
-            <label>Data</label>
-            <input type="date" [(ngModel)]="formData.date" name="date" required />
+<form (ngSubmit)="submitForm()" #f="ngForm" class="temp-form">
+  <label>
+    Data
+    <input type="date" [(ngModel)]="form.date" name="date" required />
+  </label>
 
-            <label>Godzina</label>
-            <input type="time" [(ngModel)]="formData.time" name="time" required />
+  <label>
+    Godzina
+    <input type="time" [(ngModel)]="form.time" name="time" required />
+  </label>
 
-            <label>Temperatura (°C)</label>
-            <input type="number" step="0.1" [(ngModel)]="formData.temperature" name="temperature" required />
+  <label>
+    Temperatura (°C)
+    <input type="number" step="0.1" [(ngModel)]="form.temperature" name="temperature" required />
+  </label>
 
-            <label>Zachowanie</label>
-            <select [(ngModel)]="formData.behavior" name="behavior">
-                <option value="">-- Wybierz --</option>
-                <option value="normal">Normalne</option>
-                <option value="lethargic">Ospałe</option>
-                <option value="agitated">Pobudzone</option>
-                <option value="unresponsive">Brak reakcji</option>
-            </select>
+  <label>
+    Zachowanie
+    <select [(ngModel)]="form.behavior" name="behavior">
+      <option value="">—</option>
+      <option value="normal">Normalne</option>
+      <option value="lethargic">Ospałe</option>
+      <option value="agitated">Pobudzone</option>
+      <option value="unresponsive">Brak reakcji</option>
+    </select>
+  </label>
 
-            <label>Apetyt</label>
-            <select [(ngModel)]="formData.appetite" name="appetite">
-                <option value="">-- Wybierz --</option>
-                <option value="normal">Normalny</option>
-                <option value="reduced">Zmniejszony</option>
-                <option value="none">Brak</option>
-            </select>
+  <label>
+    Apetyt
+    <select [(ngModel)]="form.appetite" name="appetite">
+      <option value="">—</option>
+      <option value="normal">Normalny</option>
+      <option value="reduced">Zmniejszony</option>
+      <option value="none">Brak</option>
+    </select>
+  </label>
 
-            <label>Komentarze</label>
-            <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+  <label>
+    Komentarze
+    <input type="text" [(ngModel)]="form.comments" name="comments" />
+  </label>
 
-            <button type="submit">Zapisz temperaturę</button>
-        </form>
+  <button type="submit" [disabled]="saving || f.invalid">
+    {{ saving ? 'Zapisywanie…' : 'Zapisz pomiar' }}
+  </button>
+
+  <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+</form>
+
     </div>
 </div>

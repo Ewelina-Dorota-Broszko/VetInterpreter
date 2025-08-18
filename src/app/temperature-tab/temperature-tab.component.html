@@ -8,6 +8,9 @@
       <th>Data</th>
       <th>Godzina</th>
       <th>Temperatura (°C)</th>
+      <th>Zachowanie</th>
+      <th>Apetyt</th>
+      <th>Komentarze</th>
     </tr>
   </thead>
   <tbody>
@@ -15,6 +18,9 @@
       <td>{{ t.date }}</td>
       <td>{{ t.time }}</td>
       <td>{{ t.temperature }}</td>
+      <td>{{ t.behavior || '—' }}</td>
+      <td>{{ t.appetite || '—' }}</td>
+      <td>{{ t.comments || '—' }}</td>
     </tr>
   </tbody>
 </table>

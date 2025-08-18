@@ -20,13 +20,35 @@ const BloodTestSchema = new Schema(
 // Urine test
 const UrineTestSchema = new Schema(
   {
-    date: { type: String, required: true },
+    date: { type: String, required: true },   // YYYY-MM-DD
+    // sekcja: fizykochemia
     color: { type: String, required: true },
+    clarity: { type: String },                // przejrzystość
     specificGravity: { type: Number, required: true },
     pH: { type: Number, required: true },
     protein: { type: String, required: true },
     glucose: { type: String, required: true },
-    ketones: { type: String, required: true }
+    ketones: { type: String, required: true },
+    bilirubin: { type: String },
+    urobilinogen: { type: String },
+    blood: { type: String },
+    nitrites: { type: String },
+    leukocyteEsterase: { type: String },
+
+    // sekcja: mikroskopia
+    wbc: { type: String },             // leukocyty / pole widzenia
+    rbc: { type: String },             // erytrocyty / pole widzenia
+    epithelialCells: { type: String },
+    crystals: { type: String },
+    casts: { type: String },
+    bacteria: { type: String },
+    yeast: { type: String },
+    sperm: { type: String },
+    mucus: { type: String },
+    parasites: { type: String },
+
+    // inne
+    comments: { type: String, default: '' }
   },
   { _id: true, timestamps: true }
 );
@@ -34,11 +56,16 @@ const UrineTestSchema = new Schema(
 // Stool test
 const StoolTestSchema = new Schema(
   {
-    date: { type: String, required: true },
+    date: { type: String, required: true }, // YYYY-MM-DD
     consistency: { type: String, enum: ['solid', 'soft', 'watery'], required: true },
     color: { type: String, required: true },
     blood: { type: Boolean, required: true },
-    mucus: { type: Boolean, required: true }
+    mucus: { type: Boolean, required: true },
+
+    // nowe pola z formularza:
+    odor: { type: String, default: '' },       // opis zapachu
+    parasites: { type: Boolean, default: false },
+    comments: { type: String, default: '' }
   },
   { _id: true, timestamps: true }
 );
@@ -48,7 +75,20 @@ const TemperatureLogSchema = new Schema(
   {
     date: { type: String, required: true },   // YYYY-MM-DD
     time: { type: String, required: true },   // HH:mm
-    temperature: { type: Number, required: true }
+    temperature: { type: Number, required: true },
+
+    // nowe pola z formularza
+    behavior: {
+      type: String,
+      enum: ['normal', 'lethargic', 'agitated', 'unresponsive', ''],
+      default: ''
+    },
+    appetite: {
+      type: String,
+      enum: ['normal', 'reduced', 'none', ''],
+      default: ''
+    },
+    comments: { type: String, default: '' }
   },
   { _id: true, timestamps: true }
 );
@@ -56,12 +96,20 @@ const TemperatureLogSchema = new Schema(
 // Diabetes log
 const DiabetesLogSchema = new Schema(
   {
-    date: { type: String, required: true },
-    time: { type: String, required: true },
-    glucose: { type: Number, required: true },
-    measurementType: { type: String, enum: ['fasting', 'postMeal', 'random'], required: true },
-    insulinType: { type: String },
-    insulinDose: { type: Number }
+    date: { type: String, required: true },   // YYYY-MM-DD
+    time: { type: String, required: true },   // HH:mm
+    glucose: { type: Number, required: true }, // mg/dL
+
+    measurementType: { 
+      type: String, 
+      enum: ['fasting', 'postMeal', 'random'], 
+      required: true 
+    },
+
+    insulinType: { type: String, default: '' },  // np. „Lantus”, „NovoRapid”
+    insulinDose: { type: Number, default: null },
+
+    comments: { type: String, default: '' }      // dodatkowe uwagi
   },
   { _id: true, timestamps: true }
 );

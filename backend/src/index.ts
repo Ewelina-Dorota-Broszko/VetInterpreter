@@ -9,22 +9,38 @@ import ownersRouter from './routes/owners';
 import animalsRouter from './routes/animals';
 
 const app = express();
+
+// 🔒 Middleware
 app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Prosty endpoint do testów
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
+// Routing
 app.use('/auth', authRouter);
 app.use('/owners', ownersRouter);
 app.use('/animals', animalsRouter);
 
+// Konfiguracja serwera
 const PORT = Number(process.env.PORT || 4000);
-const MONGO_URL = process.env.MONGO_URL as string;
+const HOST = process.env.HOST || '0.0.0.0'; // ważne: nasłuchuj na wszystkich interfejsach
+const MONGO_URL = process.env.MONGO_URL || process.env.MONGO_URI;
 
-connectDB(MONGO_URL)
-  .then(() => app.listen(PORT, () => console.log(`🚀 API: http://localhost:${PORT}`)))
+if (!MONGO_URL) {
+  console.error('❌ Brak MONGO_URL/MONGO_URI w pliku .env');
+  process.exit(1);
+}
+
+// Start aplikacji
+connectDB()
+  .then(() => {
+    app.listen(PORT, HOST, () => {
+      console.log(`🚀 API listening on http://${HOST}:${PORT}`);
+    });
+  })
   .catch((e) => {
-    console.error('❌ DB error', e);
+    console.error('❌ DB connection error:', e);
     process.exit(1);
   });
