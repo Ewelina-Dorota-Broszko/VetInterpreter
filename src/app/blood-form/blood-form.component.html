@@ -3,7 +3,7 @@
     <h2>Formularz badania krwi</h2>
 
     <form (ngSubmit)="submitForm()" #bloodForm="ngForm">
-      <!-- Sekcja morfologii -->
+      <!-- Morfologia -->
       <fieldset>
         <legend>Morfologia</legend>
 
@@ -32,7 +32,7 @@
         <input type="number" [(ngModel)]="formData.morphology.mchc" name="mchc" min="0" step="0.1" />
       </fieldset>
 
-      <!-- Sekcja biochemii -->
+      <!-- Biochemia -->
       <fieldset>
         <legend>Biochemia</legend>
 
@@ -45,13 +45,13 @@
         <label>Kreatynina (mg/dL)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.creatinine" name="creatinine" min="0" step="0.1" />
 
-        <label>ALT (GPT)</label>
+        <label>ALT (U/L)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.alt" name="alt" min="0" step="1" />
 
-        <label>AST (GOT)</label>
+        <label>AST (U/L)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.ast" name="ast" min="0" step="1" />
 
-        <label>ALP</label>
+        <label>ALP (U/L)</label>
         <input type="number" [(ngModel)]="formData.biochemistry.alp" name="alp" min="0" step="1" />
 
         <label>Białko całkowite (g/dL)</label>
@@ -73,18 +73,23 @@
         <input type="number" [(ngModel)]="formData.biochemistry.bilirubinIndirect" name="bilirubinIndirect" min="0" step="0.1" />
       </fieldset>
 
-      <!-- Sekcja inne -->
+      <!-- Inne -->
       <fieldset>
         <legend>Inne</legend>
 
         <label>Data badania</label>
-        <input type="date" [(ngModel)]="formData.other.testDate" name="testDate" />
+        <input type="date" [(ngModel)]="formData.other.testDate" name="testDate" required />
 
         <label>Komentarze</label>
         <textarea [(ngModel)]="formData.other.comments" name="comments" rows="3"></textarea>
       </fieldset>
 
-      <button type="submit">Zapisz badanie krwi</button>
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz badanie krwi' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
     </form>
   </div>
 </div>

@@ -37,6 +37,9 @@ import { SymptomsTabComponent } from './symptoms-tab/symptoms-tab.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { AuthGuard } from './auth/auth.guard';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { WeightFormComponent } from './weight-form/weight-form.component';
+import { MedsFormComponent } from './meds-form/meds-form.component';
+import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
 
 
 @NgModule({
@@ -69,7 +72,10 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
     VaccinationsTabComponent,
     MedsTabComponent,
     SymptomsTabComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    WeightFormComponent,
+    MedsFormComponent,
+    VaccinationFormComponent
   ],
   imports: [
     BrowserModule,

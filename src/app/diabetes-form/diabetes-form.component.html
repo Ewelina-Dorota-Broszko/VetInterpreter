@@ -1,35 +1,46 @@
 <div class="dashboard-menu-container">
-    <div class="container">
-        <h2>Formularz monitorowania cukrzycy</h2>
+  <div class="container">
+    <h2>Formularz monitorowania cukrzycy</h2>
 
-        <form (ngSubmit)="submitForm()">
-            <label>Data</label>
-            <input type="date" [(ngModel)]="formData.date" name="date" required />
+    <form (ngSubmit)="submitForm()" #f="ngForm">
+      <label>Data</label>
+      <input type="date" [(ngModel)]="formData.date" name="date" required />
 
-            <label>Godzina</label>
-            <input type="time" [(ngModel)]="formData.time" name="time" required />
+      <label>Godzina</label>
+      <input type="time" [(ngModel)]="formData.time" name="time" required />
 
-            <label>Poziom glukozy (mg/dL)</label>
-            <input type="number" [(ngModel)]="formData.glucose" name="glucose" required />
+      <label>Poziom glukozy (mg/dL)</label>
+      <input type="number" [(ngModel)]="formData.glucose" name="glucose" required />
 
-            <label>Rodzaj pomiaru</label>
-            <select [(ngModel)]="formData.measurementType" name="measurementType" required>
-                <option value="">-- Wybierz --</option>
-                <option value="fasting">Na czczo</option>
-                <option value="postMeal">Po posiłku</option>
-                <option value="random">Przypadkowy</option>
-            </select>
+      <label>Rodzaj pomiaru</label>
+      <select [(ngModel)]="formData.measurementType" name="measurementType" required>
+        <option value="">-- Wybierz --</option>
+        <option *ngFor="let t of measurementTypes" [value]="t.value">{{ t.label }}</option>
+      </select>
 
-            <label>Rodzaj insuliny (opcjonalnie)</label>
-            <input type="text" [(ngModel)]="formData.insulinType" name="insulinType" />
+      <label>Rodzaj insuliny (opcjonalnie)</label>
+      <select [(ngModel)]="formData.insulinTypeSelect" name="insulinTypeSelect">
+        <option value="">— brak —</option>
+        <option *ngFor="let i of insulinOptions" [value]="i">{{ i }}</option>
+      </select>
 
-            <label>Dawka insuliny (j.)</label>
-            <input type="number" step="0.1" [(ngModel)]="formData.insulinDose" name="insulinDose" />
+      <ng-container *ngIf="showCustomInsulin">
+        <label>Inna insulina — wpisz nazwę</label>
+        <input type="text" [(ngModel)]="formData.insulinTypeCustom" name="insulinTypeCustom" />
+      </ng-container>
 
-            <label>Komentarze</label>
-            <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+      <label>Dawka insuliny (j.)</label>
+      <input type="number" step="0.1" [(ngModel)]="formData.insulinDose" name="insulinDose" />
 
-            <button type="submit">Zapisz wpis cukrzycy</button>
-        </form>
-    </div>
+      <label>Komentarze</label>
+      <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+
+      <button type="submit" [disabled]="saving || f.invalid">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz wpis cukrzycy' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
 </div>

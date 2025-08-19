@@ -1,6 +1,8 @@
 <h2>Plan leków</h2>
 
-<table *ngIf="medications?.length; else noMeds">
+<canvas #medsChart *ngIf="sorted?.length"></canvas>
+
+<table *ngIf="sorted?.length; else noMeds">
   <thead>
     <tr>
       <th>Nazwa</th>
@@ -14,11 +16,11 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let m of medications; trackBy: trackByIndex">
+    <tr *ngFor="let m of sorted; trackBy: trackByIndex">
       <td>{{ m.name }}</td>
       <td>{{ m.dose }}</td>
       <td>{{ m.frequency }}</td>
-      <td>{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
+      <td>{{ m.timesOfDay?.join(', ') || '—' }}</td>
       <td>{{ m.startDate }}</td>
       <td>{{ m.endDate || '—' }}</td>
       <td>

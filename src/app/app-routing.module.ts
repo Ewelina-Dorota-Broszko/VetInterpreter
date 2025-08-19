@@ -18,6 +18,9 @@ import { VisitNotesComponent } from './visit-notes/visit-notes.component';
 import { DietComponent } from './diet/diet.component';
 import { AuthGuard } from './auth/auth.guard';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { WeightFormComponent } from './weight-form/weight-form.component';
+import { MedsFormComponent } from './meds-form/meds-form.component';
+import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -31,8 +34,11 @@ const routes: Routes = [
   { path: 'animal/:id', component: AnimalProfileComponent },
   { path: 'form/blood', component: BloodFormComponent },
   { path: 'form/stool', component: StoolFormComponent },
+  { path: 'form/weight', component: WeightFormComponent },
   { path: 'form/urine', component: UrineFormComponent },
+  { path: 'form/meds', component: MedsFormComponent },
   { path: 'form/temperature', component: TemperatureFormComponent },
+  { path: 'form/vaccination', component: VaccinationFormComponent },
   { path: 'form/diabetes', component: DiabetesFormComponent },
   { path: 'form/visit-notes', component: VisitNotesComponent },
   { path: 'animal/:id/diet', component: DietComponent },

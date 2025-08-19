@@ -1,0 +1,29 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Dodaj wpis wagi</h2>
+
+    <form (ngSubmit)="submitForm()" #f="ngForm">
+      <label>Data</label>
+      <input type="date" [(ngModel)]="formData.date" name="date" required />
+
+      <label>Waga (kg)</label>
+      <input type="number" step="0.1" [(ngModel)]="formData.weightKg" name="weightKg" required />
+
+      <label>BCS (1–9)</label>
+      <select [(ngModel)]="formData.bcs" name="bcs">
+        <option value="">— brak —</option>
+        <option *ngFor="let b of bcsOptions" [value]="b">{{ b }}</option>
+      </select>
+
+      <label>Notatka</label>
+      <textarea [(ngModel)]="formData.note" name="note" rows="3"></textarea>
+
+      <button type="submit" [disabled]="saving || f.invalid">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz wpis wagi' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
+</div>

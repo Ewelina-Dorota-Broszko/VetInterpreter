@@ -1,0 +1,84 @@
+.dashboard-menu-container {
+  position: fixed;
+  top: 52px;
+  right: 0;
+  width: 80vw;
+  height: calc(100vh - 52px);
+  background-color: #1d222b;
+  overflow-y: auto;
+  padding: 40px 0;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 700px;
+  background-color: #212631;
+  padding: 40px;
+  border: 1px solid #383c46;
+  border-radius: 16px;
+  gap: 30px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+label {
+  display: block;
+  font-weight: 500;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #999;
+  background-color: #f9f9f9;
+  color: #000;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+button {
+  margin-top: 20px;
+  padding: 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  align-self: flex-start;
+
+  &:hover {
+    background-color: #388e3c;
+  }
+}
