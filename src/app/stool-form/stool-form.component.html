@@ -1,44 +1,56 @@
 <div class="dashboard-menu-container">
-    <div class="container">
-        <h2>Formularz badania kału</h2>
+  <div class="container">
+    <h2>Formularz badania kału</h2>
 
-        <form (ngSubmit)="submitForm()" #stoolForm="ngForm">
+    <form (ngSubmit)="submitForm()" #stoolForm="ngForm">
 
-            <label>Konsystencja</label>
-            <select [(ngModel)]="formData.consistency" name="consistency">
-                <option value="solid">Stała</option>
-                <option value="soft">Miękka</option>
-                <option value="watery">Wodnista</option>
-            </select>
+      <label>Konsystencja</label>
+      <select [(ngModel)]="formData.consistency" name="consistency" required>
+        <option value="">-- Wybierz --</option>
+        <option *ngFor="let c of consistencyOptions" [value]="c.value">
+          {{ c.label }}
+        </option>
+      </select>
 
-            <label>Kolor</label>
-            <input type="text" [(ngModel)]="formData.color" name="color" />
+      <label>Kolor</label>
+      <select [(ngModel)]="formData.color" name="color" required>
+        <option value="">-- Wybierz --</option>
+        <option *ngFor="let c of colorOptions" [value]="c">{{ c }}</option>
+      </select>
 
-            <label>
-                <input type="checkbox" [(ngModel)]="formData.mucus" name="mucus" />
-                Obecność śluzu
-            </label>
+      <label>
+        <input type="checkbox" [(ngModel)]="formData.mucus" name="mucus" />
+        Obecność śluzu
+      </label>
 
-            <label>
-                <input type="checkbox" [(ngModel)]="formData.blood" name="blood" />
-                Obecność krwi
-            </label>
+      <label>
+        <input type="checkbox" [(ngModel)]="formData.blood" name="blood" />
+        Obecność krwi
+      </label>
 
-            <label>Opis zapachu</label>
-            <input type="text" [(ngModel)]="formData.odor" name="odor" />
+      <label>Opis zapachu</label>
+      <select [(ngModel)]="formData.odor" name="odor">
+        <option value="">-- Wybierz --</option>
+        <option *ngFor="let o of odorOptions" [value]="o">{{ o }}</option>
+      </select>
 
-            <label>
-                <input type="checkbox" [(ngModel)]="formData.parasites" name="parasites" />
-                Obecność pasożytów
-            </label>
+      <label>
+        <input type="checkbox" [(ngModel)]="formData.parasites" name="parasites" />
+        Obecność pasożytów
+      </label>
 
-            <label>Data badania</label>
-            <input type="date" [(ngModel)]="formData.testDate" name="testDate" />
+      <label>Data badania</label>
+      <input type="date" [(ngModel)]="formData.testDate" name="testDate" required />
 
-            <label>Dodatkowe uwagi</label>
-            <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
+      <label>Dodatkowe uwagi</label>
+      <textarea [(ngModel)]="formData.comments" name="comments" rows="3"></textarea>
 
-            <button type="submit">Zapisz badanie kału</button>
-        </form>
-    </div>
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz badanie kału' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
 </div>

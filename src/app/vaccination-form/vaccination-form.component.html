@@ -1,0 +1,49 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Formularz szczepienia</h2>
+
+    <form (ngSubmit)="submitForm()">
+      <label>Rodzaj szczepienia *</label>
+      <select [(ngModel)]="formData.type" name="type" required>
+        <option value="">— Wybierz —</option>
+        <option *ngFor="let t of typeOptions" [value]="t.value">{{ t.label }}</option>
+      </select>
+
+      <label>Data wykonania *</label>
+      <input type="date" [(ngModel)]="formData.date" name="date" required />
+
+      <label>Termin następnego (opcjonalnie)</label>
+      <input type="date" [(ngModel)]="formData.dueDate" name="dueDate" />
+
+      <!-- Produkt: lista + custom -->
+      <ng-container *ngIf="showProductSelect">
+        <label>Produkt</label>
+        <select [(ngModel)]="formData.productSelect" name="productSelect">
+          <option value="">— Brak / nie dotyczy —</option>
+          <option *ngFor="let p of productList" [value]="p">{{ p }}</option>
+        </select>
+
+        <div *ngIf="showCustomProduct">
+          <label>Nazwa produktu (własna)</label>
+          <input type="text" [(ngModel)]="formData.productCustom" name="productCustom" />
+        </div>
+      </ng-container>
+
+      <label>Numer serii (batch)</label>
+      <input type="text" [(ngModel)]="formData.batch" name="batch" />
+
+      <label>Lekarz weterynarii</label>
+      <input type="text" [(ngModel)]="formData.vet" name="vet" />
+
+      <label>Uwagi</label>
+      <textarea [(ngModel)]="formData.notes" name="notes" rows="3"></textarea>
+
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz szczepienie' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
+</div>

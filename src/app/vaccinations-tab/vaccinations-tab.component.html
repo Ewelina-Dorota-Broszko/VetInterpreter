@@ -1,1 +1,32 @@
-<p>vaccinations-tab works!</p>
+<h2>Szczepienia</h2>
+
+<canvas #vaccChart *ngIf="sorted?.length"></canvas>
+
+<table *ngIf="sorted?.length; else noVacc">
+  <thead>
+    <tr>
+      <th>Typ</th>
+      <th>Data</th>
+      <th>Następny termin</th>
+      <th>Produkt</th>
+      <th>Seria</th>
+      <th>Lekarz</th>
+      <th>Uwagi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let v of sorted; trackBy: trackByIndex">
+      <td>{{ prettyType(v.type) }}</td>
+      <td>{{ v.date }}</td>
+      <td>{{ v.dueDate || '—' }}</td>
+      <td>{{ v.product || '—' }}</td>
+      <td>{{ v.batch || '—' }}</td>
+      <td>{{ v.vet || '—' }}</td>
+      <td>{{ v.notes || '—' }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #noVacc>
+  <p>Brak szczepień.</p>
+</ng-template>

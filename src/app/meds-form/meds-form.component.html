@@ -1,0 +1,49 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Formularz leków</h2>
+
+    <form (ngSubmit)="submitForm()">
+      <label>Nazwa leku</label>
+      <input type="text" [(ngModel)]="formData.name" name="name" required />
+
+      <label>Dawka</label>
+      <input type="text" [(ngModel)]="formData.dose" name="dose" required />
+
+      <label>Częstotliwość (np. raz dziennie)</label>
+      <input type="text" [(ngModel)]="formData.frequency" name="frequency" />
+
+      <label>Godziny podania</label>
+      <div class="checkbox-group">
+        <label *ngFor="let t of timesOptions">
+          <input
+            type="checkbox"
+            [checked]="formData.timesOfDay.includes(t)"
+            (change)="toggleTime(t)"
+          />
+          {{ t }}
+        </label>
+      </div>
+
+      <label>Data rozpoczęcia</label>
+      <input type="date" [(ngModel)]="formData.startDate" name="startDate" required />
+
+      <label>Data zakończenia</label>
+      <input type="date" [(ngModel)]="formData.endDate" name="endDate" />
+
+      <label>
+        <input type="checkbox" [(ngModel)]="formData.isActive" name="isActive" />
+        Aktywna kuracja
+      </label>
+
+      <label>Uwagi</label>
+      <textarea [(ngModel)]="formData.notes" name="notes" rows="3"></textarea>
+
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz lek' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
+</div>

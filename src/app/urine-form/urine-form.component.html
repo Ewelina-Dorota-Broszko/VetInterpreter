@@ -4,86 +4,140 @@
 
     <form (ngSubmit)="submitForm()" #form="ngForm">
 
-      <!-- Sekcja 1: Właściwości fizyczne i chemiczne -->
+      <!-- Właściwości fizyczne i chemiczne -->
       <fieldset>
         <legend>Właściwości fizyczne i chemiczne</legend>
 
         <label>Kolor</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.color" name="color" required />
+        <select [(ngModel)]="formData.physicalChemical.color" name="color" required>
+          <option value="" disabled>— wybierz —</option>
+          <option *ngFor="let c of colors" [value]="c">{{ c }}</option>
+        </select>
 
         <label>Przejrzystość</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.clarity" name="clarity" />
+        <select [(ngModel)]="formData.physicalChemical.clarity" name="clarity">
+          <option value="" disabled>— wybierz —</option>
+          <option *ngFor="let c of clarities" [value]="c">{{ c }}</option>
+        </select>
 
-        <label>Ciężar właściwy</label>
-        <input type="number" step="0.001" [(ngModel)]="formData.physicalChemical.specificGravity" name="specificGravity" required />
+        <label>Ciężar właściwy (SG)</label>
+        <input type="number" step="0.001" min="1.000" max="1.100"
+               [(ngModel)]="formData.physicalChemical.specificGravity" name="specificGravity" required />
 
         <label>pH</label>
-        <input type="number" step="0.1" [(ngModel)]="formData.physicalChemical.pH" name="pH" required />
+        <input type="number" step="0.1" min="4.5" max="9.5"
+               [(ngModel)]="formData.physicalChemical.pH" name="pH" required />
 
+        <!-- Półilościowe -->
         <label>Białko</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.protein" name="protein" required />
+        <select [(ngModel)]="formData.physicalChemical.protein" name="protein" required>
+          <option value="" disabled>— wybierz —</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Glukoza</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.glucose" name="glucose" required />
+        <select [(ngModel)]="formData.physicalChemical.glucose" name="glucose" required>
+          <option value="" disabled>— wybierz —</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Ciała ketonowe</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.ketones" name="ketones" required />
+        <select [(ngModel)]="formData.physicalChemical.ketones" name="ketones" required>
+          <option value="" disabled>— wybierz —</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Bilirubina</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.bilirubin" name="bilirubin" />
+        <select [(ngModel)]="formData.physicalChemical.bilirubin" name="bilirubin">
+          <option value="">—</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Urobilinogen</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.urobilinogen" name="urobilinogen" />
+        <select [(ngModel)]="formData.physicalChemical.urobilinogen" name="urobilinogen">
+          <option value="">—</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Krew</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.blood" name="blood" />
+        <select [(ngModel)]="formData.physicalChemical.blood" name="blood">
+          <option value="">—</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Azotyny</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.nitrites" name="nitrites" />
+        <select [(ngModel)]="formData.physicalChemical.nitrites" name="nitrites">
+          <option value="">—</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
 
         <label>Esteraza leukocytowa</label>
-        <input type="text" [(ngModel)]="formData.physicalChemical.leukocyteEsterase" name="leukocyteEsterase" />
+        <select [(ngModel)]="formData.physicalChemical.leukocyteEsterase" name="leukocyteEsterase">
+          <option value="">—</option>
+          <option *ngFor="let o of stripOptions" [value]="o.value">{{ o.label }}</option>
+        </select>
       </fieldset>
 
-      <!-- Sekcja 2: Analiza mikroskopowa -->
+      <!-- Analiza mikroskopowa -->
       <fieldset>
         <legend>Analiza mikroskopowa</legend>
 
-        <label>Leukocyty (WBC) / pole widzenia</label>
-        <input type="text" [(ngModel)]="formData.microscopic.wbc" name="wbc" />
+        <label>Leukocyty (WBC) / HPF</label>
+        <select [(ngModel)]="formData.microscopic.wbc" name="wbc">
+          <option value="">—</option>
+          <option *ngFor="let r of wbcRanges" [value]="r">{{ r }}</option>
+        </select>
 
-        <label>Erytrocyty (RBC) / pole widzenia</label>
-        <input type="text" [(ngModel)]="formData.microscopic.rbc" name="rbc" />
+        <label>Erytrocyty (RBC) / HPF</label>
+        <select [(ngModel)]="formData.microscopic.rbc" name="rbc">
+          <option value="">—</option>
+          <option *ngFor="let r of rbcRanges" [value]="r">{{ r }}</option>
+        </select>
 
         <label>Komórki nabłonkowe</label>
-        <input type="text" [(ngModel)]="formData.microscopic.epithelialCells" name="epithelialCells" />
+        <select [(ngModel)]="formData.microscopic.epithelialCells" name="epithelialCells">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
 
         <label>Kryształy</label>
-        <input type="text" [(ngModel)]="formData.microscopic.crystals" name="crystals" />
+        <select [(ngModel)]="formData.microscopic.crystals" name="crystals">
+          <option *ngFor="let c of crystalTypes" [value]="c">{{ c }}</option>
+        </select>
 
         <label>Wałeczki</label>
-        <input type="text" [(ngModel)]="formData.microscopic.casts" name="casts" />
+        <select [(ngModel)]="formData.microscopic.casts" name="casts">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
 
         <label>Bakterie</label>
-        <input type="text" [(ngModel)]="formData.microscopic.bacteria" name="bacteria" />
+        <select [(ngModel)]="formData.microscopic.bacteria" name="bacteria">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
 
         <label>Drożdżaki</label>
-        <input type="text" [(ngModel)]="formData.microscopic.yeast" name="yeast" />
+        <select [(ngModel)]="formData.microscopic.yeast" name="yeast">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
 
         <label>Plemniki</label>
-        <input type="text" [(ngModel)]="formData.microscopic.sperm" name="sperm" />
+        <select [(ngModel)]="formData.microscopic.sperm" name="sperm">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
 
         <label>Pasma śluzu</label>
-        <input type="text" [(ngModel)]="formData.microscopic.mucus" name="mucus" />
+        <select [(ngModel)]="formData.microscopic.mucus" name="mucus">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
 
         <label>Pasożyty</label>
-        <input type="text" [(ngModel)]="formData.microscopic.parasites" name="parasites" />
+        <select [(ngModel)]="formData.microscopic.parasites" name="parasites">
+          <option *ngFor="let q of quantity" [value]="q">{{ q }}</option>
+        </select>
       </fieldset>
 
-      <!-- Inne -->
+      <!-- Dodatkowe informacje -->
       <fieldset>
         <legend>Dodatkowe informacje</legend>
-
         <label>Data badania</label>
         <input type="date" [(ngModel)]="formData.testDate" name="testDate" required />
 

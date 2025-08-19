@@ -42,18 +42,22 @@ export class AnimalsService {
   }
   addWeight(animalId: string, body: any) {
   return this.http.post<any>(`${this.api}/animals/${animalId}/weight-history`, body);
-}
-addVaccination(animalId: string, body: any) {
-  return this.http.post<any>(`${this.api}/animals/${animalId}/vaccinations`, body);
-}
-addMedication(animalId: string, body: any) {
-  return this.http.post<any>(`${this.api}/animals/${animalId}/medications`, body);
-}
-addSymptom(animalId: string, body: any) {
-  return this.http.post<any>(`${this.api}/animals/${animalId}/symptoms`, body);
-}
-addVisit(animalId: string, body: any) {
-  return this.http.post<any>(`${this.api}/animals/${animalId}/visits`, body);
-}
+  }
+  addVaccination(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/vaccinations`, body);
+  }
+  addMedication(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/medications`, body);
+  }
+  addSymptom(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/symptoms`, body);
+  }
+  addVisit(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/visits`, body);
+  }
+  addDiabetesLog(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/diabetes-logs`, body);
+  }
+
 
 }
