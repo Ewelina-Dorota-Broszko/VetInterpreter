@@ -21,6 +21,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { WeightFormComponent } from './weight-form/weight-form.component';
 import { MedsFormComponent } from './meds-form/meds-form.component';
 import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
+import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -34,6 +35,7 @@ const routes: Routes = [
   { path: 'animal/:id', component: AnimalProfileComponent },
   { path: 'form/blood', component: BloodFormComponent },
   { path: 'form/stool', component: StoolFormComponent },
+   { path: 'form/symptoms', component: SymptomsFormComponent },
   { path: 'form/weight', component: WeightFormComponent },
   { path: 'form/urine', component: UrineFormComponent },
   { path: 'form/meds', component: MedsFormComponent },

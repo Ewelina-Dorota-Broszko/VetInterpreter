@@ -30,6 +30,7 @@ export class AuthService {
     }
   }
 
+  /** 🔹 Logowanie */
   login(email: string, password: string) {
     return this.http.post<{ token: string; user: User; owner?: any }>(
       `${this.api}/auth/login`,
@@ -44,10 +45,33 @@ export class AuthService {
     );
   }
 
+  /** 🔹 Rejestracja */
+  register(data: {
+    email: string;
+    password: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    isVet: boolean;
+  }) {
+    return this.http.post<{ token: string; user: User; owner?: any }>(
+      `${this.api}/auth/register`,
+      data
+    ).pipe(
+      tap(res => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
+        if (res.owner) localStorage.setItem('owner', JSON.stringify(res.owner));
+        this.userSubject.next(res.user);
+      })
+    );
+  }
+
+  /** 🔹 Potwierdź dane aktualnego usera */
   fetchMe() {
     return this.http.get<{ ownerId: string } & User>(`${this.api}/auth/me`).pipe(
       tap(me => {
-        // zapisz usera i ownerId (jako obiekt ownera minimalnie)
+        // zapisz usera i ownerId
         localStorage.setItem('user', JSON.stringify({
           id: me.id, email: me.email, firstName: me.firstName, lastName: me.lastName,
           phone: me.phone, isVet: me.isVet
@@ -61,23 +85,24 @@ export class AuthService {
     );
   }
 
+  /** 🔹 Token JWT */
   getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  /** <<— TEGO BRAKOWAŁO */
+  /** 🔹 ID właściciela */
   getOwnerId(): string | null {
     const raw = localStorage.getItem('owner');
     if (!raw) return null;
     try {
       const obj = JSON.parse(raw);
-      // obsłuż oba przypadki: { id: '...' } albo { _id: '...' }
       return obj.id || obj._id || null;
     } catch {
       return null;
     }
   }
 
+  /** 🔹 Wylogowanie */
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');

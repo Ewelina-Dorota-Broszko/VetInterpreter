@@ -1,0 +1,63 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Formularz objawów</h2>
+
+    <form (ngSubmit)="submitForm()">
+      <label>Data *</label>
+      <input type="date" [(ngModel)]="formData.date" name="date" required />
+
+      <label>Objawy (zaznacz wszystkie pasujące)</label>
+      <div class="tags-grid">
+        <button
+          type="button"
+          class="tag-chip"
+          *ngFor="let tag of symptomTagOptions"
+          [class.selected]="isTagSelected(tag)"
+          (click)="toggleTag(tag)">
+          {{ tag }}
+        </button>
+      </div>
+      <div class="selected-tags" *ngIf="formData.symptomTags.length">
+        Wybrane: {{ formData.symptomTags.join(', ') }}
+      </div>
+
+      <label>Skala bólu (0–10)</label>
+      <input
+        type="number"
+        min="0" max="10" step="1"
+        [(ngModel)]="formData.painScore"
+        name="painScore"
+        placeholder="np. 3" />
+
+      <label>Energia (1–5)</label>
+      <select [(ngModel)]="formData.energy" name="energy">
+        <option [ngValue]="null">— Wybierz —</option>
+        <option [ngValue]="1">1 — bardzo niska</option>
+        <option [ngValue]="2">2</option>
+        <option [ngValue]="3">3 — umiarkowana</option>
+        <option [ngValue]="4">4</option>
+        <option [ngValue]="5">5 — bardzo wysoka</option>
+      </select>
+
+      <label>Apetyt (1–5)</label>
+      <select [(ngModel)]="formData.appetite" name="appetite">
+        <option [ngValue]="null">— Wybierz —</option>
+        <option [ngValue]="1">1 — brak</option>
+        <option [ngValue]="2">2 — słaby</option>
+        <option [ngValue]="3">3 — umiarkowany</option>
+        <option [ngValue]="4">4 — dobry</option>
+        <option [ngValue]="5">5 — bardzo dobry</option>
+      </select>
+
+      <label>Uwagi</label>
+      <textarea [(ngModel)]="formData.notes" name="notes" rows="3" placeholder="Dowolne dodatkowe informacje"></textarea>
+
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Zapisywanie…' : 'Zapisz objawy' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
+</div>

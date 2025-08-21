@@ -20,7 +20,7 @@ export class AddDocumentComponent implements OnInit {
     | 'weight'
     | 'vaccination'
     | 'meds'
-    | 'symptom'
+    | 'symptoms'
     | 'visit' = 'blood';
 
   loading = true;
