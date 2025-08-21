@@ -5,6 +5,8 @@
       <p><strong>Imię i nazwisko:</strong> {{ profile.owner.name }}</p>
       <p><strong>Email:</strong> {{ profile.owner.email || '—' }}</p>
       <p><strong>Telefon:</strong> {{ profile.owner.phone || '—' }}</p>
+      <p><strong>Identyfikator:</strong> {{ profile.owner.id || '—' }}</p>
+
     
       <h3>Zwierzaki</h3>
       <table *ngIf="profile.animals.length; else noAnimals">

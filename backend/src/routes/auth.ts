@@ -125,4 +125,62 @@ router.get('/me', auth, async (req: AuthedRequest, res) => {
   });
 });
 
+/** POST /auth/logout – przy JWT to tylko odpowiedź 200 dla klienta */
+router.post('/logout', (req, res) => {
+  return res.json({ message: 'Logged out' });
+});
+
+/** POST /auth/check-email – sprawdzenie dostępności e-maila */
+router.post('/check-email', async (req, res) => {
+  try {
+    const { email } = req.body || {};
+    if (!email || !isEmail(email)) {
+      return res.status(400).json({ error: 'Podaj prawidłowy email' });
+    }
+    const exists = await User.findOne({ email }).lean();
+    return res.json({ available: !exists });
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+/** POST /auth/change-password – wymaga zalogowania */
+router.post('/change-password', auth, async (req: AuthedRequest, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body || {};
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ error: 'oldPassword i newPassword są wymagane' });
+    }
+    if (String(newPassword).length < 6) {
+      return res.status(400).json({ error: 'Nowe hasło musi mieć min. 6 znaków' });
+    }
+
+    const user = await User.findById(req.user!.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const ok = await bcrypt.compare(oldPassword, user.passwordHash);
+    if (!ok) return res.status(401).json({ error: 'Nieprawidłowe stare hasło' });
+
+    user.passwordHash = await bcrypt.hash(newPassword, 12);
+    await user.save();
+
+    return res.json({ message: 'Hasło zmienione' });
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+/** POST /auth/refresh – wydaj nowy token na podstawie ważnego tokenu */
+router.post('/refresh', auth, async (req: AuthedRequest, res) => {
+  try {
+    const user = await User.findById(req.user!.id).lean();
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    const token = signToken({ id: String(user._id), email: user.email });
+    return res.json({ token });
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
 export default router;

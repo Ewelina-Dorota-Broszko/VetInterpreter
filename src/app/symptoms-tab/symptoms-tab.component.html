@@ -1,20 +1,22 @@
-<h2>Rejestr objawów</h2>
+<h2>Objawy</h2>
 
-<table *ngIf="symptoms?.length; else noSymptoms">
+<canvas #symptomsChart *ngIf="sorted?.length"></canvas>
+
+<table *ngIf="sorted?.length; else noSymptoms">
   <thead>
     <tr>
       <th>Data</th>
       <th>Objawy</th>
-      <th>Ból</th>
-      <th>Energia</th>
-      <th>Apetyt</th>
-      <th>Notatki</th>
+      <th>Ból (0–10)</th>
+      <th>Energia (0–10)</th>
+      <th>Apetyt (0–10)</th>
+      <th>Uwagi</th>
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let s of symptoms; trackBy: trackByIndex">
+    <tr *ngFor="let s of sorted; trackBy: trackByIndex">
       <td>{{ s.date }}</td>
-      <td>{{ (s.symptomTags || []).join(', ') }}</td>
+      <td>{{ s.symptomTags?.join(', ') || '—' }}</td>
       <td>{{ s.painScore ?? '—' }}</td>
       <td>{{ s.energy ?? '—' }}</td>
       <td>{{ s.appetite ?? '—' }}</td>

@@ -1,24 +1,73 @@
 <div class="login-container">
   <div class="login-container-cont">
     <div class="login-form">
-      <div class="photo-login"><img src="../assets/images/logo.jpg" alt="Logo" /></div>
-      <form>
-        <h2>Rejestracja</h2>
-        <div class="form-group">
-          <label for="username">Nazwa użytkownika:</label>
-          <input type="text" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-          <label for="email">Email:</label>
-          <input type="email" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-          <label for="password">Hasło:</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-        <!-- dodaj akceptacje polityki -->
-        <div class="login-button"><button type="submit">Zarejestruj</button></div>
-      </form>
+      <div class="auth-container">
+  <h2>Załóż konto</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <label>
+      Imię
+      <input type="text" formControlName="firstName" placeholder="Jan" />
+      <small class="err" *ngIf="form.get('firstName')?.touched && form.get('firstName')?.invalid">
+        Podaj poprawne imię (min. 2 znaki)
+      </small>
+    </label>
+
+    <label>
+      Nazwisko
+      <input type="text" formControlName="lastName" placeholder="Kowalski" />
+      <small class="err" *ngIf="form.get('lastName')?.touched && form.get('lastName')?.invalid">
+        Podaj poprawne nazwisko (min. 2 znaki)
+      </small>
+    </label>
+
+    <label>
+      Email
+      <input type="email" formControlName="email" placeholder="jan@example.com" />
+      <small class="err" *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+        Podaj prawidłowy adres email
+      </small>
+    </label>
+
+    <label>
+      Telefon
+      <input type="tel" formControlName="phone" placeholder="+48 600 000 000" />
+      <small class="err" *ngIf="form.get('phone')?.touched && form.get('phone')?.invalid">
+        Podaj prawidłowy numer telefonu
+      </small>
+    </label>
+
+    <label class="password-field">
+      Hasło
+      <div class="password-wrap">
+        <input [type]="showPass ? 'text' : 'password'" formControlName="password" placeholder="••••••" />
+        <button type="button" class="ghost" (click)="toggleShowPass()">
+          {{ showPass ? 'Ukryj' : 'Pokaż' }}
+        </button>
+      </div>
+      <small class="err" *ngIf="form.get('password')?.touched && form.get('password')?.invalid">
+        Hasło musi mieć min. 6 znaków
+      </small>
+    </label>
+
+    <label class="checkbox">
+      <input type="checkbox" formControlName="isVet" />
+      Jestem lekarzem weterynarii
+    </label>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+
+    <button class="primary" type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? 'Rejestruję…' : 'Zarejestruj się' }}
+    </button>
+
+    <p class="alt">
+      Masz już konto?
+      <a routerLink="/login">Zaloguj się</a>
+    </p>
+  </form>
+</div>
+
     </div>
   </div>
 </div>

@@ -40,6 +40,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { WeightFormComponent } from './weight-form/weight-form.component';
 import { MedsFormComponent } from './meds-form/meds-form.component';
 import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
+import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
 
 
 @NgModule({
@@ -75,7 +76,8 @@ import { VaccinationFormComponent } from './vaccination-form/vaccination-form.co
     UserProfileComponent,
     WeightFormComponent,
     MedsFormComponent,
-    VaccinationFormComponent
+    VaccinationFormComponent,
+    SymptomsFormComponent
   ],
   imports: [
     BrowserModule,

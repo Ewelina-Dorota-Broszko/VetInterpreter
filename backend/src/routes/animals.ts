@@ -210,6 +210,73 @@ router.post('/:id/medications', (req, res) =>
 router.delete('/:id/medications/:medId', (req, res) =>
   pullById(req.params.id, 'medications', req.params.medId, res, 'Medication not found')
 );
+/* ========= Medications ========= */
+router.get('/:id/medications', async (req: AuthedRequest, res) => {
+  const can = await ensureOwnership(req.params.id, req.user!.id);
+  if (!can) return res.status(404).json({ error: 'Animal not found' });
+  const animal = await Animal.findById(req.params.id).lean();
+  res.json(animal?.medications || []);
+});
+
+router.post('/:id/medications', (req, res) =>
+  addAndReturnLast(req.params.id, 'medications', req.body, res)
+);
+
+router.delete('/:id/medications/:medId', (req, res) =>
+  pullById(req.params.id, 'medications', req.params.medId, res, 'Medication not found')
+);
+
+/** ⬇️ DODAJ TO: UPDATE jednego leku */
+router.patch('/:id/medications/:medId', async (req: AuthedRequest, res) => {
+  try {
+    const { id, medId } = req.params;
+
+    // 1) autoryzacja właściciela
+    const can = await ensureOwnership(id, req.user!.id);
+    if (!can) return res.status(404).json({ error: 'Animal not found' });
+
+    // 2) whitelist pól, które wolno aktualizować
+    const allowed = [
+      'name',
+      'dose',
+      'frequency',
+      'timesOfDay',   // string[]
+      'startDate',
+      'endDate',
+      'isActive',
+      'notes'
+    ] as const;
+
+    const update: Record<string, any> = {};
+    for (const k of allowed) {
+      if (req.body[k] !== undefined) {
+        // budujemy ścieżki typu "medications.$.isActive"
+        update[`medications.$.${k}`] = req.body[k];
+      }
+    }
+    if (Object.keys(update).length === 0) {
+      return res.status(400).json({ error: 'No updatable fields in body' });
+    }
+
+    // 3) aktualizacja subdokumentu po _id z użyciem operatora pozycyjnego $
+    const result = await Animal.updateOne(
+      { _id: id, 'medications._id': oid(medId) },
+      { $set: update }
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Medication not found' });
+    }
+
+    // 4) zwróć aktualny stan z bazy (tylko ten lek)
+    const fresh = await Animal.findById(id).lean();
+    const updated = fresh?.medications?.find((m: any) => String(m._id) === String(medId));
+    return res.json(updated ?? { message: 'Updated' });
+  } catch (e: any) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
 
 /* ========= Symptoms ========= */
 router.get('/:id/symptoms', async (req: AuthedRequest, res) => {

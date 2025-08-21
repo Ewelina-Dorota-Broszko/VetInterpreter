@@ -1,3 +1,4 @@
+<!-- meds-tab.component.html -->
 <h2>Plan leków</h2>
 
 <canvas #medsChart *ngIf="sorted?.length"></canvas>
@@ -12,6 +13,7 @@
       <th>Start</th>
       <th>Koniec</th>
       <th>Aktywna</th>
+      <th>Akcja</th>
       <th>Uwagi</th>
     </tr>
   </thead>
@@ -19,14 +21,23 @@
     <tr *ngFor="let m of sorted; trackBy: trackByIndex">
       <td>{{ m.name }}</td>
       <td>{{ m.dose }}</td>
-      <td>{{ m.frequency }}</td>
-      <td>{{ m.timesOfDay?.join(', ') || '—' }}</td>
+      <td>{{ m.frequency || '—' }}</td>
+      <td>{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
       <td>{{ m.startDate }}</td>
       <td>{{ m.endDate || '—' }}</td>
       <td>
         <span class="pill" [ngClass]="m.isActive ? 'active' : 'inactive'">
           {{ m.isActive ? 'Tak' : 'Nie' }}
         </span>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="pill toggle"
+          [disabled]="!animalId || !m._id || saving.has(m._id)"
+          (click)="onToggleActive(m)">
+          {{ m.isActive ? 'Wyłącz' : 'Włącz' }}
+        </button>
       </td>
       <td>{{ m.notes || '—' }}</td>
     </tr>

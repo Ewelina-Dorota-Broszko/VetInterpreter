@@ -58,6 +58,11 @@ export class AnimalsService {
   addDiabetesLog(animalId: string, body: any) {
     return this.http.post<any>(`${this.api}/animals/${animalId}/diabetes-logs`, body);
   }
+  updateMedication(animalId: string, medId: string, body: Partial<{ isActive: boolean }>) {
+    return this.http.patch<any>(`${this.api}/animals/${animalId}/medications/${medId}`, body);
+  }
+
+
 
 
 }
