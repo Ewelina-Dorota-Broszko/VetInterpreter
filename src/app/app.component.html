@@ -1,4 +1,4 @@
-<!-- WIDOK 1: NIEZALOGOWANY → zawsze pełne publiczne menu -->
+<!-- WIDOK 1: NIEZALOGOWANY – pełne publiczne menu zawsze -->
 <div class="toolbar-container" role="banner" *ngIf="!loggedIn">
   <div class="menu-container desktop">
     <div class="logo-container">
@@ -14,27 +14,9 @@
       <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
     </div>
   </div>
-
-  <!-- mobile -->
-  <div class="menu-container mobile">
-    <div class="logo-container">
-      <img src="../assets/images/logo.jpg" alt="Logo" />
-      <p>VetInterpreter</p>
-    </div>
-    <div class="open-menu" (click)="toggleMenu()"><img src="../assets/images/menu.png" alt="menu" /></div>
-    <div class="menu-items" *ngIf="isMenuOpen" [ngClass]="{ 'active': isMenuOpen }">
-      <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
-      <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
-      <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
-      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontakt</a></div>
-      <div class="menu-item"><a routerLink="/login" [class.active]="isActive('/login')">Logowanie</a></div>
-      <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
-      <div class="close" (click)="toggleMenu()"><img src="../assets/images/close.png" alt="close" /></div>
-    </div>
-  </div>
 </div>
 
-<!-- WIDOK 2: ZALOGOWANY & PUBLICZNE STRONY → pełne menu + Dashboard + Wyloguj -->
+<!-- WIDOK 2: ZALOGOWANY + PUBLICZNE STRONY → pełne menu + Dashboard + Wyloguj (+ profil wet.) -->
 <div class="toolbar-container" role="banner" *ngIf="loggedIn && isOnPublicPage">
   <div class="menu-container desktop">
     <div class="logo-container">
@@ -46,62 +28,36 @@
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
       <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
       <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontakt</a></div>
-      <div class="menu-item"><a routerLink="/dashboard" [class.active]="isActive('/dashboard')">Dashboard</a></div>
-      <div class="menu-item"><a href="#" (click)="logout()">Wyloguj</a></div>
-    </div>
-  </div>
 
-  <!-- mobile -->
-  <div class="menu-container mobile">
-    <div class="logo-container">
-      <img src="../assets/images/logo.jpg" alt="Logo" />
-      <p>VetInterpreter</p>
-    </div>
-    <div class="open-menu" (click)="toggleMenu()"><img src="../assets/images/menu.png" alt="menu" /></div>
-    <div class="menu-items" *ngIf="isMenuOpen" [ngClass]="{ 'active': isMenuOpen }">
-      <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
-      <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
-      <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
-      <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontakt</a></div>
-      <div class="menu-item"><a routerLink="/dashboard">Dashboard</a></div>
-      <div class="menu-item"><a href="#" (click)="logout(); toggleMenu()">Wyloguj</a></div>
-      <div class="close" (click)="toggleMenu()"><img src="../assets/images/close.png" alt="close" /></div>
+      <div class="menu-item"><a routerLink="/dashboard" [class.active]="isActive('/dashboard')">Dashboard</a></div>
+      <!-- Link do profilu weterynarza tylko dla weta -->
+      <div class="menu-item" *ngIf="(auth.user$ | async)?.isVet">
+        <a routerLink="/vet-profile" [class.active]="isActive('/vet-profile')">Mój profil (wet.)</a>
+      </div>
+
+      <div class="menu-item"><a href="#" (click)="logout()">Wyloguj</a></div>
     </div>
   </div>
 </div>
 
-<!-- WIDOK 3: ZALOGOWANY & POZA PUBLICZNYMI → brak pełnego menu, tylko HOME + NAVBAR -->
-<div class="toolbar-container mini" role="banner" *ngIf="loggedIn && !isOnPublicPage">
+<!-- WIDOK 3: ZALOGOWANY + NIEPUBLICZNE → mini pasek + NAVBAR (właściciel/wet) -->
+<div class="toolbar-container mini" role="banner" *ngIf="loggedIn && !isOnPublicPage" >
   <div class="menu-container desktop">
     <!-- <div class="logo-container">
       <img src="../assets/images/logo.jpg" alt="Logo" />
       <p>VetInterpreter</p>
     </div> -->
-    <div class="menu-items" [ngClass]="{ 'move-80': loggedIn && !isOnPublicPage }">
+    <div class="menu-items">
       <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
       <div class="menu-item"><a href="#" (click)="logout()">Wyloguj</a></div>
-      <!-- intencjonalnie brak Dashboard/Logout w mini-menu; logout np. w navbarze -->
-    </div>
-  </div>
-
-  <!-- mobile -->
-  <div class="menu-container mobile">
-    <div class="logo-container">
-      <img src="../assets/images/logo.jpg" alt="Logo" />
-      <p>VetInterpreter</p>
-    </div>
-    <div class="open-menu" (click)="toggleMenu()"><img src="../assets/images/menu.png" alt="menu" /></div>
-    <div class="menu-items" *ngIf="isMenuOpen" [ngClass]="{ 'active': isMenuOpen }">
-      <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
-      <div class="close" (click)="toggleMenu()"><img src="../assets/images/close.png" alt="close" /></div>
     </div>
   </div>
 </div>
 
-<!-- NAVBAR – tylko dla zalogowanych poza publicznymi stronami -->
+<!-- tu wpina się lewe menu: właściciel vs weterynarz -->
 <app-navbar *ngIf="loggedIn && !isOnPublicPage"></app-navbar>
 
-<!-- Treść; jeśli masz stały navbar, możesz dodać offset przez klasę -->
+<!-- Treść; gdy jesteś na stronach wewnętrznych, odsuń poniżej navbara -->
 <div [ngClass]="{ 'move-80': loggedIn && !isOnPublicPage }">
   <router-outlet></router-outlet>
 </div>
