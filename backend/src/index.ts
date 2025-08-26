@@ -7,6 +7,7 @@ import { connectDB } from './lib/db';
 import authRouter from './routes/auth';
 import ownersRouter from './routes/owners';
 import animalsRouter from './routes/animals';
+import vetRoutes from './routes/vets';
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.get('/health', (_req, res) => res.json({ ok: true }));
 app.use('/auth', authRouter);
 app.use('/owners', ownersRouter);
 app.use('/animals', animalsRouter);
+app.use('/vets', vetRoutes); 
 
 // Konfiguracja serwera
 const PORT = Number(process.env.PORT || 4000);

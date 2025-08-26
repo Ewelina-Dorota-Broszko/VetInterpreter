@@ -10,30 +10,18 @@ import { AuthService } from './auth/auth.service';
 })
 export class AppComponent {
   loggedIn = false;
-  isMenuOpen = false;
-  title = 'VetInterpreter';
-
-  /** Publiczne strony, na których pokazujemy pełne menu dla zalogowanych */
+  isOnPublicPage = true;
   readonly PUBLIC_ROUTES = ['/', '/about', '/blog', '/contact'];
 
-  /** Czy aktualny adres to publiczna strona */
-  isOnPublicPage = true;
-
   constructor(public auth: AuthService, private router: Router) {
-    // subskrybuj stan logowania
     this.auth.user$.subscribe(u => this.loggedIn = !!u);
 
-    // nasłuchuj zmian trasy, aby ustawiać isOnPublicPage
     this.router.events
       .pipe(filter(e => e instanceof NavigationEnd))
       .subscribe(() => {
         const url = this.router.url.split('?')[0].split('#')[0];
         this.isOnPublicPage = this.PUBLIC_ROUTES.includes(url);
       });
-  }
-
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
   }
 
   isActive(path: string): boolean {

@@ -22,6 +22,8 @@ import { WeightFormComponent } from './weight-form/weight-form.component';
 import { MedsFormComponent } from './meds-form/meds-form.component';
 import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
 import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
+import { VetProfileComponent } from './vet-profile/vet-profile.component';
+import { AnimalsAddFormComponent } from './animals-add-form/animals-add-form.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -47,6 +49,9 @@ const routes: Routes = [
   { path: 'diet', component: DietComponent },
   { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
   { path: 'profile', component: UserProfileComponent },
+  { path: 'vet-profile', component: VetProfileComponent },
+  { path: 'animals/new', component: AnimalsAddFormComponent }
+
 
 ]
 

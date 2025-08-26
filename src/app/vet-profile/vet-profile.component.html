@@ -1,0 +1,278 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Mój profil (weterynarz)</h2>
+
+    <div class="actions" *ngIf="!loading">
+      <button *ngIf="!editMode" class="secondary" (click)="switchToEdit()">Dodaj Dane/Edytuj</button>
+      <button *ngIf="editMode" class="ghost" type="button" (click)="cancelEdit()">Anuluj</button>
+    </div>
+
+    <!-- PODGLĄD -->
+    <div *ngIf="!editMode && currentData" class="preview">
+      <section>
+        <h3>Dane kliniki</h3>
+        <p><strong>Nazwa:</strong> {{ currentData.clinicName || '—' }}</p>
+        <p *ngIf="vetId"><strong>ID weterynarza:</strong> {{ vetId }}</p>
+        <!-- <p *ngIf="userId">ID użytkownika: <strong>{{ userId }}</strong></p> -->
+        <p><strong>PWZ:</strong> {{ currentData.licenseNo || '—' }}</p>
+        <p><strong>Telefon:</strong> {{ currentData.phone || '—' }}</p>
+        <p><strong>Email:</strong> {{ currentData.email || '—' }}</p>
+        <p><strong>WWW:</strong> {{ currentData.website || '—' }}</p>
+        <p><strong>O mnie:</strong> {{ currentData.about || '—' }}</p>
+      </section>
+
+      <section>
+        <h3>Adres</h3>
+        <p>
+          {{ currentData.address?.line1 || '' }}
+          <span *ngIf="currentData.address?.line2">, {{ currentData.address?.line2 }}</span><br>
+          {{ currentData.address?.postalCode || '' }} {{ currentData.address?.city || '' }}<br>
+          {{ currentData.address?.country || '' }}
+        </p>
+      </section>
+
+      <section>
+        <h3>Ustawienia i cennik</h3>
+        <p><strong>Nowi pacjenci:</strong> {{ currentData.acceptsNewPatients ? 'Tak' : 'Nie' }}</p>
+        <p><strong>Nagłe przypadki:</strong> {{ currentData.acceptsEmergency ? 'Tak' : 'Nie' }}</p>
+        <p *ngIf="currentData.acceptsEmergency"><strong>Telefon alarmowy:</strong> {{ currentData.emergencyPhone || '—' }}</p>
+        <p><strong>Czas wizyty:</strong> {{ currentData.appointmentDurationMin }} min</p>
+        <p><strong>Cena konsultacji:</strong> {{ currentData.consultPrice | number:'1.0-0' }} PLN</p>
+      </section>
+
+      <section>
+        <h3>Specjalizacje</h3>
+        <p>{{ (currentData.specialties || []).join(', ') || '—' }}</p>
+      </section>
+
+      <section>
+        <h3>Usługi</h3>
+        <p>{{ (currentData.servicesOffered || []).join(', ') || '—' }}</p>
+      </section>
+
+      <section>
+        <h3>Języki</h3>
+        <p>{{ (currentData.languages || []).join(', ') || '—' }}</p>
+      </section>
+
+      <section>
+        <h3>Metody płatności</h3>
+        <p>{{ (currentData.paymentMethods || []).join(', ') || '—' }}</p>
+      </section>
+
+      <section>
+        <h3>Godziny pracy</h3>
+        <table class="hours">
+          <tbody>
+            <tr *ngFor="let d of days">
+              <td class="day">{{ d.label }}</td>
+              <td class="time">
+                <ng-container *ngIf="currentData?.workingHours">
+                  <ng-container *ngFor="let wh of currentData.workingHours">
+                    <ng-container *ngIf="wh.day === d.idx">
+                      <span *ngIf="wh.open; else closed">
+                        {{ wh.start }}–{{ wh.end }}
+                        <span *ngIf="wh.breakStart && wh.breakEnd"> (przerwa {{ wh.breakStart }}–{{ wh.breakEnd }})</span>
+                      </span>
+                      <ng-template #closed>zamknięte</ng-template>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </div>
+
+    <!-- EDYCJA -->
+    <form *ngIf="editMode && !loading" [formGroup]="form" (ngSubmit)="save()">
+      <fieldset>
+        <legend>Dane kliniki</legend>
+        <label>Nazwa przychodni
+          <input formControlName="clinicName" type="text" />
+        </label>
+        <label>PWZ (nr)
+          <input formControlName="licenseNo" type="text" />
+        </label>
+        <label>Telefon
+          <input formControlName="phone" type="text" />
+        </label>
+        <label>Email
+          <input formControlName="email" type="email" />
+        </label>
+        <label>WWW
+          <input formControlName="website" type="text" />
+        </label>
+        <label>O mnie
+          <textarea formControlName="about" rows="3"></textarea>
+        </label>
+      </fieldset>
+
+      <fieldset formGroupName="address">
+        <legend>Adres</legend>
+        <label>Ulica i numer
+          <input formControlName="line1" type="text" />
+        </label>
+        <label>Uzupełnienie
+          <input formControlName="line2" type="text" />
+        </label>
+        <label>Miasto
+          <input formControlName="city" type="text" />
+        </label>
+        <label>Kod pocztowy
+          <input formControlName="postalCode" type="text" />
+        </label>
+        <label>Kraj
+          <input formControlName="country" type="text" />
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Ustawienia i cennik</legend>
+        <label class="checkbox">
+          <input type="checkbox" formControlName="acceptsNewPatients" />
+          Przyjmuję nowych pacjentów
+        </label>
+        <label class="checkbox">
+          <input type="checkbox" formControlName="acceptsEmergency" (change)="onEmergencyToggle()" />
+          Obsługuję nagłe przypadki
+        </label>
+        <label>Telefon alarmowy
+          <input formControlName="emergencyPhone" type="text"
+                 [disabled]="!form.get('acceptsEmergency')?.value" />
+        </label>
+        <label>Czas trwania wizyty (min)
+          <input formControlName="appointmentDurationMin" type="number" min="5" max="180" />
+        </label>
+        <label>Cena konsultacji (PLN)
+          <input formControlName="consultPrice" type="number" min="0" step="1" />
+        </label>
+      </fieldset>
+
+      <!-- Specjalizacje -->
+      <fieldset>
+        <legend>Specjalizacje</legend>
+
+        <div class="inline-add">
+          <input type="text" placeholder="Inne (wpisz, oddziel przecinkami)…"
+                 [(ngModel)]="newSpecialties" [ngModelOptions]="{standalone:true}">
+          <button type="button" class="ghost"
+                  (click)="addCustomOptions('specialties', newSpecialties)"
+                  [disabled]="!newSpecialties.trim()">
+            Dodaj
+          </button>
+        </div>
+
+        <div class="chips">
+          <label *ngFor="let s of getMergedOptions('specialties')">
+            <input type="checkbox"
+                   [checked]="isChecked('specialties', s)"
+                   (change)="toggleMulti('specialties', s, $any($event.target).checked)" />
+            {{ s }}
+            <!-- „x” tylko dla custom -->
+            <button type="button" class="chip-remove"
+                    *ngIf="!(specialtyOptions.includes(s))"
+                    (click)="removeOption('specialties', s)">×</button>
+          </label>
+        </div>
+      </fieldset>
+
+      <!-- Usługi -->
+      <fieldset>
+        <legend>Usługi</legend>
+
+        <div class="inline-add">
+          <input type="text" placeholder="Inne (wpisz, oddziel przecinkami)…"
+                 [(ngModel)]="newServices" [ngModelOptions]="{standalone:true}">
+          <button type="button" class="ghost"
+                  (click)="addCustomOptions('servicesOffered', newServices)"
+                  [disabled]="!newServices.trim()">
+            Dodaj
+          </button>
+        </div>
+
+        <div class="chips">
+          <label *ngFor="let s of getMergedOptions('servicesOffered')">
+            <input type="checkbox"
+                   [checked]="isChecked('servicesOffered', s)"
+                   (change)="toggleMulti('servicesOffered', s, $any($event.target).checked)" />
+            {{ s }}
+            <button type="button" class="chip-remove"
+                    *ngIf="!(serviceOptions.includes(s))"
+                    (click)="removeOption('servicesOffered', s)">×</button>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Języki</legend>
+        <div class="chips">
+          <label *ngFor="let l of languageOptions">
+            <input type="checkbox"
+                   [checked]="isChecked('languages', l)"
+                   (change)="toggleMulti('languages', l, $any($event.target).checked)" />
+            {{ l }}
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Metody płatności</legend>
+        <div class="chips">
+          <label *ngFor="let p of paymentOptions">
+            <input type="checkbox"
+                   [checked]="isChecked('paymentMethods', p)"
+                   (change)="toggleMulti('paymentMethods', p, $any($event.target).checked)" />
+            {{ p }}
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Godziny pracy</legend>
+        <div formArrayName="workingHours" class="hours-grid">
+          <div class="hour-row" *ngFor="let row of hoursFA.controls; let i = index" [formGroupName]="i">
+            <div class="day">{{ days[i].label }}</div>
+
+            <label class="checkbox">
+              <input type="checkbox" formControlName="open" />
+              Otwarte
+            </label>
+
+            <div class="times">
+              <span>od</span>
+              <input type="time" formControlName="start" [disabled]="!row.get('open')?.value">
+              <span>do</span>
+              <input type="time" formControlName="end" [disabled]="!row.get('open')?.value">
+            </div>
+
+            <div class="times">
+              <span>przerwa</span>
+              <input type="time" formControlName="breakStart" [disabled]="!row.get('open')?.value">
+              <span>–</span>
+              <input type="time" formControlName="breakEnd" [disabled]="!row.get('open')?.value">
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+
+      <div class="actions">
+        <button class="ghost" type="button" (click)="cancelEdit()" [disabled]="saving">Anuluj</button>
+        <button class="primary" type="submit" [disabled]="saving || form.invalid">
+          {{ saving ? 'Zapisywanie…' : 'Zapisz' }}
+        </button>
+      </div>
+    </form>
+
+    <ng-template #loadingTpl>
+      <p>Ładowanie…</p>
+    </ng-template>
+  </div>
+</div>

@@ -1,4 +1,5 @@
-<div class="navbar-container">
+<!-- NAVBAR – WŁAŚCICIEL (isVet = false) -->
+<div class="navbar-container" *ngIf="!(isVet$ | async)">
   <div class="navbar-menu">
     <div class="logo-container-login">
       <img src="assets/images/logo.jpg" alt="Logo" />
@@ -6,9 +7,8 @@
     </div>
 
     <div class="menu">
-
+      <!-- Profil właściciela -->
       <div class="menu-elements">
-        <!-- <p>Dashboard</p> -->
         <div class="menu-element" routerLink="/profile" routerLinkActive="active">
           <div class="photo-name">
             <img src="assets/images/pawprint.png" alt="">
@@ -17,10 +17,8 @@
         </div>
       </div>
 
-
-      <!-- DASHBOARD -->
+      <!-- Dashboard -->
       <div class="menu-elements">
-        <!-- <p>Dashboard</p> -->
         <div class="menu-element" (click)="goToDashboard()">
           <div class="photo-name">
             <img src="assets/images/pawprint.png" alt="">
@@ -29,7 +27,7 @@
         </div>
       </div>
 
-      <!-- KALENDARZ -->
+      <!-- Kalendarz -->
       <div class="menu-elements">
         <p>Kalendarz</p>
         <div class="menu-element" (click)="goToCalendar()">
@@ -40,29 +38,94 @@
         </div>
       </div>
 
-      <!-- ZWIERZĘTA (lista) -->
+      <!-- Zwierzęta (lista właściciela) -->
       <div class="menu-elements">
         <p>Zwierzęta</p>
-        <div class="menu-element" *ngFor="let animal of animals; trackBy: trackById" (click)="selectAnimal(animal)">
+        <div
+          class="menu-element"
+          *ngFor="let animal of animals; trackBy: trackById"
+          (click)="selectAnimal(animal)">
           <div class="photo-name">
             <img src="assets/images/pawprint.png" alt="">
             <p>{{ animal.name }}</p>
           </div>
         </div>
+        <div class="menu-element"  routerLink="animals/new">
+          <div class="photo-name">
+            <img src="assets/images/add.png" alt="">
+            <p>Dodaj Zwierzę</p>
+          </div>
+        </div>
       </div>
+      
 
-      <!-- DOKUMENTY -->
+      <!-- Dokumenty -->
       <div class="menu-elements">
         <p>Dokumenty</p>
-
         <div class="menu-element" (click)="goToAddDocument()">
           <div class="photo-name">
             <img src="assets/images/add.png" alt="">
             <p>Dodaj dokument</p>
           </div>
         </div>
-
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR – WETERYNARZ (isVet = true) -->
+<div class="navbar-container" *ngIf="isVet$ | async">
+  <div class="navbar-menu">
+    <div class="logo-container-login">
+      <img src="assets/images/logo.jpg" alt="Logo" />
+      <p>VetInterpreter</p>
+    </div>
+
+    <div class="menu">
+      <!-- Profil weterynarza -->
+      <div class="menu-elements">
+        <div class="menu-element" routerLink="/vet-profile" routerLinkActive="active">
+          <div class="photo-name">
+            <img src="assets/images/pawprint.png" alt="">
+            <p>Mój profil (wet.)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kalendarz przyjęć (wet) -->
+      <div class="menu-elements">
+        <p>Kalendarz</p>
+        <div class="menu-element" routerLink="/vet/calendar" routerLinkActive="active">
+          <div class="photo-name">
+            <img src="assets/images/pawprint.png" alt="">
+            <p>Kalendarz wizyt</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pacjenci (opcjonalnie: lista pacjentów kliniki) -->
+      <div class="menu-elements">
+        <p>Pacjenci</p>
+        <div class="menu-element" routerLink="/vet/patients" routerLinkActive="active">
+          <div class="photo-name">
+            <img src="assets/images/pawprint.png" alt="">
+            <p>Lista pacjentów</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notatki kliniczne / dokumentacja (opcjonalnie) -->
+      <div class="menu-elements">
+        <p>Dokumentacja</p>
+        <div class="menu-element" routerLink="/vet/notes" routerLinkActive="active">
+          <div class="photo-name">
+            <img src="assets/images/add.png" alt="">
+            <p>Notatki kliniczne</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Możesz dodać inne sekcje weterynaryjne tutaj -->
     </div>
   </div>
 </div>
