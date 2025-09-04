@@ -24,6 +24,12 @@ import { VaccinationFormComponent } from './vaccination-form/vaccination-form.co
 import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
 import { VetProfileComponent } from './vet-profile/vet-profile.component';
 import { AnimalsAddFormComponent } from './animals-add-form/animals-add-form.component';
+import { CalendarComponent } from './calendar/calendar.component';
+import { FindVetComponent } from './find-vet/find-vet.component';
+import { VetPatientsComponent } from './vet-patients/vet-patients.component';
+import { MyVetComponent } from './my-vet/my-vet.component';
+import { VetPatientProfileComponent } from './vet-patient-profile/vet-patient-profile.component';
+import { VetAnimalProfileComponent } from './vet-animal-profile/vet-animal-profile.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -49,9 +55,17 @@ const routes: Routes = [
   { path: 'diet', component: DietComponent },
   { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
   { path: 'profile', component: UserProfileComponent },
+  { path: 'animals/new', component: AnimalsAddFormComponent },
+  { path: 'calendar', component: CalendarComponent },
+  { path: 'find-vet', component: FindVetComponent },
+  { path: 'my-vet', component: MyVetComponent, canActivate: [AuthGuard] },
+    // dostępne tylko dla weterynarzy (bo requireVet = true)
+  { path: 'vet/patients', component: VetPatientsComponent, canActivate: [AuthGuard], data: { requireVet: true } },
+  { path: 'vet/patient/:ownerId', component: VetPatientProfileComponent, canActivate: [AuthGuard], data: { requireVet: true } },
+  { path: 'vet/animal/:id', component: VetAnimalProfileComponent, canActivate: [AuthGuard], data: { requireVet: true } },
+  { path: 'vet/patients', component: VetPatientsComponent, canActivate: [AuthGuard], data: { requireVet: true } },
+  { path: 'vet/:id', component: MyVetComponent, canActivate: [AuthGuard] },
   { path: 'vet-profile', component: VetProfileComponent },
-  { path: 'animals/new', component: AnimalsAddFormComponent }
-
 
 ]
 

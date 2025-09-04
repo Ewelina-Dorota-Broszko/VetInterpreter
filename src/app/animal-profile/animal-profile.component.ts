@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { AnimalsService } from '../services/animals.service';
+import { VetService } from '../services/vet.service';
 
 @Component({
   selector: 'app-animal-profile',
@@ -25,11 +26,14 @@ export class AnimalProfileComponent implements OnInit {
   private chartInstance: Chart | null = null;
   private chartTempInstance: Chart | null = null;
 
+  deleting = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private animalsService: AnimalsService
-  ) {}
+    private animalsService: AnimalsService,
+    private vetSvc: VetService,
+  ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -39,6 +43,26 @@ export class AnimalProfileComponent implements OnInit {
         return;
       }
       this.loadAnimal(id);
+    });
+  }
+  onDeleteAnimal() {
+    if (!this.animal?._id) return;
+
+    const sure = confirm(`Na pewno usunąć ${this.animal.name}? Tej operacji nie można cofnąć.`);
+    if (!sure) return;
+
+    this.deleting = true;
+    this.animalsService.deleteAnimal(this.animal._id).subscribe({
+      next: () => {
+        this.deleting = false;
+        // Po usunięciu wracamy na dashboard (lub gdzie wolisz)
+        this.router.navigateByUrl('/dashboard');
+      },
+      error: (err) => {
+        this.deleting = false;
+        console.error('Błąd usuwania zwierzaka:', err);
+        alert(err?.error?.error || 'Nie udało się usunąć zwierzaka.');
+      }
     });
   }
 
@@ -192,5 +216,21 @@ export class AnimalProfileComponent implements OnInit {
   addNewDocument() {
     if (!this.animal?._id) return;
     this.router.navigate(['/add-document'], { queryParams: { animalId: this.animal._id } });
+  }
+
+  goAssignVet() {
+    if (!this.animal?._id) return;
+    // przejście do listy wetów z kontekstem zwierzaka
+    this.router.navigate(['/find-vet'], { queryParams: { animalId: this.animal._id } });
+  }
+
+  unassignVet() {
+    if (!this.animal?._id) return;
+    if (!confirm(`Odepnąć weterynarza od ${this.animal.name}?`)) return;
+
+    this.vetSvc.unassignAnimalFromVet(this.animal._id).subscribe({
+      next: () => this.animal.vetId = undefined,
+      error: (e) => alert(e?.error?.error || 'Nie udało się odpiąć.')
+    });
   }
 }

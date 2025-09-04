@@ -1,0 +1,72 @@
+.dashboard-menu-container {
+  height: 100%;
+  background-color: #1d222b;
+  width: 80vw;
+  height: 100vh;
+  position: absolute;
+  right: -8px;
+  top: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 100px 1.5rem;
+  border: 1px solid #383c46;
+  margin: 60px;
+  height: auto;
+  background-color: #212631;
+
+  .toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+
+  input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    background: #2b2f3a;
+    color: #fff;
+  }
+
+  button {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: none;
+    background: #4cafef;
+    color: #fff;
+    cursor: pointer;
+
+    &:hover {
+      background: #3a9ed1;
+    }
+  }
+}
+
+table.patients {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #444;
+  }
+
+  tr {
+    cursor: pointer;
+
+    &:hover {
+      background: #2b2f3a;
+    }
+  }
+}
+
+}

@@ -1,14 +1,194 @@
-<!-- <div class="dashboard-container-menu">
-  <div class="container">
-    <div class="dashboard">wonfis</div>
-  </div>
-</div> -->
-
 <div class="dashboard-menu-container">
   <div class="container">
 
-<app-calendar></app-calendar>
+    <div class="owner-dashboard">
+      <h2>Panel właściciela</h2>
 
-    
+      <div *ngIf="loading" class="loading">Ładowanie…</div>
+      <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+      <div class="grid">
+        <!-- Najbliższe terminy -->
+        <section class="card">
+          <div class="card-head">
+            <h3>Najbliższe terminy</h3>
+            <button class="ghost" (click)="openCalendar()">Kalendarz</button>
+          </div>
+
+          <table class="tbl" *ngIf="upcoming.length; else noUpcoming">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tytuł</th>
+                <th>Zwierz</th>
+                <th>Notatka</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of upcoming; trackBy: trackEvent">
+                <td><span class="badge">{{ e.date }}</span></td>
+                <td class="strong">{{ e.title }}</td>
+                <td>
+                  <ng-container *ngIf="e.animalId as aid; else dash">
+                    <a class="link" (click)="openAnimal(aid)">Profil</a>
+                  </ng-container>
+                  <ng-template #dash>—</ng-template>
+                </td>
+                <td class="muted">{{ e.note || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noUpcoming>
+            <p class="muted">Brak zaplanowanych terminów.</p>
+          </ng-template>
+        </section>
+
+        <!-- Leki do podania dziś -->
+        <section class="card">
+          <div class="card-head">
+            <h3>Leki do podania dziś</h3>
+          </div>
+
+          <table class="tbl" *ngIf="medsToday.length; else noMeds">
+            <thead>
+              <tr>
+                <th>Godzina</th>
+                <th>Lek</th>
+                <th>Dawka</th>
+                <th>Zwierz</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let row of medsToday">
+                <td><span class="chip chip-time">{{ row.timeLabel }}</span></td>
+                <td class="strong">{{ row.medication?.name || '—' }}</td>
+                <td class="muted">{{ row.medication?.dose || '—' }}</td>
+                <td>{{ row.animalName }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noMeds>
+            <p class="muted">Na dziś brak zaplanowanych leków.</p>
+          </ng-template>
+        </section>
+
+        <!-- Zbliżające się szczepienia -->
+        <section class="card span-2">
+          <div class="card-head">
+            <h3>Zbliżające się szczepienia</h3>
+          </div>
+
+          <table class="tbl" *ngIf="vaccSoon.length; else noVacc">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Termin</th>
+                <th>Szczepionka</th>
+                <th>Zwierz</th>
+                <th>Uwagi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of vaccSoon">
+                <td>
+                  <span [class]="badgeClassForVacc(r.daysLeft)">
+                    {{ r.daysLeft < 0 ? 'po terminie' : (r.daysLeft === 0 ? 'dzisiaj' : 'za ' + r.daysLeft + ' d') }}
+                  </span>
+                </td>
+                <td>{{ r.v?.nextDueDate || '—' }}</td>
+                <td class="strong">{{ r.v?.name || r.v?.type || '—' }}</td>
+                <td>{{ r.animalName }}</td>
+                <td class="muted">{{ r.v?.notes || '—' }}</td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noVacc>
+            <p class="muted">Brak szczepień w ciągu 30 dni.</p>
+          </ng-template>
+        </section>
+
+        <!-- Ostatnie wyniki badań -->
+        <section class="card span-2">
+          <div class="card-head">
+            <h3>Ostatnie wyniki badań</h3>
+          </div>
+
+          <table class="tbl compact" *ngIf="latestResults.length; else noRes">
+            <thead>
+              <tr>
+                <th>Zwierz</th>
+                <th>Krew</th>
+                <th>Mocz</th>
+                <th>Temperatura</th>
+                <th>Waga</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of latestResults">
+                <td class="strong">{{ r.animalName }}</td>
+                <td>
+                  <div *ngIf="r.blood; else dash"> {{ r.blood.date }} · HGB: {{ r.blood.hemoglobin ?? '—' }} </div>
+                  <ng-template #dash>—</ng-template>
+                </td>
+                <td>
+                  <div *ngIf="r.urine; else dash2"> {{ r.urine.date }} · pH: {{ r.urine.pH ?? '—' }} </div>
+                  <ng-template #dash2>—</ng-template>
+                </td>
+                <td>
+                  <div *ngIf="r.temperature; else dash3"> {{ r.temperature.date }} · {{ r.temperature.temperature }}°C </div>
+                  <ng-template #dash3>—</ng-template>
+                </td>
+                <td>
+                  <div *ngIf="r.weight; else dash4"> {{ r.weight.date }} · {{ r.weight.weightKg ?? r.weight.value ?? '—' }} kg </div>
+                  <ng-template #dash4>—</ng-template>
+                </td>
+                <td class="actions">
+                  <button class="ghost" (click)="openAnimal(r.animalId)">Otwórz</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noRes>
+            <p class="muted">Brak wyników do wyświetlenia.</p>
+          </ng-template>
+        </section>
+
+        <!-- Moi weterynarze -->
+        <section class="card">
+          <div class="card-head">
+            <h3>Moi weterynarze</h3>
+            <!-- <button class="ghost" (click)="openCalendar()">Terminy</button> -->
+          </div>
+
+          <table class="tbl" *ngIf="myVets.length; else noVets">
+            <thead>
+              <tr>
+                <th>Klinika</th>
+                <th>Lekarz</th>
+                <th>Miasto</th>
+                <th>Kontakt</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let v of myVets; trackBy: trackVet">
+                <td class="strong">{{ v.clinicName }}</td>
+                <td>{{ v.vetName || '—' }}</td>
+                <td>{{ v.address?.city || '—' }}</td>
+                <td class="muted">{{ v.email || '—' }} <span *ngIf="v.phone"> · {{ v.phone }}</span></td>
+                <td class="actions">
+                  <button class="ghost" (click)="openVet(v._id)">Profil</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ng-template #noVets>
+            <p class="muted">Nie masz przypiętych weterynarzy.</p>
+          </ng-template>
+        </section>
+      </div>
+    </div>
+
   </div>
 </div>

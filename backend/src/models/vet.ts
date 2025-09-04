@@ -47,5 +47,16 @@ const VetSchema = new Schema(
   },
   { timestamps: true }
 );
+VetSchema.virtual('vetName').get(function (this: any) {
+  const u = this.userId; // po populate może być obiektem
+  if (!u) return undefined;
+  // popularne warianty pól w User:
+  const name = u.name || u.fullName || [u.firstName, u.lastName].filter(Boolean).join(' ').trim();
+  return name || undefined;
+});
+
+// ⬇️ włącz virtuale w JSON i obiekcie
+VetSchema.set('toJSON', { virtuals: true });
+VetSchema.set('toObject', { virtuals: true });
 
 export default model('Vet', VetSchema);

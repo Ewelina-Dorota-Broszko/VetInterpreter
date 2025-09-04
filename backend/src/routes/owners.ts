@@ -129,6 +129,31 @@ router.get('/me/full', async (req: AuthedRequest, res) => {
   });
 });
 
+/**
+ * GET /vets/patients?search=Kowalski
+ * Zwraca listę pacjentów (ownerów), opcjonalnie filtrowanych
+ */
+router.get('/vets/patients', async (req: AuthedRequest, res) => {
+  try {
+    const { search } = req.query;
+
+    const filter: any = {};
+    if (search) {
+      const regex = new RegExp(String(search), 'i'); // case-insensitive
+      filter.$or = [
+        { name: regex },
+        { email: regex },
+        { phone: regex }
+      ];
+    }
+
+    const owners = await Owner.find(filter).select('_id name email phone createdAt').lean();
+    res.json(owners);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 
 
 export default router;

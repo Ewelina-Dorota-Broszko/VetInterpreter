@@ -1,1 +1,70 @@
-<p>animals-add-form works!</p>
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Dodaj zwierzaka</h2>
+
+    <div class="info" *ngIf="loadingOwner">Ładowanie profilu właściciela…</div>
+    <div class="error" *ngIf="!loadingOwner && !ownerId">Brak profilu właściciela.</div>
+
+    <form (ngSubmit)="submitForm()" #animalForm="ngForm" *ngIf="!loadingOwner && ownerId">
+      <fieldset>
+        <legend>Dane zwierzaka</legend>
+
+        <label>Imię <span>*</span></label>
+        <input
+          type="text"
+          [(ngModel)]="formData.basic.name"
+          name="name"
+          required
+          minlength="2"
+          placeholder="np. Reksio"
+        />
+
+        <label>Gatunek <span>*</span></label>
+        <select [(ngModel)]="formData.basic.species" name="species" required>
+          <option *ngFor="let s of speciesOptions" [ngValue]="s.value">{{ s.label }}</option>
+        </select>
+
+        <label>Rasa</label>
+        <input
+          type="text"
+          [(ngModel)]="formData.basic.breed"
+          name="breed"
+          placeholder="opcjonalnie"
+        />
+
+        <label>Płeć <span>*</span></label>
+        <div class="radios">
+          <label class="radio" *ngFor="let sx of sexOptions">
+            <input type="radio" [value]="sx.value" name="sex" [(ngModel)]="formData.basic.sex" required />
+            <span>{{ sx.label }}</span>
+          </label>
+        </div>
+
+        <label>Waga (kg)</label>
+        <input
+          type="number"
+          min="0"
+          step="0.1"
+          [(ngModel)]="formData.basic.weightKg"
+          name="weightKg"
+          placeholder="np. 12.5"
+        />
+
+        <label>Data urodzenia <span>*</span></label>
+        <input
+          type="date"
+          [(ngModel)]="formData.basic.birthDate"
+          name="birthDate"
+          required
+        />
+      </fieldset>
+
+      <button type="submit" [disabled]="saving">
+        {{ saving ? 'Dodawanie…' : 'Dodaj zwierzaka' }}
+      </button>
+
+      <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </form>
+  </div>
+</div>

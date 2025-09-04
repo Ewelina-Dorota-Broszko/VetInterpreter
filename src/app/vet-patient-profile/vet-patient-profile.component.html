@@ -1,0 +1,72 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+
+    <div class="vet-patient-profile">
+      <button class="ghost back" routerLink="/vet/patients">← Wróć do listy</button>
+
+      <h2>Profil pacjenta</h2>
+
+      <div *ngIf="loading" class="muted">Ładowanie…</div>
+      <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+      <div *ngIf="!loading && data">
+        <section class="card">
+          <h3>Dane właściciela</h3>
+          <div class="grid2">
+            <div>
+              <div class="label">Imię i nazwisko</div>
+              <div class="value strong">{{ data.owner?.name || '—' }}</div>
+            </div>
+            <div>
+              <div class="label">Kontakt</div>
+              <div class="value muted">
+                {{ data.owner?.email || '—' }} <span *ngIf="data.owner?.phone">· {{ data.owner?.phone }}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h3>Zwierzęta tego pacjenta</h3>
+
+          <table class="tbl" *ngIf="data.animals?.length; else noAnimals">
+            <thead>
+              <tr>
+                <th>Nazwa</th>
+                <th>Gatunek</th>
+                <th>Rasa</th>
+                <th>Płeć</th>
+                <th>Waga</th>
+                <th>Akcje</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of data.animals">
+                <td class="strong">{{ a.name }}</td>
+                <td>{{ a.species }}</td>
+                <td>{{ a.breed || '—' }}</td>
+                <td>{{ a.sex || '—' }}</td>
+                <td>{{ a.weightKg ?? '—' }}</td>
+                <td class="actions">
+                  <button class="ghost" (click)="openAnimal(a._id)">Profil zwierzaka</button>
+                  <div class="split">
+                    <button (click)="addBlood(a._id)">+ Krew</button>
+                    <button (click)="addUrine(a._id)">+ Mocz</button>
+                    <button (click)="addTemp(a._id)">+ Temp</button>
+                    <button (click)="addWeight(a._id)">+ Waga</button>
+                    <button (click)="addVacc(a._id)">+ Szczep.</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <ng-template #noAnimals>
+            <p class="muted">Brak zwierząt przypisanych do tego veta dla tego właściciela.</p>
+          </ng-template>
+        </section>
+      </div>
+    </div>
+
+  </div>
+</div>

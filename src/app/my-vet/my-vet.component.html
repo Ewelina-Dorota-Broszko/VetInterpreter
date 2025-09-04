@@ -1,0 +1,129 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+   <div class="my-vet">
+  <h2>Mój weterynarz</h2>
+
+  <div *ngIf="loading">Ładowanie…</div>
+  <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+  <!-- Gdy brak przypiętych wetów -->
+  <div *ngIf="!loading && !error && byVet.length === 0" class="empty">
+    Nie masz jeszcze przypiętego weterynarza do żadnego zwierzaka.
+    <button type="button" (click)="findVets()">Znajdź weta</button>
+  </div>
+
+  <!-- Grupy: Wet -> Zwierzaki + Szczegóły weta -->
+  <div *ngFor="let group of byVet" class="vet-block">
+    <div class="vet-header">
+      <div class="meta">
+        <h3>{{ group.vet?.clinicName || 'Weterynarz' }}</h3>
+        <p class="muted small" *ngIf="group.vet?.licenseNo">Licencja: {{ group.vet?.licenseNo }}</p>
+        <p class="muted">
+          <span *ngIf="group.vet?.address?.city">{{ group.vet?.address?.city }}</span>
+          <span *ngIf="group.vet?.specialties?.length"> · {{ group.vet?.specialties?.join(', ') }}</span>
+        </p>
+        <p class="muted small">
+          <span *ngIf="group.vet?.email">{{ group.vet?.email }}</span>
+          <span *ngIf="group.vet?.phone"> · {{ group.vet?.phone }}</span>
+          <span *ngIf="group.vet?.website"> · <a [href]="group.vet?.website" target="_blank">www</a></span>
+        </p>
+      </div>
+
+      <div class="actions">
+        <button type="button" (click)="toggleDetails(group)">{{ group.expanded ? 'Ukryj szczegóły' : 'Pokaż szczegóły' }}</button>
+      </div>
+    </div>
+
+    <!-- SZCZEGÓŁY WETA -->
+    <div class="vet-details" *ngIf="group.expanded">
+      <div class="cols">
+        <section>
+          <h4>O klinice</h4>
+          <p>{{ group.vet?.about || '—' }}</p>
+
+          <h4>Adres</h4>
+          <p *ngIf="group.vet?.address">
+            {{ group.vet?.address?.line1 }}<span *ngIf="group.vet?.address?.line2">, {{ group.vet?.address?.line2 }}</span><br />
+            {{ group.vet?.address?.postalCode }} {{ group.vet?.address?.city }}<br />
+            {{ group.vet?.address?.country }}
+          </p>
+          <p *ngIf="!group.vet?.address">—</p>
+
+          <h4>Przyjęcia</h4>
+          <p>Nowi pacjenci: <strong>{{ group.vet?.acceptsNewPatients ? 'tak' : 'nie' }}</strong></p>
+          <p *ngIf="group.vet?.acceptsEmergency">Całodobowo: <strong>tak</strong> ({{ group.vet?.emergencyPhone || group.vet?.phone }})</p>
+          <p *ngIf="!group.vet?.acceptsEmergency">Całodobowo: <strong>nie</strong></p>
+
+          <p>Cena konsultacji: <strong>{{ group.vet?.consultPrice || 0 }} PLN</strong></p>
+          <p>Czas wizyty: <strong>{{ group.vet?.appointmentDurationMin || 20 }} min</strong></p>
+        </section>
+
+        <section>
+          <h4>Specjalizacje</h4>
+          <ul class="chips">
+            <li *ngFor="let s of group.vet?.specialties">{{ s }}</li>
+            <li *ngIf="!group.vet?.specialties?.length">—</li>
+          </ul>
+
+          <h4>Usługi</h4>
+          <ul class="chips">
+            <li *ngFor="let s of group.vet?.servicesOffered">{{ s }}</li>
+            <li *ngIf="!group.vet?.servicesOffered?.length">—</li>
+          </ul>
+
+          <h4>Języki</h4>
+          <ul class="chips">
+            <li *ngFor="let l of group.vet?.languages">{{ l }}</li>
+            <li *ngIf="!group.vet?.languages?.length">—</li>
+          </ul>
+
+          <h4>Płatności</h4>
+          <ul class="chips">
+            <li *ngFor="let m of group.vet?.paymentMethods">{{ m }}</li>
+            <li *ngIf="!group.vet?.paymentMethods?.length">—</li>
+          </ul>
+        </section>
+
+        <section *ngIf="group.vet?.workingHours?.length">
+          <h4>Godziny otwarcia</h4>
+          <table class="hours">
+            <tr *ngFor="let h of group.vet?.workingHours">
+              <td class="day">{{ dayName(h.day) }}</td>
+              <td *ngIf="h.open">{{ h.start }} – {{ h.end }}</td>
+              <td *ngIf="!h.open" class="closed">zamknięte</td>
+            </tr>
+          </table>
+        </section>
+      </div>
+    </div>
+
+    <!-- ZWIERZĘTA PRZYPISANE DO TEGO WETA -->
+    <table class="animals">
+      <thead>
+        <tr>
+          <th>Zwierz</th>
+          <th>Gatunek</th>
+          <th>Rasa</th>
+          <th>Płeć</th>
+          <th>Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of group.animals">
+          <td>{{ a.name }}</td>
+          <td>{{ a.species }}</td>
+          <td>{{ a.breed || '—' }}</td>
+          <td>{{ a.sex || '—' }}</td>
+          <td>
+            <button type="button" class="danger" (click)="unassign(a)" [disabled]="unassigning[a._id]">
+              {{ unassigning[a._id] ? 'Usuwanie…' : 'Odepnij' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+    </div>
+</div>

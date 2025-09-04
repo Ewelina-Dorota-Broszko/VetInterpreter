@@ -2,7 +2,7 @@
 <div class="navbar-container" *ngIf="!(isVet$ | async)">
   <div class="navbar-menu">
     <div class="logo-container-login">
-      <img src="assets/images/logo.jpg" alt="Logo" />
+      <img src="assets/images/logo-dorota.png" alt="Logo" />
       <p>VetInterpreter</p>
     </div>
 
@@ -11,7 +11,7 @@
       <div class="menu-elements">
         <div class="menu-element" routerLink="/profile" routerLinkActive="active">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img src="assets/images/edit.png" alt="profile">
             <p>Mój Profil</p>
           </div>
         </div>
@@ -21,7 +21,7 @@
       <div class="menu-elements">
         <div class="menu-element" (click)="goToDashboard()">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img src="assets/images/dashboard.png" alt="dashboard">
             <p>Dashboard</p>
           </div>
         </div>
@@ -32,7 +32,7 @@
         <p>Kalendarz</p>
         <div class="menu-element" (click)="goToCalendar()">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img src="assets/images/calendar.png" alt="calendar">
             <p>Kalendarz</p>
           </div>
         </div>
@@ -41,31 +41,39 @@
       <!-- Zwierzęta (lista właściciela) -->
       <div class="menu-elements">
         <p>Zwierzęta</p>
-        <div
-          class="menu-element"
-          *ngFor="let animal of animals; trackBy: trackById"
-          (click)="selectAnimal(animal)">
+        <div class="menu-element" *ngFor="let animal of animals; trackBy: trackById" (click)="selectAnimal(animal)">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img [src]="getAnimalIcon(animal.species)" alt="{{ animal.species }}">
             <p>{{ animal.name }}</p>
           </div>
         </div>
-        <div class="menu-element"  routerLink="animals/new">
+
+        <div class="menu-element" routerLink="animals/new">
           <div class="photo-name">
-            <img src="assets/images/add.png" alt="">
+            <img src="assets/images/add.png" alt="add">
             <p>Dodaj Zwierzę</p>
           </div>
         </div>
       </div>
-      
+
 
       <!-- Dokumenty -->
       <div class="menu-elements">
         <p>Dokumenty</p>
         <div class="menu-element" (click)="goToAddDocument()">
           <div class="photo-name">
-            <img src="assets/images/add.png" alt="">
+            <img src="assets/images/add.png" alt="add">
             <p>Dodaj dokument</p>
+          </div>
+        </div>
+      </div>
+      <!-- znajdz veta -->
+      <div class="menu-elements">
+        <p>Znajdz Weterynarza</p>
+        <div class="menu-element" routerLink="/find-vet">
+          <div class="photo-name">
+            <img src="assets/images/loupe.png" alt="loupe">
+            <p>Szukaj</p>
           </div>
         </div>
       </div>
@@ -95,9 +103,9 @@
       <!-- Kalendarz przyjęć (wet) -->
       <div class="menu-elements">
         <p>Kalendarz</p>
-        <div class="menu-element" routerLink="/vet/calendar" routerLinkActive="active">
+        <div class="menu-element" routerLink="/calendar" routerLinkActive="active">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img src="assets/images/pawprint.png" alt="paw">
             <p>Kalendarz wizyt</p>
           </div>
         </div>
@@ -108,7 +116,7 @@
         <p>Pacjenci</p>
         <div class="menu-element" routerLink="/vet/patients" routerLinkActive="active">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img src="assets/images/pawprint.png" alt="paw">
             <p>Lista pacjentów</p>
           </div>
         </div>
@@ -119,7 +127,7 @@
         <p>Dokumentacja</p>
         <div class="menu-element" routerLink="/vet/notes" routerLinkActive="active">
           <div class="photo-name">
-            <img src="assets/images/add.png" alt="">
+            <img src="assets/images/add.png" alt="add">
             <p>Notatki kliniczne</p>
           </div>
         </div>
