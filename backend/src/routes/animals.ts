@@ -51,6 +51,25 @@ router.post('/owners/:ownerId/animals', async (req: AuthedRequest, res) => {
   }
 });
 
+// GET /owners/:ownerId/animals
+router.get('/owners/:ownerId/animals', async (req: AuthedRequest, res) => {
+  const { ownerId } = req.params;
+
+  if (!valid(ownerId)) {
+    return res.status(400).json({ error: 'Invalid ownerId' });
+  }
+
+  // Upewnij się, że owner należy do zalogowanego użytkownika
+  const owner = await Owner.findOne({ _id: ownerId, userId: req.user!.id }).lean();
+  if (!owner) {
+    return res.status(404).json({ error: 'Owner not found' });
+  }
+
+  const animals = await Animal.find({ ownerId: owner._id }).lean();
+  return res.json(animals);
+});
+
+
 // GET /animals/:id
 router.get('/:id', async (req: AuthedRequest, res) => {
   const animal = await ensureOwnership(req.params.id, req.user!.id);
@@ -306,19 +325,52 @@ router.delete('/:id/visit-history/:visitId', (req, res) =>
   pullById(req.params.id, 'visitHistory', req.params.visitId, res, 'Visit not found')
 );
 
-/* ========= Calendar ========= */
-router.get('/:id/calendar', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
-  if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.calendar || []);
+/* ========= Owner Calendar (globalny) ========= */
+router.get('/owners/:ownerId/calendar', async (req: AuthedRequest, res) => {
+  const { ownerId } = req.params;
+  if (!valid(ownerId)) return res.status(400).json({ error: 'Invalid ownerId' });
+
+  const owner = await Owner.findOne({ _id: ownerId, userId: req.user!.id }).lean();
+  if (!owner) return res.status(404).json({ error: 'Owner not found' });
+
+  res.json(owner.calendar || []);
 });
-router.post('/:id/calendar', (req, res) =>
-  addAndReturnLast(req.params.id, 'calendar', req.body, res)
-);
-router.delete('/:id/calendar/:eventId', (req, res) =>
-  pullById(req.params.id, 'calendar', req.params.eventId, res, 'Calendar event not found')
-);
+
+router.post('/owners/:ownerId/calendar', async (req: AuthedRequest, res) => {
+  const { ownerId } = req.params;
+  if (!valid(ownerId)) return res.status(400).json({ error: 'Invalid ownerId' });
+
+  const { date, title, note, animalId, animalName } = req.body || {};
+  if (!date || !title) return res.status(400).json({ error: 'date i title są wymagane' });
+
+  const updated = await Owner.findOneAndUpdate(
+    { _id: ownerId, userId: req.user!.id },
+    { $push: { calendar: { date, title, note, animalId, animalName } } },
+    { new: true, projection: { calendar: { $slice: -1 } } } // zwróć tylko ostatnio dodany
+  ).lean();
+
+  if (!updated) return res.status(404).json({ error: 'Owner not found' });
+
+  const last = updated.calendar?.[0];
+  res.status(201).json(last ?? {});
+});
+
+// DELETE /owners/:ownerId/calendar/:eventId
+router.delete('/owners/:ownerId/calendar/:eventId', async (req: AuthedRequest, res) => {
+  const { ownerId, eventId } = req.params;
+  if (!valid(ownerId)) return res.status(400).json({ error: 'Invalid ownerId' });
+
+  const result = await Owner.updateOne(
+    { _id: ownerId, userId: req.user!.id },
+    { $pull: { calendar: { _id: oid(eventId) } } }
+  );
+
+  if (result.modifiedCount === 0)
+    return res.status(404).json({ error: 'Calendar event not found' });
+
+  res.json({ message: 'Deleted' });
+});
+
 
 /* ========= Diet ========= */
 router.get('/:id/diet', async (req: AuthedRequest, res) => {

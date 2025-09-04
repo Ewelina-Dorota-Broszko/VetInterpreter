@@ -1,0 +1,40 @@
+<div class="dashboard-menu-container">
+  <div class="container">
+    <h2>Pacjenci</h2>
+
+    <div class="toolbar">
+      <input
+        type="text"
+        [(ngModel)]="search"
+        (keyup.enter)="searchPatients()"
+        placeholder="Szukaj po imieniu, e-mailu lub telefonie..." />
+      <button type="button" (click)="searchPatients()">Szukaj</button>
+    </div>
+
+    <div *ngIf="loading">Ładowanie…</div>
+    <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+    <table *ngIf="!loading && patients.length > 0" class="patients">
+      <thead>
+        <tr>
+          <th>Imię i nazwisko</th>
+          <th>Email</th>
+          <th>Telefon</th>
+          <th>Dodany</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of patients" [routerLink]="['/vet/patient', p._id]">
+          <td>{{ p.name }}</td>
+          <td>{{ p.email }}</td>
+          <td>{{ p.phone }}</td>
+          <td>{{ p.createdAt | date:'shortDate' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!loading && patients.length === 0 && !error" class="empty">
+      Brak pacjentów do wyświetlenia.
+    </p>
+  </div>
+</div>

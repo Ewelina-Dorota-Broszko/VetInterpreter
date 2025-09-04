@@ -1,0 +1,237 @@
+.dashboard-menu-container {
+  height: 100%;
+  background-color: #1d222b;
+  width: 80vw;
+  height: 100vh;
+  position: absolute;
+  right: -8px;
+  top: 52px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  padding: 100px 1.5rem;
+  border: 1px solid #383c46;
+  margin: 60px;
+  height: auto;
+  background-color: #212631;
+
+  .find-vet {
+  color: #e5e7eb;
+
+  h2 {
+    margin: 0 0 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  h3 {
+    margin: 0.5rem 0;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+
+  .error {
+    color: #f87171;
+    margin-top: 0.5rem;
+  }
+
+  .empty {
+    padding: 1rem;
+    border: 1px dashed #4b5563;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.95rem;
+    color: #9ca3af;
+    background: #1f2430;
+    margin: 1rem 0;
+  }
+
+  /* ===== Twoi weterynarze (nad wyszukiwarką) ===== */
+  .my-vets {
+    margin-bottom: 2rem;
+
+    .my-vet-card {
+      background: #2a2f3d;
+      border: 1px solid #383c46;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+
+      .head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.5rem;
+
+        .title {
+          font-weight: 600;
+          font-size: 1.1rem;
+        }
+
+        .meta {
+          color: #9ca3af;
+          font-size: 0.9rem;
+        }
+
+        .head-actions {
+          button {
+            background: transparent;
+            border: 1px solid #4b6fff;
+            color: #4b6fff;
+            border-radius: 8px;
+            padding: 0.35rem 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+          button:hover {
+            background: #4b6fff;
+            color: #fff;
+          }
+        }
+      }
+
+      .animals-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+
+        .pill {
+          background: #374151;
+          border-radius: 9999px;
+          padding: 0.3rem 0.75rem;
+          font-size: 0.85rem;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.3rem;
+
+          .x {
+            background: transparent;
+            border: none;
+            color: #f87171;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+          }
+        }
+      }
+    }
+  }
+
+  /* ===== Pasek narzędzi ===== */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+
+    input[type="text"] {
+      flex: 1;
+      padding: 0.6rem 1rem;
+      border: 1px solid #383c46;
+      border-radius: 8px;
+      background: #2a2f3d;
+      color: #e5e7eb;
+    }
+
+    .pick-animal,
+    .locked-animal {
+      font-size: 0.9rem;
+      color: #d1d5db;
+
+      select {
+        margin-left: 0.5rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 6px;
+        background: #2a2f3d;
+        border: 1px solid #383c46;
+        color: #fff;
+      }
+    }
+  }
+
+  /* ===== Katalog wetów ===== */
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  }
+
+  .vet-card {
+    background: #2a2f3d;
+    border: 1px solid #383c46;
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 0 0.5rem;
+      font-size: 1.1rem;
+      color: #fff;
+
+      .badge {
+        background: #4b6fff;
+        color: #fff;
+        padding: 0.2rem 0.5rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+
+    .muted {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .about {
+      margin: 0.5rem 0;
+      font-size: 0.9rem;
+      color: #d1d5db;
+    }
+
+    .small {
+      font-size: 0.8rem;
+    }
+
+    .card-actions {
+      margin-top: 0.75rem;
+
+      button {
+        width: 100%;
+        padding: 0.6rem;
+        border: none;
+        border-radius: 8px;
+        background: #4b6fff;
+        color: #fff;
+        cursor: pointer;
+        font-weight: 500;
+        transition: background 0.2s;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      button:hover:not(:disabled) {
+        background: #3450cc;
+      }
+    }
+  }
+}
+
+}

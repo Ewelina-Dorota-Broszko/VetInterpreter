@@ -7,6 +7,18 @@ export interface Animal {
   _id: string;
   name: string;
   species: string;
+  breed?: string;
+  sex?: string;
+  weightKg?: number;
+  birthDate?: string;
+  vetId?: string;
+}
+
+export interface CalendarEntry {
+  _id: string;        // nadawane przez Mongo
+  date: string;       // YYYY-MM-DD
+  title: string;
+  note?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -20,11 +32,11 @@ export class AnimalsService {
   }
 
   getForOwner(ownerId: string): Observable<Animal[]> {
-    return this.http.get<Animal[]>(`${this.api}/owners/${ownerId}/animals`);
+    return this.http.get<Animal[]>(`${this.api}/animals/owners/${ownerId}/animals`);
   }
 
   addForOwner(ownerId: string, body: any) {
-    return this.http.post<Animal>(`${this.api}/owners/${ownerId}/animals`, body);
+    return this.http.post<Animal>(`${this.api}/animals/owners/${ownerId}/animals`, body);
   }
 
   /** Badania – przykładowe metody */
@@ -60,6 +72,23 @@ export class AnimalsService {
   }
   updateMedication(animalId: string, medId: string, body: Partial<{ isActive: boolean }>) {
     return this.http.patch<any>(`${this.api}/animals/${animalId}/medications/${medId}`, body);
+  }
+  getMyOwner() {
+    return this.http.get<{ _id: string; userId: string; name: string; email?: string; phone?: string }>(
+      `${this.api}/owners/me`
+    );
+  }
+ getOwnerCalendar(ownerId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/owners/${ownerId}/calendar`);
+  }
+  addOwnerCalendarEvent(ownerId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/owners/${ownerId}/calendar`, body);
+  }
+  deleteOwnerCalendarEvent(ownerId: string, eventId: string) {
+    return this.http.delete<any>(`${this.api}/animals/owners/${ownerId}/calendar/${eventId}`);
+  }
+  deleteAnimal(id: string) {
+    return this.http.delete<{ message: string }>(`${this.api}/animals/${id}`);
   }
 
 

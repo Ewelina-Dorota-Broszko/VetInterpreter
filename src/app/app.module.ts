@@ -43,6 +43,11 @@ import { VaccinationFormComponent } from './vaccination-form/vaccination-form.co
 import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
 import { VetProfileComponent } from './vet-profile/vet-profile.component';
 import { AnimalsAddFormComponent } from './animals-add-form/animals-add-form.component';
+import { FindVetComponent } from './find-vet/find-vet.component';
+import { VetPatientsComponent } from './vet-patients/vet-patients.component';
+import { MyVetComponent } from './my-vet/my-vet.component';
+import { VetPatientProfileComponent } from './vet-patient-profile/vet-patient-profile.component';
+import { VetAnimalProfileComponent } from './vet-animal-profile/vet-animal-profile.component';
 
 
 @NgModule({
@@ -81,7 +86,12 @@ import { AnimalsAddFormComponent } from './animals-add-form/animals-add-form.com
     VaccinationFormComponent,
     SymptomsFormComponent,
     VetProfileComponent,
-    AnimalsAddFormComponent
+    AnimalsAddFormComponent,
+    FindVetComponent,
+    VetPatientsComponent,
+    MyVetComponent,
+    VetPatientProfileComponent,
+    VetAnimalProfileComponent
   ],
   imports: [
     BrowserModule,

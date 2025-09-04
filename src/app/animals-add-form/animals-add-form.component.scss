@@ -457,3 +457,73 @@ fieldset {
     }
   }
 }
+.container {
+  max-width: 720px;
+}
+
+fieldset {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  legend {
+    padding: 0 8px;
+    font-weight: 600;
+  }
+
+  label {
+    display: block;
+    margin: 10px 0 6px;
+    font-weight: 600;
+
+    span { color: #ef4444; }
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+  }
+
+  .radios {
+    display: flex;
+    gap: 16px;
+    .radio { display: flex; align-items: center; gap: 6px; }
+  }
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #111827;
+  color: #fff;
+  cursor: pointer;
+}
+
+.ok {
+  color: #14532d;
+  background: #dcfce7;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.error {
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
+.info {
+  color: #1f2937;
+  background: #f3f4f6;
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}

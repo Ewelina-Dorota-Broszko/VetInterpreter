@@ -31,6 +31,7 @@ export class NavbarComponent implements OnInit {
       if (!isVet) this.loadAnimalsForOwner();
       else this.animals = [];
     });
+    
   }
 
   private loadAnimalsForOwner() {
@@ -44,6 +45,7 @@ export class NavbarComponent implements OnInit {
       this.fetchAnimals();
     }
   }
+  
 
   private fetchAnimals() {
     const ownerId = this.auth.getOwnerId();
@@ -53,6 +55,17 @@ export class NavbarComponent implements OnInit {
       error: (err) => console.error('Błąd pobierania zwierząt', err),
     });
   }
+  getAnimalIcon(species: string): string {
+  switch (species) {
+    case 'dog':
+      return 'assets/images/bone.png';
+    case 'cat':
+      return 'assets/images/paw.png';
+    default:
+      return 'assets/images/bed.png'; // np. królik, chomik itp.
+  }
+}
+
 
   // --- Akcje / nawigacja ---
   goToDashboard() { this.router.navigate(['/dashboard']); }

@@ -1,15 +1,80 @@
-<div class="mini-calendar-wrapper">
-  <full-calendar #fullcalendar [options]="calendarOptions"></full-calendar>
-</div>
+<!-- src/app/calendar/calendar.component.html -->
+<div class="dashboard-menu-container">
+  <div class="container">
 
-<div class="note-section" *ngIf="selectedDate">
-  <h4>Notatki dla {{ selectedDate }}:</h4>
+    <!-- akcje nad kalendarzem -->
+    <div class="calendar-actions">
+      <button type="button" (click)="openForm()">Dodaj termin</button>
+    </div>
 
-  <ul *ngIf="getNotesForSelectedDate().length > 0; else noNotes">
-    <li *ngFor="let note of getNotesForSelectedDate()">{{ note }}</li>
-  </ul>
+    <!-- formularz -->
+    <div class="add-appointment" *ngIf="showForm">
+      <h4>Nowy termin</h4>
 
-  <ng-template #noNotes>
-    <p>Brak notatek na ten dzień dla tego psa.</p>
-  </ng-template>
+      <div class="row">
+        <label>Data</label>
+        <input type="date" [(ngModel)]="newEvent.date" name="eventDate" />
+      </div>
+
+      <div class="row">
+        <label>Tytuł</label>
+        <input type="text" [(ngModel)]="newEvent.title" name="eventTitle" placeholder="np. Wizyta kontrolna" />
+      </div>
+
+      <div class="row">
+        <label>Dotyczy zwierzaka (opcjonalnie)</label>
+        <select [(ngModel)]="newEvent.animalId" name="eventAnimalId">
+          <option [ngValue]="undefined">— brak —</option>
+          <option *ngFor="let a of animals" [value]="a._id">{{ a.name }}</option>
+        </select>
+      </div>
+
+      <div class="row">
+        <label>Notatka (opcjonalnie)</label>
+        <textarea rows="2" [(ngModel)]="newEvent.note" name="eventNote" placeholder="Krótka notatka..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="submitForm()" [disabled]="saving">
+          {{ saving ? 'Zapisywanie…' : 'Zapisz' }}
+        </button>
+        <button type="button" class="secondary" (click)="cancelForm()" [disabled]="saving">Anuluj</button>
+      </div>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </div>
+
+    <!-- kalendarz -->
+    <div class="mini-calendar-wrapper">
+      <full-calendar [options]="calendarOptions"></full-calendar>
+    </div>
+
+    <!-- notatki (opcjonalna sekcja) -->
+    <div class="note-section" *ngIf="selectedDate">
+      <h4>Notatki dla {{ selectedDate }}:</h4>
+
+      <ul *ngIf="getNotesForSelectedDate().length > 0; else noNotes">
+        <li *ngFor="let n of getNotesForSelectedDate()">{{ n }}</li>
+      </ul>
+
+      <ng-template #noNotes>
+        <p>Brak notatek na ten dzień.</p>
+      </ng-template>
+    </div>
+
+    <div *ngIf="loading">Ładowanie kalendarza…</div>
+    <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+    <!-- prosta lista z przyciskiem usuń (opcjonalnie) -->
+    <div *ngIf="entries.length">
+      <h4>Wszystkie terminy</h4>
+      <ul>
+        <li *ngFor="let e of entries">
+          {{ e.date }} — {{ e.title }} <span *ngIf="e.animalName">({{ e.animalName }})</span>
+          <button type="button" (click)="deleteEntry(e)">Usuń</button>
+        </li>
+      </ul>
+    </div>
+
+  </div>
 </div>

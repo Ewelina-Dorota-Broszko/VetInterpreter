@@ -155,3 +155,22 @@ table {
     }
   }
 }
+
+.actions {
+  display: flex;
+  gap: 10px;
+
+  button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .danger {
+    background: #dc3545;
+    color: #fff;
+  }
+  .danger:hover { background: #c82333; }
+  .danger:disabled { opacity: .6; cursor: not-allowed; }
+}

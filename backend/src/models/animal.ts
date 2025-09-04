@@ -226,7 +226,7 @@ const AnimalSchema = new Schema(
   {
     ownerId: { type: Types.ObjectId, ref: 'Owner', required: true, index: true },
     name: { type: String, required: true, trim: true },
-    species: { type: String, enum: ['dog', 'cat'], required: true },
+    species: { type: String, enum: ['dog', 'cat', 'other'], required: true },
     breed: { type: String, default: '' },
     sex: { type: String, enum: ['male', 'female'], required: true },
     weightKg: { type: Number, default: 0 },
@@ -245,7 +245,8 @@ const AnimalSchema = new Schema(
     visitHistory: { type: [VisitRecordSchema], default: [] },
 
     calendar: { type: [CalendarEventSchema], default: [] },
-    diet: { type: DietSchema, default: {} }
+    diet: { type: DietSchema, default: {} },
+    vetId: { type: Schema.Types.ObjectId, ref: 'Vet', default: null }
   },
   { timestamps: true }
 );
