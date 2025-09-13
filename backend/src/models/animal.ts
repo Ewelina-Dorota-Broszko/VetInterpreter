@@ -12,7 +12,12 @@ const BloodTestSchema = new Schema(
     alt: Number, ast: Number, alp: Number,
     totalProtein: Number, albumin: Number, globulin: Number,
     bilirubinTotal: Number, bilirubinDirect: Number, bilirubinIndirect: Number,
-    comments: { type: String, default: '' }
+    comments: { type: String, default: '' },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -20,10 +25,9 @@ const BloodTestSchema = new Schema(
 // Urine test
 const UrineTestSchema = new Schema(
   {
-    date: { type: String, required: true },   // YYYY-MM-DD
-    // sekcja: fizykochemia
+    date: { type: String, required: true },
     color: { type: String, required: true },
-    clarity: { type: String },                // przejrzystość
+    clarity: { type: String },
     specificGravity: { type: Number, required: true },
     pH: { type: Number, required: true },
     protein: { type: String, required: true },
@@ -34,10 +38,8 @@ const UrineTestSchema = new Schema(
     blood: { type: String },
     nitrites: { type: String },
     leukocyteEsterase: { type: String },
-
-    // sekcja: mikroskopia
-    wbc: { type: String },             // leukocyty / pole widzenia
-    rbc: { type: String },             // erytrocyty / pole widzenia
+    wbc: { type: String },
+    rbc: { type: String },
     epithelialCells: { type: String },
     crystals: { type: String },
     casts: { type: String },
@@ -46,9 +48,12 @@ const UrineTestSchema = new Schema(
     sperm: { type: String },
     mucus: { type: String },
     parasites: { type: String },
+    comments: { type: String, default: '' },
 
-    // inne
-    comments: { type: String, default: '' }
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -61,11 +66,14 @@ const StoolTestSchema = new Schema(
     color: { type: String, required: true },
     blood: { type: Boolean, required: true },
     mucus: { type: Boolean, required: true },
-
-    // nowe pola z formularza:
-    odor: { type: String, default: '' },       // opis zapachu
+    odor: { type: String, default: '' },
     parasites: { type: Boolean, default: false },
-    comments: { type: String, default: '' }
+    comments: { type: String, default: '' },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -73,22 +81,17 @@ const StoolTestSchema = new Schema(
 // Temperature log
 const TemperatureLogSchema = new Schema(
   {
-    date: { type: String, required: true },   // YYYY-MM-DD
-    time: { type: String, required: true },   // HH:mm
+    date: { type: String, required: true },
+    time: { type: String, required: true },
     temperature: { type: Number, required: true },
+    behavior: { type: String, enum: ['normal', 'lethargic', 'agitated', 'unresponsive', ''], default: '' },
+    appetite: { type: String, enum: ['normal', 'reduced', 'none', ''], default: '' },
+    comments: { type: String, default: '' },
 
-    // nowe pola z formularza
-    behavior: {
-      type: String,
-      enum: ['normal', 'lethargic', 'agitated', 'unresponsive', ''],
-      default: ''
-    },
-    appetite: {
-      type: String,
-      enum: ['normal', 'reduced', 'none', ''],
-      default: ''
-    },
-    comments: { type: String, default: '' }
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -96,20 +99,18 @@ const TemperatureLogSchema = new Schema(
 // Diabetes log
 const DiabetesLogSchema = new Schema(
   {
-    date: { type: String, required: true },   // YYYY-MM-DD
-    time: { type: String, required: true },   // HH:mm
-    glucose: { type: Number, required: true }, // mg/dL
-
-    measurementType: { 
-      type: String, 
-      enum: ['fasting', 'postMeal', 'random'], 
-      required: true 
-    },
-
-    insulinType: { type: String, default: '' },  // np. „Lantus”, „NovoRapid”
+    date: { type: String, required: true },
+    time: { type: String, required: true },
+    glucose: { type: Number, required: true },
+    measurementType: { type: String, enum: ['fasting', 'postMeal', 'random'], required: true },
+    insulinType: { type: String, default: '' },
     insulinDose: { type: Number, default: null },
+    comments: { type: String, default: '' },
 
-    comments: { type: String, default: '' }      // dodatkowe uwagi
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -120,7 +121,12 @@ const WeightEntrySchema = new Schema(
     date: { type: String, required: true },
     weightKg: { type: Number, required: true },
     bcs: { type: Number },
-    note: { type: String, default: '' }
+    note: { type: String, default: '' },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -134,7 +140,12 @@ const VaccinationSchema = new Schema(
     product: { type: String },
     batch: { type: String },
     vet: { type: String },
-    notes: { type: String, default: '' }
+    notes: { type: String, default: '' },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -149,7 +160,12 @@ const MedicationPlanSchema = new Schema(
     startDate: { type: String, required: true },
     endDate: { type: String },
     isActive: { type: Boolean, default: true },
-    notes: { type: String, default: '' }
+    notes: { type: String, default: '' },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -162,7 +178,12 @@ const SymptomEntrySchema = new Schema(
     painScore: { type: Number },
     energy: { type: Number },
     appetite: { type: Number },
-    notes: { type: String, default: '' }
+    notes: { type: String, default: '' },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'owner' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
@@ -188,15 +209,20 @@ const VisitRecordSchema = new Schema(
     treatments: { type: String },
     medications: { type: [VisitMedicationSchema], default: [] },
     notes: { type: String, default: '' },
-    expanded: { type: Boolean, default: false }
+    expanded: { type: Boolean, default: false },
+
+    // META
+    addedBy: { type: String, enum: ['owner','vet'], default: 'vet' },
+    addedByVetId: { type: Types.ObjectId, ref: 'Vet', default: null },
+    addedAt: { type: Date, default: Date.now }
   },
   { _id: true, timestamps: true }
 );
 
-// Calendar event
+// Calendar event (zostawiamy bez meta, bo to dotyczy właściciela)
 const CalendarEventSchema = new Schema(
   {
-    id: { type: String, required: true },  // np. UUID z frontu
+    id: { type: String, required: true },
     date: { type: String, required: true },
     time: { type: String },
     title: { type: String, required: true },
