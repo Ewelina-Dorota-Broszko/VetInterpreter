@@ -103,11 +103,19 @@ export class VetService {
     return this.http.get<any[]>(`${this.api}/vets/patients`, params);
   }
   getPatientDetails(ownerId: string) {
-  return this.http.get<{ owner: any; animals: any[] }>(
-    `${this.api}/vets/patients/${ownerId}`
-  );
+    return this.http.get<{ owner: any; animals: any[] }>(
+      `${this.api}/vets/patients/${ownerId}`
+    );
   }
 
-
-
+  getAnimalAsVet(animalId: string) {
+    console.log('[VetService] GET', `${this.api}/vets/animals/${animalId}`);
+    return this.http.get<any>(`${this.api}/vets/animals/${animalId}`);
+  }
+}
+// --- helper: czy profil veta jest "kompletny" ---
+export function isVetProfileComplete(p?: VetProfile | null): boolean {
+  if (!p) return false;
+  const ok = (v?: string | null) => !!(v && String(v).trim().length);
+  return ok(p.clinicName) && ok(p.licenseNo) && ok(p.phone) && ok(p.email);
 }

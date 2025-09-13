@@ -24,6 +24,10 @@ app.use('/auth', authRouter);
 app.use('/owners', ownersRouter);
 app.use('/animals', animalsRouter);
 app.use('/vets', vetRoutes); 
+// app.use((req, _res, next) => {
+//   console.log('[APP]', req.method, req.url);
+//   next();
+// });
 
 // Konfiguracja serwera
 const PORT = Number(process.env.PORT || 4000);

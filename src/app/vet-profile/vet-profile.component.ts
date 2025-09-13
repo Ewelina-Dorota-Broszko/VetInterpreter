@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { VetService, VetProfile, WorkingHour } from '../services/vet.service';
 
 type StrArr = string[];
@@ -14,14 +15,17 @@ export class VetProfileComponent implements OnInit {
   saving = false;
   error = '';
   okMsg = '';
+  infoMsg = '';              // ⬅ komunikat od guarda
   editMode = false;
+
+  /** do ewentualnej nawigacji po zapisie */
+  returnUrl: string | null = null;
+
+  /** powiązania */
   userId: string | null = null;
-
-
-  /** ID zalogowanego weterynarza (z /vet/me) */
   vetId: string | null = null;
 
-  /** aktualnie zapisane dane (do podglądu i resetu zmian) */
+  /** aktualne dane do podglądu */
   currentData: VetProfile | null = null;
 
   /** domyślne (nieusuwalne) */
@@ -38,7 +42,7 @@ export class VetProfileComponent implements OnInit {
   languageOptions: StrArr = ['polski','angielski','niemiecki','ukraiński','rosyjski','francuski','hiszpański'];
   paymentOptions:  StrArr = ['gotówka','karta','BLIK','przelew'];
 
-  /** własne (custom) – utrzymują widoczność niezależnie od zaznaczenia */
+  /** własne (custom) – trwale widoczne */
   private customSpecialtiesSet = new Set<string>();
   private customServicesSet = new Set<string>();
 
@@ -75,8 +79,8 @@ export class VetProfileComponent implements OnInit {
     acceptsEmergency:   [false],
     emergencyPhone:     [''],
 
-    specialties:     this.fb.control([] as string[]),   // zaznaczone
-    servicesOffered: this.fb.control([] as string[]),   // zaznaczone
+    specialties:     this.fb.control([] as string[]),
+    servicesOffered: this.fb.control([] as string[]),
     languages:       this.fb.control([] as string[]),
     paymentMethods:  this.fb.control([] as string[]),
 
@@ -88,61 +92,114 @@ export class VetProfileComponent implements OnInit {
 
   get hoursFA(): FormArray { return this.form.get('workingHours') as FormArray; }
 
-  constructor(private fb: FormBuilder, private vet: VetService) {}
+  constructor(
+    private fb: FormBuilder,
+    private vet: VetService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  /* ======================== INIT ======================== */
 
   ngOnInit(): void {
     this.initDefaultHours();
+    this.ensureProfileAndLoad();
+
+    // komunikat od guarda + adres powrotny
+    const qp = this.route.snapshot.queryParamMap;
+    this.returnUrl = qp.get('returnUrl');
+    const reason = qp.get('reason') || qp.get('requireComplete'); // wsteczna kompatybilność
+    if (reason === 'completeProfile' || reason === '1') {
+      this.infoMsg = 'Aby korzystać z panelu (pacjenci, profile), uzupełnij podstawowe dane i zapisz.';
+      this.editMode = true;
+    }
+  }
+
+  private ensureProfileAndLoad() {
+    this.loading = true;
+    this.error = '';
+    this.okMsg = '';
 
     this.vet.getMe().subscribe({
-  next: (p: VetProfile & { id?: string; _id?: string; userId?: any }) => {
-    // 🔐 ID profilu veta – bierz id, albo _id (zmapuj na string)
-    this.vetId = (p?.id as string)
-              || (p?._id ? String(p._id) : null);
+      next: (p) => {
+        this.vetId  = (p as any).id ? String((p as any).id) : ((p as any)._id ? String((p as any)._id) : null);
+        this.userId = p?.userId ? String(p.userId) : null;
 
-    // (opcjonalnie) ID użytkownika powiązanego z profilem
-    this.userId = p?.userId ? String(p.userId) : null;
+        this.currentData = this.normalizeProfile(p);
+        this.hydrateCustomSets(this.currentData);
+        this.patchForm(this.currentData);
 
-    this.currentData = this.normalizeProfile(p);
+        this.loading = false;
+        // jeśli przyszliśmy „na siłę” z guarda, editMode już ustawiony wyżej
+        if (!this.infoMsg) this.editMode = false;
+      },
+      error: (e) => {
+        if (e?.status === 404) {
+          // brak profilu — zakładamy minimalny i otwieramy edycję
+          const minimal: Partial<VetProfile> = {
+            clinicName: 'Klinika (uzupełnij)',
+            licenseNo:  '',
+            phone:      '',
+            email:      ''
+          };
+          this.vet.updateMe(minimal).subscribe({
+            next: (saved) => {
+              this.vetId  = (saved as any).id ? String((saved as any).id) : ((saved as any)._id ? String((saved as any)._id) : null);
+              this.userId = saved?.userId ? String(saved.userId) : null;
 
-    // custom sety (bez zmian)
-    (this.currentData.specialties || []).forEach(s => {
+              this.currentData = this.normalizeProfile(saved);
+              this.hydrateCustomSets(this.currentData);
+              this.patchForm(this.currentData);
+
+              this.loading = false;
+              this.editMode = true;
+              this.okMsg = 'Założono profil weterynarza. Uzupełnij dane i zapisz.';
+            },
+            error: (err2) => {
+              this.loading = false;
+              this.error = err2?.error?.error || 'Nie udało się założyć profilu weterynarza.';
+            }
+          });
+        } else {
+          this.loading = false;
+          this.error = e?.error?.error || 'Nie udało się pobrać profilu';
+        }
+      }
+    });
+  }
+
+  private hydrateCustomSets(p: VetProfile) {
+    (p.specialties || []).forEach(s => {
       if (!this.specialtyOptions.map(x => x.toLowerCase()).includes(s.toLowerCase())) {
         this.customSpecialtiesSet.add(s);
       }
     });
-    (this.currentData.servicesOffered || []).forEach(s => {
+    (p.servicesOffered || []).forEach(s => {
       if (!this.serviceOptions.map(x => x.toLowerCase()).includes(s.toLowerCase())) {
         this.customServicesSet.add(s);
       }
     });
-
-    this.patchForm(this.currentData);
-    this.loading = false;
-    this.editMode = false;
-  },
-  error: (e) => {
-    this.error = e?.error?.error || 'Nie udało się pobrać profilu';
-    this.loading = false;
-  }
-});
-
   }
 
-  /* ===== Tryby ===== */
+  /* ======================== TRYBY ======================== */
+
   switchToEdit() {
     this.okMsg = '';
-    if (this.currentData) this.patchForm(this.currentData);
+    if (!this.currentData) { this.ensureProfileAndLoad(); return; }
+    this.patchForm(this.currentData);
     this.editMode = true;
   }
 
   cancelEdit() {
-    this.error = ''; this.okMsg = '';
+    this.error = '';
+    this.okMsg = '';
     if (this.currentData) this.patchForm(this.currentData);
     this.editMode = false;
   }
 
   save() {
-    this.error = ''; this.okMsg = '';
+    this.error = '';
+    this.okMsg = '';
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     if (this.form.value.acceptsEmergency && !this.form.value.emergencyPhone) {
       this.error = 'Podaj numer telefonu do nagłych przypadków.';
@@ -151,13 +208,20 @@ export class VetProfileComponent implements OnInit {
 
     const payload = this.form.value as Partial<VetProfile>;
     this.saving = true;
+
     this.vet.updateMe(payload).subscribe({
       next: (saved) => {
         this.okMsg = 'Zapisano profil';
         this.saving = false;
+
         this.currentData = this.normalizeProfile(saved);
         this.patchForm(this.currentData);
         this.editMode = false;
+
+        // jeśli trafiliśmy z guarda – wróć tam, skąd przyszliśmy
+        if (this.returnUrl) {
+          this.router.navigateByUrl(this.returnUrl);
+        }
       },
       error: (e) => {
         this.error = e?.error?.error || e?.message || 'Błąd zapisu';
@@ -166,7 +230,8 @@ export class VetProfileComponent implements OnInit {
     });
   }
 
-  /* ===== Godziny ===== */
+  /* ======================== GODZINY ======================== */
+
   private initDefaultHours() {
     this.hoursFA.clear();
     for (const d of this.days) {
@@ -200,6 +265,8 @@ export class VetProfileComponent implements OnInit {
       }
     });
   }
+
+  /* ======================== PATCH/FORMAT ======================== */
 
   private patchForm(p: VetProfile) {
     this.form.patchValue({
@@ -264,9 +331,8 @@ export class VetProfileComponent implements OnInit {
     };
   }
 
-  /* ===== Checkboxy i listy ===== */
+  /* ======================== CHECKBOXY ======================== */
 
-  /** Checkbox: zaznacz/odznacz (NIE usuwa z listy!) */
   toggleMulti(
     controlName: 'specialties'|'servicesOffered'|'languages'|'paymentMethods',
     value: string,
@@ -275,10 +341,7 @@ export class VetProfileComponent implements OnInit {
     const ctrl = this.form.get(controlName) as FormControl;
     const current = (ctrl.value as string[]) ?? [];
     const set = new Set(current);
-
-    if (checked) set.add(value);
-    else set.delete(value);  // odznacz — pozycja pozostaje widoczna (custom-set trzyma listę)
-
+    if (checked) set.add(value); else set.delete(value);
     ctrl.setValue(Array.from(set));
     ctrl.markAsDirty();
   }
@@ -291,25 +354,21 @@ export class VetProfileComponent implements OnInit {
     return v.map(x => x.toLowerCase()).includes(value.toLowerCase());
   }
 
-  /** Widoczne = DOMYŚLNE + CUSTOM (nie: “zaznaczone”) */
+  /** Widoczne = DOMYŚLNE + CUSTOM */
   getMergedOptions(controlName: 'specialties'|'servicesOffered'): string[] {
     const base = controlName === 'specialties' ? this.specialtyOptions : this.serviceOptions;
     const custom = controlName === 'specialties'
       ? Array.from(this.customSpecialtiesSet)
       : Array.from(this.customServicesSet);
-
     const set = new Set<string>([...base, ...custom]);
     return Array.from(set).sort((a, b) => a.localeCompare(b, 'pl', { sensitivity: 'base' }));
   }
 
-  
-  /** Dodaj własne (można wiele po przecinku). Po dodaniu od razu zaznaczamy. */
   addCustomOptions(controlName: 'specialties'|'servicesOffered', inputValue: string) {
     const items = (inputValue || '')
       .split(',')
       .map(s => s.trim())
       .filter(Boolean);
-
     if (!items.length) return;
 
     if (controlName === 'specialties') {
@@ -333,7 +392,6 @@ export class VetProfileComponent implements OnInit {
     }
   }
 
-  /** Usuń CAŁKOWICIE (tylko custom). Dodatkowo odznacz w zaznaczonych. */
   removeOption(controlName: 'specialties'|'servicesOffered', value: string) {
     if (controlName === 'specialties') {
       this.customSpecialtiesSet.delete(value);

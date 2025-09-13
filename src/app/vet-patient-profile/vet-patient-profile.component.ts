@@ -41,7 +41,7 @@ export class VetPatientProfileComponent implements OnInit {
   }
 
   openAnimal(animalId: string) {
-    this.router.navigate(['/animal', animalId]);
+    this.router.navigate(['/vet/animal', animalId]);
   }
 
   // skróty do dodawania badań → przekierowanie do formularzy

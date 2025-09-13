@@ -11,8 +11,14 @@ router.use(auth);
 const oid = (s: string) => new Types.ObjectId(s);
 const valid = (s: string) => Types.ObjectId.isValid(s);
 
+// Logger wejścia do routera /vets – ZOSTAW na razie
+router.use((req, _res, next) => {
+  console.log('[VETS ROUTER]', req.method, req.path);
+  next();
+});
+
 /* =========================================================
- *  PRZYPISYWANIE ZWIERZĄT DO WETA (OWNER moze przypiąć/odpiąć)
+ *  PRZYPISYWANIE ZWIERZĄT DO WETA (OWNER)
  * ======================================================= */
 
 // POST /vets/assign  { animalId, vetId }
@@ -25,14 +31,17 @@ router.post('/assign', async (req: AuthedRequest, res) => {
     const animal = await Animal.findById(animalId);
     if (!animal) return res.status(404).json({ error: 'Animal not found' });
 
-    // tylko właściciel zwierzaka może przypisać veta
-    const isOwner = await Owner.findOne({ _id: animal.ownerId, userId: req.user!.id }).lean();
+    // tylko właściciel może przypiąć veta
+    const isOwner = await Owner.findOne({
+      _id: animal.ownerId,
+      userId: oid(req.user!.id)
+    }).lean();
     if (!isOwner) return res.status(403).json({ error: 'Not your animal' });
 
     const vet = await Vet.findById(vetId).lean();
     if (!vet) return res.status(404).json({ error: 'Vet not found' });
 
-    animal.vetId = oid(vetId);
+    (animal as any).vetId = oid(vetId);
     await animal.save();
 
     return res.json({ message: 'Assigned', animalId, vetId });
@@ -51,7 +60,10 @@ router.post('/unassign', async (req: AuthedRequest, res) => {
     const animal = await Animal.findById(animalId);
     if (!animal) return res.status(404).json({ error: 'Animal not found' });
 
-    const isOwner = await Owner.findOne({ _id: animal.ownerId, userId: req.user!.id }).lean();
+    const isOwner = await Owner.findOne({
+      _id: animal.ownerId,
+      userId: oid(req.user!.id)
+    }).lean();
     if (!isOwner) return res.status(403).json({ error: 'Not your animal' });
 
     (animal as any).vetId = null;
@@ -67,9 +79,8 @@ router.post('/unassign', async (req: AuthedRequest, res) => {
  *  PROFIL VETA (me)
  * ======================================================= */
 
-// GET /vets/me
 router.get('/me', async (req: AuthedRequest, res) => {
-  const vet = await Vet.findOne({ userId: req.user!.id })
+  const vet = await Vet.findOne({ userId: oid(req.user!.id) })
     .populate('userId', 'name fullName firstName lastName email')
     .lean({ virtuals: true });
 
@@ -82,10 +93,9 @@ router.get('/me', async (req: AuthedRequest, res) => {
   });
 });
 
-// PATCH /vets/me
 router.patch('/me', async (req: AuthedRequest, res) => {
   const vet = await Vet.findOneAndUpdate(
-    { userId: req.user!.id },
+    { userId: oid(req.user!.id) },
     req.body,
     { new: true, upsert: true }
   )
@@ -100,13 +110,12 @@ router.patch('/me', async (req: AuthedRequest, res) => {
 });
 
 /* =========================================================
- *  PACJENCI DLA ZALOGOWANEGO VETA (opcjonalnie: tylko przypięci)
+ *  PACJENCI VETA (przypięci do niego)
  * ======================================================= */
 
-// GET /vets/me/patients    -> właściciele, którzy mają przynajmniej 1 zwierzę przypięte do tego veta
 router.get('/me/patients', async (req: AuthedRequest, res) => {
   try {
-    const vet = await Vet.findOne({ userId: req.user!.id }).lean();
+    const vet = await Vet.findOne({ userId: oid(req.user!.id) }).lean();
     if (!vet) return res.status(404).json({ error: 'Vet profile not found' });
 
     const animals = await Animal.find({ vetId: vet._id }).lean();
@@ -137,7 +146,6 @@ router.get('/me/patients', async (req: AuthedRequest, res) => {
  *  GLOBALNA LISTA PACJENTÓW (wet widzi wszystkich)
  * ======================================================= */
 
-// GET /vets/patients?search=...
 router.get('/patients', async (req: AuthedRequest, res) => {
   try {
     const { search } = req.query as { search?: string };
@@ -159,7 +167,6 @@ router.get('/patients', async (req: AuthedRequest, res) => {
   }
 });
 
-// GET /vets/patients/:ownerId  -> profil pacjenta + WSZYSTKIE jego zwierzęta (niezależnie od przypisania)
 router.get('/patients/:ownerId', async (req: AuthedRequest, res) => {
   try {
     const { ownerId } = req.params;
@@ -178,10 +185,50 @@ router.get('/patients/:ownerId', async (req: AuthedRequest, res) => {
 });
 
 /* =========================================================
- *  LISTA WETÓW + SZCZEGÓŁY
+ *  DOSTĘP DO ZWIERZAKA W WIDOKU VETA
+ *  (UWAGA: TA TRASA MUSI BYĆ PRZED LISTĄ "/" I SZCZEGÓŁAMI "/:id")
  * ======================================================= */
 
-// GET /vets
+router.get('/animals/:id', async (req: AuthedRequest, res) => {
+  try {
+    const { id } = req.params;
+    if (!Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid animal id' });
+    }
+
+    const animal = await Animal.findById(id).lean();
+    if (!animal) return res.status(404).json({ error: 'Animal not found' });
+
+    // Właściciel – zawsze może
+    const owner = await Owner.findOne({
+      _id: animal.ownerId,
+      $or: [
+        { userId: req.user!.id },
+        ...(Types.ObjectId.isValid(req.user!.id) ? [{ userId: new Types.ObjectId(req.user!.id) }] : [])
+      ]
+    }).lean();
+    if (owner) return res.json(animal);
+
+    // Każdy user mający profil veta – może
+    const vetProfile = await Vet.findOne({
+      $or: [
+        { userId: req.user!.id },
+        ...(Types.ObjectId.isValid(req.user!.id) ? [{ userId: new Types.ObjectId(req.user!.id) }] : [])
+      ]
+    }).lean();
+
+    if (vetProfile) return res.json(animal);
+
+    return res.status(403).json({ error: 'Forbidden' });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
+/* =========================================================
+ *  LISTA WETÓW + SZCZEGÓŁY (KOŃCÓWKA PLIKU – KOLEJNOŚĆ!)
+ * ======================================================= */
+
 router.get('/', async (_req, res) => {
   try {
     const vets = await Vet.find()
@@ -193,7 +240,6 @@ router.get('/', async (_req, res) => {
   }
 });
 
-// GET /vets/:id  (UWAGA: na samym końcu pliku; ID walidujemy w handlerze)
 router.get('/:id', async (req, res) => {
   try {
     if (!Types.ObjectId.isValid(req.params.id)) {

@@ -1,5 +1,9 @@
 <div class="dashboard-menu-container">
   <div class="container">
+      <!-- BANER INFORMACYJNY od guarda -->
+<div *ngIf="infoMsg" class="banner info">
+  {{ infoMsg }}
+</div>
     <h2>Mój profil (weterynarz)</h2>
 
     <div class="actions" *ngIf="!loading">
@@ -274,5 +278,7 @@
     <ng-template #loadingTpl>
       <p>Ładowanie…</p>
     </ng-template>
+  
+
   </div>
 </div>

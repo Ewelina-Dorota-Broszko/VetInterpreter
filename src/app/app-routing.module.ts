@@ -1,35 +1,43 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
+import { FrontPageComponent } from './front-page/front-page.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { AboutComponent } from './about/about.component';
-import { FrontPageComponent } from './front-page/front-page.component'
 import { BlogComponent } from './blog/blog.component';
 import { ContactComponent } from './contact/contact.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { DiabetesFormComponent } from './diabetes-form/diabetes-form.component';
-import { TemperatureFormComponent } from './temperature-form/temperature-form.component';
-import { StoolFormComponent } from './stool-form/stool-form.component';
+
 import { AddDocumentComponent } from './add-document/add-document.component';
 import { AnimalProfileComponent } from './animal-profile/animal-profile.component';
+
 import { BloodFormComponent } from './blood-form/blood-form.component';
 import { UrineFormComponent } from './urine-form/urine-form.component';
-import { VisitNotesComponent } from './visit-notes/visit-notes.component';
-import { DietComponent } from './diet/diet.component';
-import { AuthGuard } from './auth/auth.guard';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { StoolFormComponent } from './stool-form/stool-form.component';
+import { TemperatureFormComponent } from './temperature-form/temperature-form.component';
 import { WeightFormComponent } from './weight-form/weight-form.component';
 import { MedsFormComponent } from './meds-form/meds-form.component';
 import { VaccinationFormComponent } from './vaccination-form/vaccination-form.component';
-import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
-import { VetProfileComponent } from './vet-profile/vet-profile.component';
+import { DiabetesFormComponent } from './diabetes-form/diabetes-form.component';
+import { VisitNotesComponent } from './visit-notes/visit-notes.component';
+
+import { DietComponent } from './diet/diet.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 import { AnimalsAddFormComponent } from './animals-add-form/animals-add-form.component';
 import { CalendarComponent } from './calendar/calendar.component';
+
 import { FindVetComponent } from './find-vet/find-vet.component';
-import { VetPatientsComponent } from './vet-patients/vet-patients.component';
 import { MyVetComponent } from './my-vet/my-vet.component';
+
+import { VetPatientsComponent } from './vet-patients/vet-patients.component';
 import { VetPatientProfileComponent } from './vet-patient-profile/vet-patient-profile.component';
 import { VetAnimalProfileComponent } from './vet-animal-profile/vet-animal-profile.component';
+import { VetProfileComponent } from './vet-profile/vet-profile.component';
+
+import { AuthGuard } from './auth/auth.guard';
+import { VetProfileCompleteGuard } from './auth/vet-profile-complete.guard';
+import { VetAddDocumentComponent } from './vet-add-document/vet-add-document.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -38,39 +46,57 @@ const routes: Routes = [
   { path: 'about', component: AboutComponent },
   { path: 'blog', component: BlogComponent },
   { path: 'contact', component: ContactComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'add-document', component: AddDocumentComponent },
-  { path: 'animal/:id', component: AnimalProfileComponent },
-  { path: 'form/blood', component: BloodFormComponent },
-  { path: 'form/stool', component: StoolFormComponent },
-   { path: 'form/symptoms', component: SymptomsFormComponent },
-  { path: 'form/weight', component: WeightFormComponent },
-  { path: 'form/urine', component: UrineFormComponent },
-  { path: 'form/meds', component: MedsFormComponent },
-  { path: 'form/temperature', component: TemperatureFormComponent },
-  { path: 'form/vaccination', component: VaccinationFormComponent },
-  { path: 'form/diabetes', component: DiabetesFormComponent },
-  { path: 'form/visit-notes', component: VisitNotesComponent },
-  { path: 'animal/:id/diet', component: DietComponent },
-  { path: 'diet', component: DietComponent },
-  { path: 'dashboard', canActivate: [AuthGuard], component: DashboardComponent },
-  { path: 'profile', component: UserProfileComponent },
-  { path: 'animals/new', component: AnimalsAddFormComponent },
-  { path: 'calendar', component: CalendarComponent },
-  { path: 'find-vet', component: FindVetComponent },
-  { path: 'my-vet', component: MyVetComponent, canActivate: [AuthGuard] },
-    // dostępne tylko dla weterynarzy (bo requireVet = true)
-  { path: 'vet/patients', component: VetPatientsComponent, canActivate: [AuthGuard], data: { requireVet: true } },
-  { path: 'vet/patient/:ownerId', component: VetPatientProfileComponent, canActivate: [AuthGuard], data: { requireVet: true } },
-  { path: 'vet/animal/:id', component: VetAnimalProfileComponent, canActivate: [AuthGuard], data: { requireVet: true } },
-  { path: 'vet/patients', component: VetPatientsComponent, canActivate: [AuthGuard], data: { requireVet: true } },
-  { path: 'vet/:id', component: MyVetComponent, canActivate: [AuthGuard] },
-  { path: 'vet-profile', component: VetProfileComponent },
 
-]
+  // Strefa użytkownika
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'profile', component: UserProfileComponent, canActivate: [AuthGuard] },
+  { path: 'animals/new', component: AnimalsAddFormComponent, canActivate: [AuthGuard] },
+  { path: 'animal/:id', component: AnimalProfileComponent, canActivate: [AuthGuard] },
+  { path: 'animal/:id/diet', component: DietComponent, canActivate: [AuthGuard] },
+  { path: 'diet', component: DietComponent, canActivate: [AuthGuard] },
+  { path: 'add-document', component: AddDocumentComponent, canActivate: [AuthGuard] },
+  { path: 'calendar', component: CalendarComponent, canActivate: [AuthGuard] },
+
+  // Formularze
+  { path: 'form/blood', component: BloodFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/urine', component: UrineFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/stool', component: StoolFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/temperature', component: TemperatureFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/weight', component: WeightFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/meds', component: MedsFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/vaccination', component: VaccinationFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/diabetes', component: DiabetesFormComponent, canActivate: [AuthGuard] },
+  { path: 'form/visit-notes', component: VisitNotesComponent, canActivate: [AuthGuard] },
+
+  // Właściciel – weterynarze
+  { path: 'find-vet', component: FindVetComponent, canActivate: [AuthGuard] },
+  { path: 'my-vet', component: MyVetComponent, canActivate: [AuthGuard] },
+
+  // Panel veta (zagnieżdżony) – wymagany login + rola veta; dzieci pilnowane przez VetProfileCompleteGuard
+  {
+    path: 'vet',
+    canActivate: [AuthGuard],
+    data: { requireVet: true },
+    canActivateChild: [VetProfileCompleteGuard],
+    children: [
+      { path: 'profile', component: VetProfileComponent },                  // dostępny zawsze (guard powinien przepuszczać profile)
+      { path: 'patients', component: VetPatientsComponent },                // blokowane, gdy profil niekompletny
+      { path: 'patients/:ownerId', component: VetPatientProfileComponent }, // jw.
+      { path: 'animal/:id', component: VetAnimalProfileComponent },         // jw.
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      { path: 'add-document', component: VetAddDocumentComponent }, 
+    ]
+  },
+
+  // **ALIAS** dla starych linków /vet/patient/:ownerId  -> przekierowanie na /vet/patients/:ownerId
+  { path: 'vet/patient/:ownerId', redirectTo: 'vet/patients/:ownerId', pathMatch: 'full' },
+
+  // Fallback
+  { path: '**', redirectTo: 'dashboard' }
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

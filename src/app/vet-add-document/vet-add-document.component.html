@@ -1,0 +1,48 @@
+<div class="dashboard-menu-container">
+    <div class="container vet-add-doc">
+
+        <div class="topbar">
+            <button class="ghost" (click)="goBack()">← Wróć</button>
+            <h2>Dodaj dokument (weterynarz)</h2>
+        </div>
+
+        <!-- wybór / potwierdzenie zwierzaka -->
+        <section class="pick">
+            <label>
+                <span>ID zwierzaka</span>
+                <input type="text" [value]="animalId || ''" (change)="setAnimalId($any($event.target).value)"
+                    placeholder="Wklej ID zwierzaka (ObjectId)" />
+
+            </label>
+
+            <div class="animal-brief" *ngIf="animal">
+                <div class="title">
+                    <strong>{{ animal.name }}</strong>
+                    <span class="muted"> ({{ animal.species }}<span *ngIf="animal.breed"> / {{ animal.breed
+                            }}</span>)</span>
+                </div>
+                <div class="muted small">
+                    Właściciel: {{ animal.ownerName || '—' }}
+                    <span *ngIf="animal.weightKg"> · Waga: {{ animal.weightKg }} kg</span>
+                </div>
+            </div>
+
+            <div *ngIf="loading" class="muted">Sprawdzam zwierzaka…</div>
+            <p class="error" *ngIf="!loading && error">{{ error }}</p>
+        </section>
+
+        <!-- kafelki z dokumentami -->
+        <section class="cards">
+            <button class="card" *ngFor="let c of cards" [disabled]="!animalId" (click)="open(c.type)">
+                <div class="title">{{ c.title }}</div>
+                <div class="hint">{{ c.hint }}</div>
+                <div class="cta">{{ animalId ? 'Otwórz formularz' : 'Wybierz zwierzaka' }}</div>
+            </button>
+        </section>
+
+        <p class="tip muted">
+            Wpisy tworzone z tego widoku zostaną oznaczone jako <strong>dodane przez weterynarza</strong>.
+        </p>
+
+    </div>
+</div>

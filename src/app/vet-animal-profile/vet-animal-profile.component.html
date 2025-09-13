@@ -1,1 +1,130 @@
-<p>vet-animal-profile works!</p>
+<div class="dashboard-menu-container">
+  <div class="container">
+
+    <div *ngIf="loading" class="muted">Ładowanie…</div>
+    <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+    <div *ngIf="!loading && animal">
+      <!-- Pasek akcji -->
+      <div class="bar">
+        <button class="ghost" routerLink="/vet/patients">← Wróć</button>
+        <div class="right">
+          <button (click)="addDoc('blood')">+ Krew</button>
+          <button (click)="addDoc('urine')">+ Mocz</button>
+          <button (click)="addDoc('temperature')">+ Temp</button>
+          <button (click)="addDoc('weight')">+ Waga</button>
+          <button (click)="addDoc('vaccination')">+ Szczep.</button>
+          <button (click)="addDoc('meds')">+ Lek</button>
+          <button (click)="addDoc('symptoms')">+ Objaw</button>
+        </div>
+      </div>
+
+      <!-- ===== Nagłówek profilu ===== -->
+      <div class="profile-wrapper">
+        <header class="header">
+          <div class="info">
+            <h1>{{ animal.name }}</h1>
+            <p *ngIf="animal.ownerName">Właściciel: <strong>{{ animal.ownerName }}</strong></p>
+            <p>
+              Gatunek: <strong>{{ animal.species }}</strong>
+              <span *ngIf="animal.breed"> | Rasa: <strong>{{ animal.breed }}</strong></span>
+            </p>
+            <p>
+              Płeć: <strong>{{ animal.sex || '—' }}</strong>
+              <span *ngIf="animal.weightKg"> | Waga: <strong>{{ animal.weightKg }} kg</strong></span>
+            </p>
+            <p *ngIf="getAgeYears() !== null">Wiek: <strong>{{ getAgeYears() }} lat</strong></p>
+
+            <p class="muted small">
+              Widok veta — poniżej pokazuję wyłącznie wpisy dodane przez weterynarzy.
+            </p>
+          </div>
+
+          <div class="actions">
+            <button type="button" (click)="addDoc('blood')">Dodaj nowy dokument</button>
+          </div>
+        </header>
+
+        <!-- ===== Zakładki ===== -->
+        <nav class="tabs">
+          <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Podsumowanie</button>
+          <button [class.active]="activeTab === 'blood'" (click)="setTab('blood')">Krew</button>
+          <button [class.active]="activeTab === 'urine'" (click)="setTab('urine')">Mocz</button>
+          <button [class.active]="activeTab === 'stool'" (click)="setTab('stool')">Kał</button>
+          <button [class.active]="activeTab === 'temperature'" (click)="setTab('temperature')">Temperatura</button>
+          <button [class.active]="activeTab === 'diabetes'" (click)="setTab('diabetes')">Cukrzyca</button>
+          <button [class.active]="activeTab === 'weight'" (click)="setTab('weight')">Waga & BCS</button>
+          <button [class.active]="activeTab === 'vaccinations'" (click)="setTab('vaccinations')">Szczepienia</button>
+          <button [class.active]="activeTab === 'meds'" (click)="setTab('meds')">Leki</button>
+          <button [class.active]="activeTab === 'symptoms'" (click)="setTab('symptoms')">Objawy</button>
+        </nav>
+
+        <!-- ===== Podsumowanie (opcjonalnie) ===== -->
+        <!-- Możesz tu kiedyś zrobić karty z ostatnimi wpisami jak u ownera -->
+
+        <!-- ===== Badania krwi ===== -->
+        <section *ngIf="activeTab === 'blood'" class="tab-content">
+          <app-blood-tab
+            [active]="true"
+            [bloodTests]="bloodTestsVet"
+            [referenceRanges]="referenceRanges">
+          </app-blood-tab>
+          <p class="muted" *ngIf="!bloodTestsVet.length">Brak badań krwi dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Badania moczu ===== -->
+        <section *ngIf="activeTab === 'urine'" class="tab-content">
+          <app-urine-tab [urineTests]="urineTestsVet"></app-urine-tab>
+          <p class="muted" *ngIf="!urineTestsVet.length">Brak badań moczu dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Badania kału ===== -->
+        <section *ngIf="activeTab === 'stool'" class="tab-content">
+          <app-stool-tab [stoolTests]="stoolTestsVet"></app-stool-tab>
+          <p class="muted" *ngIf="!stoolTestsVet.length">Brak badań kału dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Temperatura ===== -->
+        <section *ngIf="activeTab === 'temperature'" class="tab-content">
+          <app-temperature-tab [temperatureLogs]="temperatureLogsVet"></app-temperature-tab>
+          <p class="muted" *ngIf="!temperatureLogsVet.length">Brak pomiarów dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Cukrzyca ===== -->
+        <section *ngIf="activeTab === 'diabetes'" class="tab-content">
+          <app-diabetes-tab [diabetesLogs]="diabetesLogsVet"></app-diabetes-tab>
+          <p class="muted" *ngIf="!diabetesLogsVet.length">Brak wpisów cukrzycowych dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Waga ===== -->
+        <section *ngIf="activeTab === 'weight'" class="tab-content">
+          <app-weight-tab [weightHistory]="weightHistoryVet"></app-weight-tab>
+          <p class="muted" *ngIf="!weightHistoryVet.length">Brak historii wagi dodanej przez veta.</p>
+        </section>
+
+        <!-- ===== Szczepienia ===== -->
+        <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
+          <app-vaccinations-tab [vaccinations]="vaccinationsVet"></app-vaccinations-tab>
+          <p class="muted" *ngIf="!vaccinationsVet.length">Brak szczepień dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Leki ===== -->
+        <section *ngIf="activeTab === 'meds'" class="tab-content">
+          <app-meds-tab [animalId]="animal?._id" [medications]="medicationsVet"></app-meds-tab>
+          <p class="muted" *ngIf="!medicationsVet.length">Brak leków dodanych przez veta.</p>
+        </section>
+
+        <!-- ===== Objawy ===== -->
+        <section *ngIf="activeTab === 'symptoms'" class="tab-content">
+          <app-symptoms-tab [symptoms]="symptomsVet"></app-symptoms-tab>
+          <p class="muted" *ngIf="!symptomsVet.length">Brak objawów dodanych przez veta.</p>
+        </section>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && !animal" class="empty-state">
+      Nie znaleziono zwierzaka.
+    </div>
+
+  </div>
+</div>
