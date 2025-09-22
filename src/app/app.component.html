@@ -29,10 +29,10 @@
       <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
       <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontakt</a></div>
 
-      <div class="menu-item"><a routerLink="/dashboard" [class.active]="isActive('/dashboard')">Dashboard</a></div>
+      <div *ngIf="!(auth.user$ | async)?.isVet" class="menu-item"><a routerLink="/dashboard" [class.active]="isActive('/dashboard')">Dashboard</a></div>
       <!-- Link do profilu weterynarza tylko dla weta -->
       <div class="menu-item" *ngIf="(auth.user$ | async)?.isVet">
-        <a routerLink="/vet-profile" [class.active]="isActive('/vet-profile')">Mój profil (wet.)</a>
+        <a routerLink="/vet/profile" [class.active]="isActive('/vet-profile')">Mój profil (wet.)</a>
       </div>
 
       <div class="menu-item"><a href="#" (click)="logout()">Wyloguj</a></div>

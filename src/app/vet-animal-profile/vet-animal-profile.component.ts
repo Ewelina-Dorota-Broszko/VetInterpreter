@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VetService } from '../services/vet.service';
-
-// jeśli masz interfejsy BloodTest/UrineTest itd. – możesz je tu zaimportować.
-// Dla prostoty biorę typ `any`, ale filtr zachowuje kształt obiektów.
+import { AnimalsService, TemperatureLog } from '../services/animals.service';
 
 @Component({
   selector: 'app-vet-animal-profile',
@@ -21,7 +19,7 @@ export class VetAnimalProfileComponent implements OnInit {
     | 'temperature' | 'diabetes' | 'weight'
     | 'vaccinations' | 'meds' | 'symptoms' = 'overview';
 
-  // tylko wpisy dodane przez wetów
+  // tylko wpisy dodane przez wetów (widok veta)
   bloodTestsVet: any[] = [];
   urineTestsVet: any[] = [];
   stoolTestsVet: any[] = [];
@@ -58,10 +56,16 @@ export class VetAnimalProfileComponent implements OnInit {
     bilirubinIndirect: { min: 0.1, max: 1.0, unit: 'mg/dL' }
   };
 
+  // stany tylko dla temperatury (bo ją ładujemy z endpointu vet-only)
+  loadingTemperature = false;
+  temperatureError = '';
+  private temperatureLoaded = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private vet: VetService
+    private vet: VetService,
+    private animals: AnimalsService
   ) {}
 
   ngOnInit(): void {
@@ -83,10 +87,11 @@ export class VetAnimalProfileComponent implements OnInit {
     this.vet.getAnimalAsVet(animalId).subscribe({
       next: (animal) => {
         this.animal = animal;
-        this.splitVetOnly();
+        this.splitVetOnly();        // wypełnia wszystkie sekcje oprócz temperatury
         this.loading = false;
-        // domyślnie przejdź do krwi / lub zostaw overview
-        this.activeTab = 'blood';
+        this.activeTab = 'blood';   // domyślna zakładka
+        this.temperatureLoaded = false; // reset przy zmianie zwierzaka
+        this.temperatureLogsVet = [];
       },
       error: (err) => {
         this.error = err?.error?.error || 'Nie udało się pobrać zwierzaka.';
@@ -96,50 +101,59 @@ export class VetAnimalProfileComponent implements OnInit {
   }
 
   /** odfiltruj tylko wpisy dodane przez weterynarzy */
-  private onlyVet<T extends { addedByRole?: string }>(arr?: T[]): T[] {
+  private onlyVet<T extends { addedBy?: string; addedByRole?: string }>(arr?: T[]): T[] {
     if (!Array.isArray(arr)) return [];
-    return arr.filter(x => (x as any).addedByRole === 'vet') as T[];
+    // standard: addedBy === 'vet'; fallback dla starych rekordów: addedByRole === 'vet'
+    return arr.filter(x => (x.addedBy === 'vet') || (x.addedByRole === 'vet')) as T[];
   }
 
+  /** Ustaw sekcje vet-only z obiektu animal (oprócz temperatury – tę ładujemy z endpointu ?mine=1) */
   private splitVetOnly() {
     const a = this.animal || {};
-    this.bloodTestsVet       = this.onlyVet(a.bloodTests);
-    this.urineTestsVet       = this.onlyVet(a.urineTests);
-    this.stoolTestsVet       = this.onlyVet(a.stoolTests);
-    this.temperatureLogsVet  = this.onlyVet(a.temperatureLogs);
-    this.diabetesLogsVet     = this.onlyVet(a.diabetesLogs);
-    this.weightHistoryVet    = this.onlyVet(a.weightHistory);
-    this.vaccinationsVet     = this.onlyVet(a.vaccinations);
-    this.medicationsVet      = this.onlyVet(a.medications);
-    this.symptomsVet         = this.onlyVet(a.symptoms);
+    this.bloodTestsVet    = this.onlyVet(a.bloodTests);
+    this.urineTestsVet    = this.onlyVet(a.urineTests);
+    this.stoolTestsVet    = this.onlyVet(a.stoolTests);
+    // this.temperatureLogsVet = this.onlyVet(a.temperatureLogs); // NIE – robimy vet-only z backendu
+    this.diabetesLogsVet  = this.onlyVet(a.diabetesLogs);
+    this.weightHistoryVet = this.onlyVet(a.weightHistory);
+    this.vaccinationsVet  = this.onlyVet(a.vaccinations);
+    this.medicationsVet   = this.onlyVet(a.medications);
+    this.symptomsVet      = this.onlyVet(a.symptoms);
   }
 
   /* ===== Zakładki ===== */
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
+    if (tab === 'temperature' && !this.temperatureLoaded) {
+      this.loadTemperatureVet();
+    }
   }
 
-  /* ===== Akcje – przejście do formularzy z ?animalId=... ===== */
-  // addDoc(kind: 'blood'|'urine'|'temperature'|'weight'|'vaccination'|'meds'|'symptoms') {
-  //   if (!this.animal?._id) return;
-  //   const map: Record<string, string> = {
-  //     blood: 'form/blood',
-  //     urine: 'form/urine',
-  //     temperature: 'form/temperature',
-  //     weight: 'form/weight',
-  //     vaccination: 'form/vaccination',
-  //     meds: 'form/meds',
-  //     symptoms: 'form/symptoms'
-  //   };
-  //   this.router.navigate(['/', map[kind]], { queryParams: { animalId: this.animal._id } });
-  // }
-  addDoc(kind: 'blood'|'urine'|'temperature'|'weight'|'vaccination'|'meds'|'symptoms') {
-  if (!this.animal?._id) return;
+  /** Temperatura: ładuj tylko wpisy zalogowanego weta z backendu (?mine=1) */
+  private loadTemperatureVet() {
+    if (!this.animal?._id) return;
+    this.loadingTemperature = true;
+    this.temperatureError = '';
 
-  // absolutny URL, zero dwuznaczności z child-routes
-  this.router.navigateByUrl(
-    `/vet/add-document?animalId=${this.animal._id}&kind=${kind}`
-  );}
+    this.animals.getTemperatureLogsVet(this.animal._id).subscribe({
+      next: (rows) => {
+        this.temperatureLogsVet = rows || [];
+        this.loadingTemperature = false;
+        this.temperatureLoaded = true;
+      },
+      error: () => {
+        this.temperatureError = 'Nie udało się pobrać pomiarów temperatury.';
+        this.loadingTemperature = false;
+      }
+    });
+  }
+
+  /* ===== Akcje – przejście do formularzy ===== */
+  addDoc(kind: 'blood'|'urine'|'temperature'|'weight'|'vaccination'|'meds'|'symptoms') {
+    if (!this.animal?._id) return;
+    // absolutny URL – brak kolizji z child routes
+    this.router.navigateByUrl(`/vet/add-document?animalId=${encodeURIComponent(this.animal._id)}&kind=${encodeURIComponent(kind)}`);
+  }
 
   /* ===== Pomocnicze ===== */
   getAgeYears(): number | null {

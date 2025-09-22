@@ -85,9 +85,10 @@ const routes: Routes = [
       { path: 'animal/:id', component: VetAnimalProfileComponent },         // jw.
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'add-document', component: VetAddDocumentComponent }, 
+      
     ]
   },
-
+  
   // **ALIAS** dla starych linków /vet/patient/:ownerId  -> przekierowanie na /vet/patients/:ownerId
   { path: 'vet/patient/:ownerId', redirectTo: 'vet/patients/:ownerId', pathMatch: 'full' },
 

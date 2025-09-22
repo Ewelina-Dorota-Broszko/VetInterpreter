@@ -21,6 +21,12 @@ async function ensureOwnership(animalId: string, userId: string) {
   return owner ? animal : null;
 }
 
+/** Zwróć _id profilu weta (albo undefined) */
+async function currentVetId(userId: string) {
+  const vet = await Vet.findOne({ userId }).lean();
+  return vet?._id;
+}
+
 /** NOWE: zapis/usuń może zrobić właściciel ALBO zalogowany wet (dowolny) */
 async function ensureOwnerOrVet(animalId: string, userId: string) {
   if (!valid(animalId)) return null;
@@ -145,6 +151,7 @@ async function addAndReturnLast(
 }
 
 /** pull subdocument by id (owner lub wet) */
+/** pull subdocument by id (owner lub wet) – wet może usuwać TYLKO swoje wpisy */
 async function pullById(
   req: AuthedRequest,
   res: any,
@@ -156,14 +163,23 @@ async function pullById(
   const can = await ensureOwnerOrVet(id, req.user!.id);
   if (!can) return res.status(403).json({ error: 'Forbidden' });
 
+  // Jeśli zalogowany to WET – ograniczamy usuwanie do jego własnych wpisów
+  const vetId = await currentVetId(req.user!.id);
+  const match = vetId
+    ? { _id: oid(subId), addedBy: 'vet', addedByVetId: vetId }
+    : { _id: oid(subId) }; // owner może usunąć cokolwiek w danym path
+
   const result = await Animal.updateOne(
     { _id: id },
-    { $pull: { [path]: { _id: oid(subId) } } }
+    { $pull: { [path]: match } }
   );
-  if (result.modifiedCount === 0) return res.status(404).json({ error: notFoundMsg });
+
+  if (result.modifiedCount === 0) {
+    return res.status(404).json({ error: notFoundMsg });
+  }
   return res.json({ message: 'Deleted' });
 }
-
+ 
 /* ========= Blood ========= */
 router.get('/:id/blood-tests', async (req: AuthedRequest, res) => {
   const can = await ensureOwnership(req.params.id, req.user!.id);
@@ -207,17 +223,68 @@ router.delete('/:id/stool-tests/:testId', (req, res) =>
 );
 
 /* ========= Temperature ========= */
+// router.get('/:id/temperature-logs', async (req: AuthedRequest, res) => {
+//   const can = await ensureOwnership(req.params.id, req.user!.id);
+//   if (!can) return res.status(404).json({ error: 'Animal not found' });
+//   const animal = await Animal.findById(req.params.id).lean();
+//   res.json(animal?.temperatureLogs || []);
+// });
+// router.post('/:id/temperature-logs', (req, res) =>
+//   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'temperatureLogs', req.body)
+// );
+// router.delete('/:id/temperature-logs/:logId', (req, res) =>
+//   pullById(req as AuthedRequest, res, req.params.id, 'temperatureLogs', req.params.logId, 'Temperature log not found')
+// );
+
+/* ========= Temperature ========= */
+
+// GET /animals/:id/temperature-logs?mine=1
 router.get('/:id/temperature-logs', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  // wet też ma mieć wgląd (nie tylko owner), więc używamy ensureOwnerOrVet
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.temperatureLogs || []);
+
+  const animal = await Animal.findById(req.params.id, { temperatureLogs: 1 }).lean();
+  let logs: any[] = animal?.temperatureLogs || [];
+
+  // mine=1 => jeśli zalogowany to wet, filtrujemy po jego wpisach
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    if (vetId) {
+      const v = String(vetId);
+      logs = logs.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === v);
+    } else {
+      // jeśli owner poda mine=1 – nic nie zwracamy
+      logs = [];
+    }
+  }
+
+  // sort: najnowsze na górze (po addedAt, a jak brak to po date+time)
+  logs.sort((a, b) => {
+    const aa = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+    const bb = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+    if (aa && bb) return bb - aa;
+    return (b.date + ' ' + b.time).localeCompare(a.date + ' ' + a.time);
+  });
+
+  res.json(logs);
 });
+
+// POST /animals/:id/temperature-logs  — zapis jednego pomiaru
 router.post('/:id/temperature-logs', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'temperatureLogs', req.body)
 );
+
+// DELETE /animals/:id/temperature-logs/:logId — usuwanie jednego wpisu
 router.delete('/:id/temperature-logs/:logId', (req, res) =>
-  pullById(req as AuthedRequest, res, req.params.id, 'temperatureLogs', req.params.logId, 'Temperature log not found')
+  pullById(
+    req as AuthedRequest,
+    res,
+    req.params.id,
+    'temperatureLogs',
+    req.params.logId,
+    'Temperature log not found'
+  )
 );
 
 /* ========= Diabetes ========= */
