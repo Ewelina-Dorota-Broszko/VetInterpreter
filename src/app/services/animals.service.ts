@@ -21,10 +21,60 @@ export interface CalendarEntry {
   note?: string;
 }
 
+// === DODAJ POD INTERFEJSAMI ===
+export interface TemperatureLog {
+  _id?: string;
+  date: string;            // YYYY-MM-DD
+  time: string;            // HH:mm
+  temperature: number;
+  behavior?: 'normal' | 'lethargic' | 'agitated' | 'unresponsive' | '';
+  appetite?: 'normal' | 'reduced' | 'none' | '';
+  comments?: string;
+  addedBy?: 'owner' | 'vet';
+  addedByVetId?: string | null;
+  addedAt?: string;        // ISO
+}
+
+
 @Injectable({ providedIn: 'root' })
 export class AnimalsService {
   private api = environment.apiUrl;
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
+  // === W KLASIE AnimalsService – DODAJ TE TRZY METODY ===
+
+  // tylko wpisy dodane przez ZALOGOWANEGO weta (backend: ?mine=1)
+  getTemperatureLogsVet(animalId: string) {
+    return this.http.get<TemperatureLog[]>(
+      `${this.api}/animals/${animalId}/temperature-logs`,
+      { params: { mine: '1' } }
+    );
+  }
+
+  // wszystkie pomiary (owner + wszyscy weci)
+  getTemperatureLogsAll(animalId: string) {
+    return this.http.get<TemperatureLog[]>(
+      `${this.api}/animals/${animalId}/temperature-logs`
+    );
+  }
+
+  // usunięcie pojedynczego pomiaru (wet może usuwać TYLKO swoje)
+  deleteTemperatureLog(animalId: string, logId: string) {
+    return this.http.delete<{ message: string }>(
+      `${this.api}/animals/${animalId}/temperature-logs/${logId}`
+    );
+  }
+  // DODAJ — zgodne z backendem:
+  addVisitHistoryEntry(animalId: string, body: any) {
+    // POST /animals/:id/visit-history
+    return this.http.post<any>(`${this.api}/animals/${animalId}/visit-history`, body);
+  }
+
+  deleteVisitHistoryEntry(animalId: string, visitId: string) {
+    // DELETE /animalsti/:id/visit-history/:visitId
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/visit-history/${visitId}`);
+  }
+
 
   /** CRUD */
   getById(id: string) {
@@ -53,7 +103,7 @@ export class AnimalsService {
     return this.http.post(`${this.api}/animals/${animalId}/temperature-logs`, body);
   }
   addWeight(animalId: string, body: any) {
-  return this.http.post<any>(`${this.api}/animals/${animalId}/weight-history`, body);
+    return this.http.post<any>(`${this.api}/animals/${animalId}/weight-history`, body);
   }
   addVaccination(animalId: string, body: any) {
     return this.http.post<any>(`${this.api}/animals/${animalId}/vaccinations`, body);
@@ -78,8 +128,8 @@ export class AnimalsService {
       `${this.api}/owners/me`
     );
   }
- getOwnerCalendar(ownerId: string) {
-  return this.http.get<any[]>(`${this.api}/animals/owners/${ownerId}/calendar`);
+  getOwnerCalendar(ownerId: string) {
+    return this.http.get<any[]>(`${this.api}/animals/owners/${ownerId}/calendar`);
   }
   addOwnerCalendarEvent(ownerId: string, body: any) {
     return this.http.post<any>(`${this.api}/animals/owners/${ownerId}/calendar`, body);

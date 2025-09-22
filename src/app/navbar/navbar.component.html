@@ -91,14 +91,16 @@
 
     <div class="menu">
       <!-- Profil weterynarza -->
-      <div class="menu-elements">
-        <div class="menu-element" routerLink="/vet-profile" routerLinkActive="active">
+  
+       <div class="menu-elements">
+        <div class="menu-element" routerLink="/vet/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="">
+            <img src="assets/images/edit.png" alt="profile">
             <p>Mój profil (wet.)</p>
           </div>
         </div>
       </div>
+
 
       <!-- Kalendarz przyjęć (wet) -->
       <div class="menu-elements">
