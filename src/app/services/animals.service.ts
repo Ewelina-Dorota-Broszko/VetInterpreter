@@ -43,13 +43,7 @@ export class AnimalsService {
 
   // === W KLASIE AnimalsService – DODAJ TE TRZY METODY ===
 
-  // tylko wpisy dodane przez ZALOGOWANEGO weta (backend: ?mine=1)
-  getTemperatureLogsVet(animalId: string) {
-    return this.http.get<TemperatureLog[]>(
-      `${this.api}/animals/${animalId}/temperature-logs`,
-      { params: { mine: '1' } }
-    );
-  }
+
 
   // wszystkie pomiary (owner + wszyscy weci)
   getTemperatureLogsAll(animalId: string) {
@@ -142,6 +136,33 @@ export class AnimalsService {
   }
 
 
+getBloodTestsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/blood-tests`, { params: { mine: '1' } });
+}
+getUrineTestsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/urine-tests`, { params: { mine: '1' } });
+}
+getStoolTestsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/stool-tests`, { params: { mine: '1' } });
+}
+getTemperatureLogsVet(animalId: string) {
+  return this.http.get<TemperatureLog[]>(`${this.api}/animals/${animalId}/temperature-logs`, { params: { mine: '1' } });
+}
+getDiabetesLogsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/diabetes-logs`, { params: { mine: '1' } });
+}
+getWeightHistoryVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/weight-history`, { params: { mine: '1' } });
+}
+getVaccinationsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/vaccinations`, { params: { mine: '1' } });
+}
+getMedicationsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/medications`, { params: { mine: '1' } });
+}
+getSymptomsVet(animalId: string) {
+  return this.http.get<any[]>(`${this.api}/animals/${animalId}/symptoms`, { params: { mine: '1' } });
+}
 
 
 }

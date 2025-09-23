@@ -181,12 +181,36 @@ async function pullById(
 }
  
 /* ========= Blood ========= */
+// GET /animals/:id/blood-tests?mine=1
 router.get('/:id/blood-tests', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.bloodTests || []);
+
+  const animal = await Animal.findById(req.params.id, { bloodTests: 1 }).lean();
+  let items: any[] = animal?.bloodTests || [];
+
+  // ?mine=1 → tylko wpisy bieżącego weta
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  // sortuj nowsze → starsze (preferuj addedAt, potem date+time)
+  items.sort((a, b) => {
+    const aa = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+    const bb = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+    if (aa && bb) return bb - aa;
+    const ad = ((a.date ?? '') + ' ' + (a.time ?? '')).trim();
+    const bd = ((b.date ?? '') + ' ' + (b.time ?? '')).trim();
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE bez zmian
 router.post('/:id/blood-tests', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'bloodTests', req.body)
 );
@@ -194,13 +218,36 @@ router.delete('/:id/blood-tests/:testId', (req, res) =>
   pullById(req as AuthedRequest, res, req.params.id, 'bloodTests', req.params.testId, 'Blood test not found')
 );
 
+
 /* ========= Urine ========= */
+// GET /animals/:id/urine-tests?mine=1
 router.get('/:id/urine-tests', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.urineTests || []);
+
+  const animal = await Animal.findById(req.params.id, { urineTests: 1 }).lean();
+  let items: any[] = animal?.urineTests || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+    const bb = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+    if (aa && bb) return bb - aa;
+    const ad = ((a.date ?? '') + ' ' + (a.time ?? '')).trim();
+    const bd = ((b.date ?? '') + ' ' + (b.time ?? '')).trim();
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE bez zmian
 router.post('/:id/urine-tests', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'urineTests', req.body)
 );
@@ -208,13 +255,36 @@ router.delete('/:id/urine-tests/:testId', (req, res) =>
   pullById(req as AuthedRequest, res, req.params.id, 'urineTests', req.params.testId, 'Urine test not found')
 );
 
+
 /* ========= Stool ========= */
+// GET /animals/:id/stool-tests?mine=1
 router.get('/:id/stool-tests', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.stoolTests || []);
+
+  const animal = await Animal.findById(req.params.id, { stoolTests: 1 }).lean();
+  let items: any[] = animal?.stoolTests || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? new Date(a.addedAt).getTime() : 0;
+    const bb = b.addedAt ? new Date(b.addedAt).getTime() : 0;
+    if (aa && bb) return bb - aa;
+    const ad = ((a.date ?? '') + ' ' + (a.time ?? '')).trim();
+    const bd = ((b.date ?? '') + ' ' + (b.time ?? '')).trim();
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE bez zmian
 router.post('/:id/stool-tests', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'stoolTests', req.body)
 );
@@ -222,22 +292,8 @@ router.delete('/:id/stool-tests/:testId', (req, res) =>
   pullById(req as AuthedRequest, res, req.params.id, 'stoolTests', req.params.testId, 'Stool test not found')
 );
 
-/* ========= Temperature ========= */
-// router.get('/:id/temperature-logs', async (req: AuthedRequest, res) => {
-//   const can = await ensureOwnership(req.params.id, req.user!.id);
-//   if (!can) return res.status(404).json({ error: 'Animal not found' });
-//   const animal = await Animal.findById(req.params.id).lean();
-//   res.json(animal?.temperatureLogs || []);
-// });
-// router.post('/:id/temperature-logs', (req, res) =>
-//   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'temperatureLogs', req.body)
-// );
-// router.delete('/:id/temperature-logs/:logId', (req, res) =>
-//   pullById(req as AuthedRequest, res, req.params.id, 'temperatureLogs', req.params.logId, 'Temperature log not found')
-// );
 
 /* ========= Temperature ========= */
-
 // GET /animals/:id/temperature-logs?mine=1
 router.get('/:id/temperature-logs', async (req: AuthedRequest, res) => {
   // wet też ma mieć wgląd (nie tylko owner), więc używamy ensureOwnerOrVet
@@ -286,14 +342,35 @@ router.delete('/:id/temperature-logs/:logId', (req, res) =>
     'Temperature log not found'
   )
 );
-
 /* ========= Diabetes ========= */
+// GET /animals/:id/diabetes-logs?mine=1
 router.get('/:id/diabetes-logs', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.diabetesLogs || []);
+
+  const animal = await Animal.findById(req.params.id, { diabetesLogs: 1 }).lean();
+  let items: any[] = animal?.diabetesLogs || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? +new Date(a.addedAt) : 0;
+    const bb = b.addedAt ? +new Date(b.addedAt) : 0;
+    if (aa && bb) return bb - aa;
+    const ad = ((a.date ?? '') + ' ' + (a.time ?? '')).trim();
+    const bd = ((b.date ?? '') + ' ' + (b.time ?? '')).trim();
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE zostają jak masz
 router.post('/:id/diabetes-logs', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'diabetesLogs', req.body)
 );
@@ -302,12 +379,34 @@ router.delete('/:id/diabetes-logs/:entryId', (req, res) =>
 );
 
 /* ========= Weight history ========= */
+// GET /animals/:id/weight-history?mine=1
 router.get('/:id/weight-history', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.weightHistory || []);
+
+  const animal = await Animal.findById(req.params.id, { weightHistory: 1 }).lean();
+  let items: any[] = animal?.weightHistory || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? +new Date(a.addedAt) : 0;
+    const bb = b.addedAt ? +new Date(b.addedAt) : 0;
+    if (aa && bb) return bb - aa;
+    const ad = String(a.date ?? '');
+    const bd = String(b.date ?? '');
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE zostają jak masz
 router.post('/:id/weight-history', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'weightHistory', req.body)
 );
@@ -316,12 +415,34 @@ router.delete('/:id/weight-history/:entryId', (req, res) =>
 );
 
 /* ========= Vaccinations ========= */
+// GET /animals/:id/vaccinations?mine=1
 router.get('/:id/vaccinations', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.vaccinations || []);
+
+  const animal = await Animal.findById(req.params.id, { vaccinations: 1 }).lean();
+  let items: any[] = animal?.vaccinations || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? +new Date(a.addedAt) : 0;
+    const bb = b.addedAt ? +new Date(b.addedAt) : 0;
+    if (aa && bb) return bb - aa;
+    const ad = String(a.date ?? '');
+    const bd = String(b.date ?? '');
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE zostają jak masz
 router.post('/:id/vaccinations', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'vaccinations', req.body)
 );
@@ -330,18 +451,41 @@ router.delete('/:id/vaccinations/:vaccId', (req, res) =>
 );
 
 /* ========= Medications ========= */
+// GET /animals/:id/medications?mine=1
 router.get('/:id/medications', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.medications || []);
+
+  const animal = await Animal.findById(req.params.id, { medications: 1 }).lean();
+  let items: any[] = animal?.medications || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? +new Date(a.addedAt) : 0;
+    const bb = b.addedAt ? +new Date(b.addedAt) : 0;
+    if (aa && bb) return bb - aa;
+    const ad = String(a.startDate ?? '');
+    const bd = String(b.startDate ?? '');
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE/UPDATE zostają jak masz
 router.post('/:id/medications', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'medications', req.body)
 );
 router.delete('/:id/medications/:medId', (req, res) =>
   pullById(req as AuthedRequest, res, req.params.id, 'medications', req.params.medId, 'Medication not found')
 );
+
 
 /** UPDATE jednego leku */
 router.patch('/:id/medications/:medId', async (req: AuthedRequest, res) => {
@@ -380,12 +524,34 @@ router.patch('/:id/medications/:medId', async (req: AuthedRequest, res) => {
 });
 
 /* ========= Symptoms ========= */
+// GET /animals/:id/symptoms?mine=1
 router.get('/:id/symptoms', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
-  res.json(animal?.symptoms || []);
+
+  const animal = await Animal.findById(req.params.id, { symptoms: 1 }).lean();
+  let items: any[] = animal?.symptoms || [];
+
+  if (req.query.mine === '1') {
+    const vetId = await currentVetId(req.user!.id);
+    items = vetId
+      ? items.filter(x => x.addedBy === 'vet' && String(x.addedByVetId) === String(vetId))
+      : [];
+  }
+
+  items.sort((a, b) => {
+    const aa = a.addedAt ? +new Date(a.addedAt) : 0;
+    const bb = b.addedAt ? +new Date(b.addedAt) : 0;
+    if (aa && bb) return bb - aa;
+    const ad = String(a.date ?? '');
+    const bd = String(b.date ?? '');
+    return bd.localeCompare(ad);
+  });
+
+  res.json(items);
 });
+
+// POST/DELETE zostają jak masz
 router.post('/:id/symptoms', (req, res) =>
   addAndReturnLast(req as AuthedRequest, res, req.params.id, 'symptoms', req.body)
 );
@@ -453,17 +619,25 @@ router.delete('/owners/:ownerId/calendar/:eventId', async (req: AuthedRequest, r
 });
 
 /* ========= Diet ========= */
+// GET /animals/:id/diet  (owner lub vet)
 router.get('/:id/diet', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findById(req.params.id).lean();
+  const animal = await Animal.findById(req.params.id, { diet: 1 }).lean();
   res.json(animal?.diet || {});
 });
+
+// PATCH /animals/:id/diet  (owner lub vet)
 router.patch('/:id/diet', async (req: AuthedRequest, res) => {
-  const can = await ensureOwnership(req.params.id, req.user!.id);
+  const can = await ensureOwnerOrVet(req.params.id, req.user!.id);
   if (!can) return res.status(404).json({ error: 'Animal not found' });
-  const animal = await Animal.findByIdAndUpdate(req.params.id, { diet: req.body }, { new: true });
+  const animal = await Animal.findByIdAndUpdate(
+    req.params.id,
+    { diet: req.body },
+    { new: true, projection: { diet: 1 } }
+  ).lean();
   res.json(animal?.diet || {});
 });
+
 
 export default router;

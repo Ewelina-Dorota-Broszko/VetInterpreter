@@ -112,7 +112,65 @@ export class VetService {
     console.log('[VetService] GET', `${this.api}/vets/animals/${animalId}`);
     return this.http.get<any>(`${this.api}/vets/animals/${animalId}`);
   }
+searchOwners(q: string) {
+  return this.http.get<any[]>(`/api/vets/owners/search`, { params: { q } });
 }
+
+getAnimalsForOwnerAsVet(ownerId: string) {
+  return this.http.get<any[]>(`/api/vets/owners/${ownerId}/animals`);
+}
+
+getOwnerCalendarAsVet(ownerId: string) {
+  return this.http.get<any[]>(`/api/vets/owners/${ownerId}/calendar`);
+}
+
+addOwnerCalendarEventAsVet(ownerId: string, body: any) {
+  return this.http.post<any>(`/api/vets/owners/${ownerId}/calendar`, body);
+}
+deleteOwnerCalendarEventAsVet(ownerId: string, eventId: string) {
+  return this.http.delete<any>(`/api/vets/owners/${ownerId}/calendar/${eventId}`);
+}
+
+getMyCalendar() {
+  return this.http.get<any[]>(`/api/vets/me/calendar`);
+}
+addMyCalendarEvent(body: any) {
+  return this.http.post<any>(`/api/vets/me/calendar`, body);
+}
+deleteMyCalendarEvent(eventId: string) {
+  return this.http.delete<any>(`/api/vets/me/calendar/${eventId}`);
+}
+getVetCalendar() {
+  // GET /api/vets/calendar
+  return this.http.get<any[]>(`/api/vets/calendar`);
+}
+
+addVetCalendarEvent(body: {
+  date: string; title: string; note?: string;
+  ownerId?: string; ownerName?: string; ownerPhone?: string;
+  animalId?: string; animalName?: string;
+}) {
+  // POST /api/vets/calendar
+  return this.http.post<any>(`/api/vets/calendar`, body);
+}
+
+deleteVetCalendarEvent(eventId: string) {
+  // DELETE /api/vets/calendar/:id
+  return this.http.delete<any>(`/api/vets/calendar/${eventId}`);
+}
+
+searchPatients(q: string) {
+  // GET /api/vets/patients?q=...
+  return this.http.get<any[]>(`/api/vets/patients`, { params: { q } });
+}
+
+getOwnerAnimalsForVet(ownerId: string) {
+  // GET /api/vets/owners/:ownerId/animals
+  return this.http.get<any[]>(`/api/vets/owners/${ownerId}/animals`);
+}
+
+}
+
 // --- helper: czy profil veta jest "kompletny" ---
 export function isVetProfileComplete(p?: VetProfile | null): boolean {
   if (!p) return false;

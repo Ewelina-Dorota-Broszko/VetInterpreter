@@ -20,8 +20,11 @@ export class AuthService {
   user$ = this.userSubject.asObservable();
   isLoggedIn$ = this.user$.pipe(map(u => !!u));
 
+  isVet$ = this.user$.pipe(map(u => !!u?.isVet));
+  get currentUser(): User | null { return this.userSubject.value; }
+  isVet(): boolean { return !!this.userSubject.value?.isVet; } // <<–– to naprawia błąd
+
   constructor(private http: HttpClient) {
-    // jeśli mamy usera w localStorage, odtwórz stan
     const rawUser = localStorage.getItem('user');
     if (rawUser) {
       try {
@@ -71,12 +74,16 @@ export class AuthService {
   fetchMe() {
     return this.http.get<{ ownerId: string } & User>(`${this.api}/auth/me`).pipe(
       tap(me => {
-        // zapisz usera i ownerId
         localStorage.setItem('user', JSON.stringify({
           id: me.id, email: me.email, firstName: me.firstName, lastName: me.lastName,
           phone: me.phone, isVet: me.isVet
         }));
-        localStorage.setItem('owner', JSON.stringify({ id: me.ownerId }));
+        // zapisuj owner tylko jeśli jest
+        if (me.ownerId) {
+          localStorage.setItem('owner', JSON.stringify({ id: me.ownerId }));
+        } else {
+          localStorage.removeItem('owner');
+        }
         this.userSubject.next({
           id: me.id, email: me.email, firstName: me.firstName, lastName: me.lastName,
           phone: me.phone, isVet: me.isVet

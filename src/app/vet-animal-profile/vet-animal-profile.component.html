@@ -8,7 +8,7 @@
       <!-- Pasek akcji -->
       <div class="bar">
         <button class="ghost" routerLink="/vet/patients">← Wróć</button>
-        <div class="right">
+        <!-- <div class="right">
           <button (click)="addDoc('blood')">+ Krew</button>
           <button (click)="addDoc('urine')">+ Mocz</button>
           <button (click)="addDoc('temperature')">+ Temp</button>
@@ -16,7 +16,7 @@
           <button (click)="addDoc('vaccination')">+ Szczep.</button>
           <button (click)="addDoc('meds')">+ Lek</button>
           <button (click)="addDoc('symptoms')">+ Objaw</button>
-        </div>
+        </div> -->
       </div>
 
       <!-- ===== Nagłówek profilu ===== -->
@@ -59,65 +59,107 @@
           <button [class.active]="activeTab === 'symptoms'" (click)="setTab('symptoms')">Objawy</button>
         </nav>
 
-        <!-- ===== Podsumowanie (opcjonalnie) ===== -->
-        <!-- Możesz tu kiedyś zrobić karty z ostatnimi wpisami jak u ownera -->
-
-        <!-- ===== Badania krwi ===== -->
+        <!-- ===== Blood ===== -->
         <section *ngIf="activeTab === 'blood'" class="tab-content">
-          <app-blood-tab
-            [active]="true"
-            [bloodTests]="bloodTestsVet"
-            [referenceRanges]="referenceRanges">
-          </app-blood-tab>
-          <p class="muted" *ngIf="!bloodTestsVet.length">Brak badań krwi dodanych przez veta.</p>
+          <div *ngIf="loadingBlood" class="muted">Ładowanie badań krwi…</div>
+          <ng-container *ngIf="!loadingBlood">
+            <app-blood-tab
+              *ngIf="bloodLoaded"
+              [active]="true"
+              [bloodTests]="bloodTestsVet"
+              [referenceRanges]="referenceRanges">
+            </app-blood-tab>
+            <p class="error" *ngIf="bloodError">{{ bloodError }}</p>
+            <p class="muted" *ngIf="bloodLoaded && !bloodTestsVet.length">Brak badań krwi dodanych przez veta.</p>
+          </ng-container>
         </section>
 
-        <!-- ===== Badania moczu ===== -->
+        <!-- ===== Urine ===== -->
         <section *ngIf="activeTab === 'urine'" class="tab-content">
-          <app-urine-tab [urineTests]="urineTestsVet"></app-urine-tab>
-          <p class="muted" *ngIf="!urineTestsVet.length">Brak badań moczu dodanych przez veta.</p>
+          <div *ngIf="loadingUrine" class="muted">Ładowanie badań moczu…</div>
+          <ng-container *ngIf="!loadingUrine">
+            <app-urine-tab *ngIf="urineLoaded" [urineTests]="urineTestsVet"></app-urine-tab>
+            <p class="error" *ngIf="urineError">{{ urineError }}</p>
+            <p class="muted" *ngIf="urineLoaded && !urineTestsVet.length">Brak badań moczu dodanych przez veta.</p>
+          </ng-container>
         </section>
 
-        <!-- ===== Badania kału ===== -->
+        <!-- ===== Stool ===== -->
         <section *ngIf="activeTab === 'stool'" class="tab-content">
-          <app-stool-tab [stoolTests]="stoolTestsVet"></app-stool-tab>
-          <p class="muted" *ngIf="!stoolTestsVet.length">Brak badań kału dodanych przez veta.</p>
+          <div *ngIf="loadingStool" class="muted">Ładowanie badań kału…</div>
+          <ng-container *ngIf="!loadingStool">
+            <app-stool-tab *ngIf="stoolLoaded" [stoolTests]="stoolTestsVet"></app-stool-tab>
+            <p class="error" *ngIf="stoolError">{{ stoolError }}</p>
+            <p class="muted" *ngIf="stoolLoaded && !stoolTestsVet.length">Brak badań kału dodanych przez veta.</p>
+          </ng-container>
         </section>
 
-        <!-- ===== Temperatura ===== -->
+        <!-- ===== Temperature ===== -->
         <section *ngIf="activeTab === 'temperature'" class="tab-content">
-          <app-temperature-tab [temperatureLogs]="temperatureLogsVet"></app-temperature-tab>
-          <p class="muted" *ngIf="!temperatureLogsVet.length">Brak pomiarów dodanych przez veta.</p>
+          <div *ngIf="loadingTemperature" class="muted">Ładowanie pomiarów temperatury…</div>
+          <ng-container *ngIf="!loadingTemperature">
+            <app-temperature-tab *ngIf="temperatureLoaded" [temperatureLogs]="temperatureLogsVet"></app-temperature-tab>
+            <p class="error" *ngIf="temperatureError">{{ temperatureError }}</p>
+            <p class="muted" *ngIf="temperatureLoaded && !temperatureLogsVet.length">
+              Brak pomiarów dodanych przez veta.
+            </p>
+          </ng-container>
         </section>
 
-        <!-- ===== Cukrzyca ===== -->
+        <!-- ===== Diabetes ===== -->
         <section *ngIf="activeTab === 'diabetes'" class="tab-content">
-          <app-diabetes-tab [diabetesLogs]="diabetesLogsVet"></app-diabetes-tab>
-          <p class="muted" *ngIf="!diabetesLogsVet.length">Brak wpisów cukrzycowych dodanych przez veta.</p>
+          <div *ngIf="loadingDiabetes" class="muted">Ładowanie wpisów cukrzycy…</div>
+          <ng-container *ngIf="!loadingDiabetes">
+            <app-diabetes-tab *ngIf="diabetesLoaded" [diabetesLogs]="diabetesLogsVet"></app-diabetes-tab>
+            <p class="error" *ngIf="diabetesError">{{ diabetesError }}</p>
+            <p class="muted" *ngIf="diabetesLoaded && !diabetesLogsVet.length">
+              Brak wpisów cukrzycowych dodanych przez veta.
+            </p>
+          </ng-container>
         </section>
 
-        <!-- ===== Waga ===== -->
+        <!-- ===== Weight ===== -->
         <section *ngIf="activeTab === 'weight'" class="tab-content">
-          <app-weight-tab [weightHistory]="weightHistoryVet"></app-weight-tab>
-          <p class="muted" *ngIf="!weightHistoryVet.length">Brak historii wagi dodanej przez veta.</p>
+          <div *ngIf="loadingWeight" class="muted">Ładowanie historii wagi…</div>
+          <ng-container *ngIf="!loadingWeight">
+            <app-weight-tab *ngIf="weightLoaded" [weightHistory]="weightHistoryVet"></app-weight-tab>
+            <p class="error" *ngIf="weightError">{{ weightError }}</p>
+            <p class="muted" *ngIf="weightLoaded && !weightHistoryVet.length">
+              Brak historii wagi dodanej przez veta.
+            </p>
+          </ng-container>
         </section>
 
-        <!-- ===== Szczepienia ===== -->
+        <!-- ===== Vaccinations ===== -->
         <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
-          <app-vaccinations-tab [vaccinations]="vaccinationsVet"></app-vaccinations-tab>
-          <p class="muted" *ngIf="!vaccinationsVet.length">Brak szczepień dodanych przez veta.</p>
+          <div *ngIf="loadingVacc" class="muted">Ładowanie szczepień…</div>
+          <ng-container *ngIf="!loadingVacc">
+            <app-vaccinations-tab *ngIf="vaccLoaded" [vaccinations]="vaccinationsVet"></app-vaccinations-tab>
+            <p class="error" *ngIf="vaccError">{{ vaccError }}</p>
+            <p class="muted" *ngIf="vaccLoaded && !vaccinationsVet.length">
+              Brak szczepień dodanych przez veta.
+            </p>
+          </ng-container>
         </section>
 
-        <!-- ===== Leki ===== -->
+        <!-- ===== Medications ===== -->
         <section *ngIf="activeTab === 'meds'" class="tab-content">
-          <app-meds-tab [animalId]="animal?._id" [medications]="medicationsVet"></app-meds-tab>
-          <p class="muted" *ngIf="!medicationsVet.length">Brak leków dodanych przez veta.</p>
+          <div *ngIf="loadingMeds" class="muted">Ładowanie leków…</div>
+          <ng-container *ngIf="!loadingMeds">
+            <app-meds-tab *ngIf="medsLoaded" [animalId]="animal?._id" [medications]="medicationsVet"></app-meds-tab>
+            <p class="error" *ngIf="medsError">{{ medsError }}</p>
+            <p class="muted" *ngIf="medsLoaded && !medicationsVet.length">Brak leków dodanych przez veta.</p>
+          </ng-container>
         </section>
 
-        <!-- ===== Objawy ===== -->
+        <!-- ===== Symptoms ===== -->
         <section *ngIf="activeTab === 'symptoms'" class="tab-content">
-          <app-symptoms-tab [symptoms]="symptomsVet"></app-symptoms-tab>
-          <p class="muted" *ngIf="!symptomsVet.length">Brak objawów dodanych przez veta.</p>
+          <div *ngIf="loadingSymptoms" class="muted">Ładowanie objawów…</div>
+          <ng-container *ngIf="!loadingSymptoms">
+            <app-symptoms-tab *ngIf="symptomsLoaded" [symptoms]="symptomsVet"></app-symptoms-tab>
+            <p class="error" *ngIf="symptomsError">{{ symptomsError }}</p>
+            <p class="muted" *ngIf="symptomsLoaded && !symptomsVet.length">Brak objawów dodanych przez veta.</p>
+          </ng-container>
         </section>
       </div>
     </div>
