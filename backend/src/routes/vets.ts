@@ -80,7 +80,12 @@ router.post('/unassign', async (req: AuthedRequest, res) => {
  * ======================================================= */
 
 router.get('/me', async (req: AuthedRequest, res) => {
-  const vet = await Vet.findOne({ userId: oid(req.user!.id) })
+  const uidStr = req.user!.id;
+  const uidObj = Types.ObjectId.isValid(uidStr) ? new Types.ObjectId(uidStr) : null;
+
+  const query: any = uidObj ? { $or: [{ userId: uidStr }, { userId: uidObj }] } : { userId: uidStr };
+
+  const vet = await Vet.findOne(query)
     .populate('userId', 'name fullName firstName lastName email')
     .lean({ virtuals: true });
 
@@ -93,12 +98,19 @@ router.get('/me', async (req: AuthedRequest, res) => {
   });
 });
 
+
 router.patch('/me', async (req: AuthedRequest, res) => {
-  const vet = await Vet.findOneAndUpdate(
-    { userId: oid(req.user!.id) },
-    req.body,
-    { new: true, upsert: true }
-  )
+  const uidStr = req.user!.id;
+  const uidObj = Types.ObjectId.isValid(uidStr) ? new Types.ObjectId(uidStr) : null;
+
+  const query: any = uidObj ? { $or: [{ userId: uidStr }, { userId: uidObj }] } : { userId: uidStr };
+
+  const update = {
+    $set: req.body,
+    $setOnInsert: { userId: uidObj ?? uidStr } // <<< DODAJE userId przy pierwszym zapisie
+  };
+
+  const vet = await Vet.findOneAndUpdate(query, update, { new: true, upsert: true })
     .populate('userId', 'name fullName firstName lastName email')
     .lean({ virtuals: true });
 
@@ -108,6 +120,7 @@ router.patch('/me', async (req: AuthedRequest, res) => {
     userId: String((vet as any).userId?._id ?? (vet as any).userId)
   });
 });
+
 
 /* =========================================================
  *  PACJENCI VETA (przypięci do niego)
@@ -156,6 +169,12 @@ router.get('/patients', async (req: AuthedRequest, res) => {
       filter.$or = [{ name: rx }, { email: rx }, { phone: rx }];
     }
 
+    // wyklucz konta mające profil veta
+    const vetUserIds = await Vet.distinct('userId'); // może zwrócić ObjectId
+    if (vetUserIds?.length) {
+      filter.userId = { $nin: vetUserIds };
+    }
+
     const owners = await Owner.find(filter)
       .select('_id name email phone createdAt')
       .sort({ name: 1 })
@@ -166,6 +185,7 @@ router.get('/patients', async (req: AuthedRequest, res) => {
     return res.status(500).json({ error: e.message });
   }
 });
+
 
 router.get('/patients/:ownerId', async (req: AuthedRequest, res) => {
   try {

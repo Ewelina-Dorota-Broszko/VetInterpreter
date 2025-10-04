@@ -137,7 +137,7 @@ export class VetProfileComponent implements OnInit {
         if (e?.status === 404) {
           // brak profilu — zakładamy minimalny i otwieramy edycję
           const minimal: Partial<VetProfile> = {
-            clinicName: 'Klinika (uzupełnij)',
+            clinicName: '',
             licenseNo:  '',
             phone:      '',
             email:      ''

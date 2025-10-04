@@ -11,6 +11,7 @@ import { VetService } from '../services/vet.service';
 })
 export class AnimalProfileComponent implements OnInit {
   animal: any;
+
   activeTab:
     | 'overview'
     | 'blood'
@@ -28,12 +29,16 @@ export class AnimalProfileComponent implements OnInit {
 
   deleting = false;
 
+  // modal profilu weta
+  showVetModal = false;
+  modalVetId: string | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private animalsService: AnimalsService,
-    private vetSvc: VetService,
-  ) { }
+    private vetSvc: VetService
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -45,9 +50,9 @@ export class AnimalProfileComponent implements OnInit {
       this.loadAnimal(id);
     });
   }
+
   onDeleteAnimal() {
     if (!this.animal?._id) return;
-
     const sure = confirm(`Na pewno usunąć ${this.animal.name}? Tej operacji nie można cofnąć.`);
     if (!sure) return;
 
@@ -55,7 +60,6 @@ export class AnimalProfileComponent implements OnInit {
     this.animalsService.deleteAnimal(this.animal._id).subscribe({
       next: () => {
         this.deleting = false;
-        // Po usunięciu wracamy na dashboard (lub gdzie wolisz)
         this.router.navigateByUrl('/dashboard');
       },
       error: (err) => {
@@ -71,7 +75,7 @@ export class AnimalProfileComponent implements OnInit {
     this.animalsService.getById(id).subscribe({
       next: (res: any) => {
         this.animal = res;
-        // jeśli użytkownik jest już na zakładce z wykresami, odśwież wykres
+        // odśwież wykresy dla aktywnej zakładki
         setTimeout(() => {
           if (this.activeTab === 'blood') this.renderBloodChart();
           if (this.activeTab === 'temperature') this.renderTemperatureChart();
@@ -87,7 +91,6 @@ export class AnimalProfileComponent implements OnInit {
   /** Zakładki */
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
-    // daj DOM-owi czas na wyrenderowanie <canvas>
     setTimeout(() => {
       if (tab === 'blood') this.renderBloodChart();
       if (tab === 'temperature') this.renderTemperatureChart();
@@ -172,7 +175,6 @@ export class AnimalProfileComponent implements OnInit {
   toggleDetails(visit: any) { visit.expanded = !visit.expanded; }
 
   referenceRanges = {
-    // Morfologia
     hemoglobin: { min: 12, max: 18, unit: 'g/dL' },
     rbc: { min: 5.0, max: 8.5, unit: '10¹²/L' },
     wbc: { min: 6.0, max: 17.0, unit: '10⁹/L' },
@@ -181,8 +183,6 @@ export class AnimalProfileComponent implements OnInit {
     mcv: { min: 80, max: 100, unit: 'fL' },
     mch: { min: 27, max: 33, unit: 'pg' },
     mchc: { min: 31, max: 36, unit: 'g/dL' },
-
-    // Biochemia
     glucose: { min: 70, max: 140, unit: 'mg/dL' },
     urea: { min: 20, max: 55, unit: 'mg/dL' },
     creatinine: { min: 0.5, max: 1.5, unit: 'mg/dL' },
@@ -192,8 +192,6 @@ export class AnimalProfileComponent implements OnInit {
     totalProtein: { min: 5.5, max: 7.5, unit: 'g/dL' },
     albumin: { min: 2.5, max: 4.0, unit: 'g/dL' },
     globulin: { min: 2.5, max: 4.0, unit: 'g/dL' },
-
-    // Bilirubina
     bilirubinTotal: { min: 0.1, max: 1.2, unit: 'mg/dL' },
     bilirubinDirect: { min: 0.0, max: 0.3, unit: 'mg/dL' },
     bilirubinIndirect: { min: 0.1, max: 1.0, unit: 'mg/dL' }
@@ -220,7 +218,6 @@ export class AnimalProfileComponent implements OnInit {
 
   goAssignVet() {
     if (!this.animal?._id) return;
-    // przejście do listy wetów z kontekstem zwierzaka
     this.router.navigate(['/find-vet'], { queryParams: { animalId: this.animal._id } });
   }
 
@@ -232,5 +229,15 @@ export class AnimalProfileComponent implements OnInit {
       next: () => this.animal.vetId = undefined,
       error: (e) => alert(e?.error?.error || 'Nie udało się odpiąć.')
     });
+  }
+
+  /* ======= Popup: profil weta ======= */
+  openVetModal(vetId: string) {
+    this.modalVetId = String(vetId);
+    this.showVetModal = true;
+  }
+  closeVetModal() {
+    this.showVetModal = false;
+    this.modalVetId = null;
   }
 }

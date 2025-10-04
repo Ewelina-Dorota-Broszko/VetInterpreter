@@ -1,4 +1,3 @@
-<!-- src/app/calendar/calendar.component.html -->
 <div class="dashboard-menu-container">
   <div class="container">
 
@@ -21,13 +20,79 @@
         <input type="text" [(ngModel)]="newEvent.title" name="eventTitle" placeholder="np. Wizyta kontrolna" />
       </div>
 
-      <div class="row">
-        <label>Dotyczy zwierzaka (opcjonalnie)</label>
-        <select [(ngModel)]="newEvent.animalId" name="eventAnimalId">
-          <option [ngValue]="undefined">— brak —</option>
-          <option *ngFor="let a of animals" [value]="a._id">{{ a.name }}</option>
-        </select>
-      </div>
+      <!-- TRYB KLIENTA -->
+      <ng-container *ngIf="!isVetView">
+        <div class="row">
+          <label>Dotyczy zwierzaka (opcjonalnie)</label>
+          <select [(ngModel)]="newEvent.animalId" name="eventAnimalIdOwner">
+            <option [ngValue]="undefined">— brak —</option>
+            <option *ngFor="let a of animals" [value]="a._id">{{ a.name }}</option>
+          </select>
+        </div>
+
+        <ng-container *ngIf="myVets.length > 0; else noVetRowClient">
+          <div class="row">
+            <label>Weterynarz (opcjonalnie)</label>
+            <select [(ngModel)]="newEvent.vetId" name="eventVetId">
+              <option [ngValue]="undefined">— brak —</option>
+              <option *ngFor="let v of myVets" [value]="v._id">
+                {{ v.label }}
+              </option>
+            </select>
+          </div>
+        </ng-container>
+        <ng-template #noVetRowClient>
+          <div class="row">
+            <label>Weterynarz</label>
+            <div class="muted">Brak przypisanego weta.</div>
+          </div>
+        </ng-template>
+      </ng-container>
+
+      <!-- TRYB WETA: wybór klienta + jego zwierzak (tylko opisowo) -->
+      <ng-container *ngIf="isVetView">
+        <div class="row">
+          <label>Klient (opcjonalnie)</label>
+          <div class="client-picker">
+            <input
+              type="text"
+              [(ngModel)]="clientQuery"
+              name="clientQuery"
+              (input)="onClientQuery()"
+              (focus)="onClientQuery()"
+              placeholder="Wpisz min. 2 znaki (imię/e-mail/tel./ID)"
+              autocomplete="off"
+            />
+
+            <!-- Dropdown z wynikami -->
+            <div class="dropdown" *ngIf="showClientDropdown">
+              <div class="item muted" *ngIf="searchingClients">Szukam…</div>
+              <div class="item muted" *ngIf="!searchingClients && !clients.length">
+                Brak wyników.
+              </div>
+              <button
+                type="button"
+                class="item"
+                *ngFor="let c of clients"
+                (click)="onSelectClient(c)"
+              >
+                {{ c.name }}
+              </button>
+            </div>
+
+            <div class="small error" *ngIf="clientsError">{{ clientsError }}</div>
+          </div>
+        </div>
+
+        <div class="row">
+          <label>Zwierz (opcjonalnie)</label>
+          <select [(ngModel)]="newEvent.animalId" name="eventAnimalIdVet" [disabled]="!clientAnimals.length">
+            <option [ngValue]="undefined">— brak —</option>
+            <option *ngFor="let a of clientAnimals" [value]="a._id">{{ a.name }}</option>
+          </select>
+          <div class="muted small" *ngIf="!newEvent.ownerId">Wybierz klienta, aby wskazać zwierzaka.</div>
+        </div>
+      </ng-container>
 
       <div class="row">
         <label>Notatka (opcjonalnie)</label>
@@ -47,34 +112,205 @@
     <!-- kalendarz -->
     <div class="mini-calendar-wrapper">
       <full-calendar [options]="calendarOptions"></full-calendar>
+      <p class="muted small" style="margin-top:.5rem">
+        Kliknij dzień w kalendarzu, aby zobaczyć wszystkie wydarzenia z tej daty.
+      </p>
     </div>
 
-    <!-- notatki (opcjonalna sekcja) -->
-    <div class="note-section" *ngIf="selectedDate">
-      <h4>Notatki dla {{ selectedDate }}:</h4>
+    <!-- WYDARZENIA Z WYBRANEGO DNIA -->
+    <section *ngIf="selectedDate" class="day-events">
+      <h4>Wydarzenia w dniu {{ selectedDate }}</h4>
 
-      <ul *ngIf="getNotesForSelectedDate().length > 0; else noNotes">
-        <li *ngFor="let n of getNotesForSelectedDate()">{{ n }}</li>
-      </ul>
+      <!-- tabela dla klienta -->
+      <table class="tbl" *ngIf="!isVetView && entriesForSelectedDate.length; else noDayItems">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tytuł</th>
+            <th>Zwierz</th>
+            <th>Notatka</th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of entriesForSelectedDate" class="clickable" (click)="selectEntry(e)">
+            <td><span class="badge">{{ e.date }}</span></td>
+            <td class="strong">{{ e.title }}</td>
+            <td>{{ e.animalName || '—' }}</td>
+            <td class="muted">{{ e.note || '—' }}</td>
+            <td class="actions">
+              <button type="button" class="ghost" (click)="deleteEntry(e); $event.stopPropagation()">Usuń</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-      <ng-template #noNotes>
-        <p>Brak notatek na ten dzień.</p>
+      <!-- tabela dla weta -->
+      <table class="tbl" *ngIf="isVetView && entriesForSelectedDate.length">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tytuł</th>
+            <th>Klient</th>
+            <th>Zwierz</th>
+            <th>Notatka</th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of entriesForSelectedDate" class="clickable" (click)="selectEntry(e)">
+            <td><span class="badge">{{ e.date }}</span></td>
+            <td class="strong">{{ e.title }}</td>
+
+            <!-- LINK do klienta -->
+            <td>
+              <ng-container *ngIf="e.ownerId; else ownerDash">
+                <a href="" (click)="openOwner(e.ownerId, $event)">
+                  {{ e.ownerName || e.ownerId }}
+                </a>
+              </ng-container>
+              <ng-template #ownerDash>—</ng-template>
+            </td>
+
+            <!-- LINK do zwierzaka -->
+            <td>
+              <ng-container *ngIf="e.animalId; else animalDash">
+                <a href="" (click)="openAnimal(e.animalId, $event)">
+                  {{ e.animalName || e.animalId }}
+                </a>
+              </ng-container>
+              <ng-template #animalDash>—</ng-template>
+            </td>
+
+            <td class="muted">{{ e.note || '—' }}</td>
+            <td class="actions">
+              <button type="button" class="ghost" (click)="deleteEntry(e); $event.stopPropagation()">Usuń</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noDayItems>
+        <p class="muted">Brak wydarzeń w tym dniu.</p>
       </ng-template>
-    </div>
+
+      <!-- szczegóły klikniętego wydarzenia -->
+      <div class="event-details" *ngIf="selectedEntry">
+        <h5>Szczegóły wydarzenia</h5>
+        <p><strong>Data:</strong> {{ selectedEntry.date }}</p>
+        <p><strong>Tytuł:</strong> {{ selectedEntry.title }}</p>
+
+        <!-- Szczegóły dla klienta -->
+        <ng-container *ngIf="!isVetView">
+          <p><strong>Zwierz:</strong> {{ selectedEntry.animalName || '—' }}</p>
+          <p><strong>Weterynarz:</strong> {{ selectedEntry.vetName || '—' }}</p>
+        </ng-container>
+
+        <!-- Szczegóły dla weta z LINKAMI -->
+        <ng-container *ngIf="isVetView">
+          <p><strong>Klient:</strong>
+            <ng-container *ngIf="selectedEntry?.ownerId; else dashOwner">
+              <a href="" (click)="openOwner(selectedEntry?.ownerId, $event)">
+                {{ selectedEntry?.ownerName || selectedEntry?.ownerId }}
+              </a>
+            </ng-container>
+            <ng-template #dashOwner> — </ng-template>
+          </p>
+
+          <p><strong>Zwierz:</strong>
+            <ng-container *ngIf="selectedEntry?.animalId; else dashAnimal">
+              <a href="" (click)="openAnimal(selectedEntry?.animalId, $event)">
+                {{ selectedEntry?.animalName || selectedEntry?.animalId }}
+              </a>
+            </ng-container>
+            <ng-template #dashAnimal> — </ng-template>
+          </p>
+        </ng-container>
+
+        <p><strong>Notatka:</strong> {{ selectedEntry.note || '—' }}</p>
+      </div>
+    </section>
 
     <div *ngIf="loading">Ładowanie kalendarza…</div>
     <p class="error" *ngIf="!loading && error">{{ error }}</p>
 
-    <!-- prosta lista z przyciskiem usuń (opcjonalnie) -->
-    <div *ngIf="entries.length">
-      <h4>Wszystkie terminy</h4>
-      <ul>
-        <li *ngFor="let e of entries">
-          {{ e.date }} — {{ e.title }} <span *ngIf="e.animalName">({{ e.animalName }})</span>
-          <button type="button" (click)="deleteEntry(e)">Usuń</button>
-        </li>
-      </ul>
-    </div>
+    <!-- NAJBLIŻSZE 5 TERMINÓW -->
+    <section class="upcoming">
+      <h4>Najbliższe 5 terminów</h4>
+
+      <!-- klient -->
+      <table class="tbl" *ngIf="!isVetView && upcoming5.length; else noUpcoming">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tytuł</th>
+            <th>Zwierz</th>
+            <th>Notatka</th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of upcoming5" class="clickable" (click)="selectEntry(e)">
+            <td><span class="badge">{{ e.date }}</span></td>
+            <td class="strong">{{ e.title }}</td>
+            <td>{{ e.animalName || '—' }}</td>
+            <td class="muted">{{ e.note || '—' }}</td>
+            <td class="actions">
+              <button type="button" class="ghost" (click)="deleteEntry(e); $event.stopPropagation()">Usuń</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- wet -->
+      <table class="tbl" *ngIf="isVetView && upcoming5.length">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tytuł</th>
+            <th>Klient</th>
+            <th>Zwierz</th>
+            <th>Notatka</th>
+            <th class="actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of upcoming5" class="clickable" (click)="selectEntry(e)">
+            <td><span class="badge">{{ e.date }}</span></td>
+            <td class="strong">{{ e.title }}</td>
+
+            <!-- LINK do klienta -->
+            <td>
+              <ng-container *ngIf="e.ownerId; else upOwnerDash">
+                <a href="" (click)="openOwner(e.ownerId, $event)">
+                  {{ e.ownerName || e.ownerId }}
+                </a>
+              </ng-container>
+              <ng-template #upOwnerDash>—</ng-template>
+            </td>
+
+            <!-- LINK do zwierzaka -->
+            <td>
+              <ng-container *ngIf="e.animalId; else upAnimalDash">
+                <a href="" (click)="openAnimal(e.animalId, $event)">
+                  {{ e.animalName || e.animalId }}
+                </a>
+              </ng-container>
+              <ng-template #upAnimalDash>—</ng-template>
+            </td>
+
+            <td class="muted">{{ e.note || '—' }}</td>
+            <td class="actions">
+              <button type="button" class="ghost" (click)="deleteEntry(e); $event.stopPropagation()">Usuń</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-template #noUpcoming>
+        <p class="muted">Brak nadchodzących wydarzeń.</p>
+      </ng-template>
+    </section>
 
   </div>
 </div>

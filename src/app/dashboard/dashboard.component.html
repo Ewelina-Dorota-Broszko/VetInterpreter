@@ -7,7 +7,8 @@
       <div *ngIf="loading" class="loading">Ładowanie…</div>
       <p class="error" *ngIf="!loading && error">{{ error }}</p>
 
-      <div class="grid">
+      <div class="grid" *ngIf="!loading && !error">
+
         <!-- Najbliższe terminy -->
         <section class="card">
           <div class="card-head">
@@ -17,25 +18,28 @@
 
           <table class="tbl" *ngIf="upcoming.length; else noUpcoming">
             <thead>
-              <tr>
-                <th>Data</th>
-                <th>Tytuł</th>
-                <th>Zwierz</th>
-                <th>Notatka</th>
-              </tr>
+            <tr>
+              <th>Data</th>
+              <th>Tytuł</th>
+              <th>Zwierz</th>
+              <th>Notatka</th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let e of upcoming; trackBy: trackEvent">
-                <td><span class="badge">{{ e.date }}</span></td>
-                <td class="strong">{{ e.title }}</td>
-                <td>
-                  <ng-container *ngIf="e.animalId as aid; else dash">
-                    <a class="link" (click)="openAnimal(aid)">Profil</a>
+            <tr *ngFor="let e of upcoming; trackBy: trackEvent">
+              <td><span class="badge">{{ e.date }}</span></td>
+              <td class="strong">{{ e.title }}</td>
+              <td>
+                <ng-container *ngIf="e.animalId as aid; else dash">
+                  <!-- dodatkowo: przycisk do profilu weta dla tego zwierzaka -->
+                  <ng-container *ngIf="getVetIdForAnimal(aid) as vid">
+                    <button class="ghost" (click)="openVetModal(vid)">Profil</button>
                   </ng-container>
-                  <ng-template #dash>—</ng-template>
-                </td>
-                <td class="muted">{{ e.note || '—' }}</td>
-              </tr>
+                </ng-container>
+                <ng-template #dash>—</ng-template>
+              </td>
+              <td class="muted">{{ e.note || '—' }}</td>
+            </tr>
             </tbody>
           </table>
           <ng-template #noUpcoming>
@@ -51,20 +55,20 @@
 
           <table class="tbl" *ngIf="medsToday.length; else noMeds">
             <thead>
-              <tr>
-                <th>Godzina</th>
-                <th>Lek</th>
-                <th>Dawka</th>
-                <th>Zwierz</th>
-              </tr>
+            <tr>
+              <th>Godzina</th>
+              <th>Lek</th>
+              <th>Dawka</th>
+              <th>Zwierz</th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of medsToday">
-                <td><span class="chip chip-time">{{ row.timeLabel }}</span></td>
-                <td class="strong">{{ row.medication?.name || '—' }}</td>
-                <td class="muted">{{ row.medication?.dose || '—' }}</td>
-                <td>{{ row.animalName }}</td>
-              </tr>
+            <tr *ngFor="let row of medsToday">
+              <td><span class="chip chip-time">{{ row.timeLabel }}</span></td>
+              <td class="strong">{{ row.medication?.name || '—' }}</td>
+              <td class="muted">{{ row.medication?.dose || '—' }}</td>
+              <td>{{ row.animalName }}</td>
+            </tr>
             </tbody>
           </table>
           <ng-template #noMeds>
@@ -80,26 +84,26 @@
 
           <table class="tbl" *ngIf="vaccSoon.length; else noVacc">
             <thead>
-              <tr>
-                <th>Status</th>
-                <th>Termin</th>
-                <th>Szczepionka</th>
-                <th>Zwierz</th>
-                <th>Uwagi</th>
-              </tr>
+            <tr>
+              <th>Status</th>
+              <th>Termin</th>
+              <th>Szczepionka</th>
+              <th>Zwierz</th>
+              <th>Uwagi</th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let r of vaccSoon">
-                <td>
-                  <span [class]="badgeClassForVacc(r.daysLeft)">
-                    {{ r.daysLeft < 0 ? 'po terminie' : (r.daysLeft === 0 ? 'dzisiaj' : 'za ' + r.daysLeft + ' d') }}
-                  </span>
-                </td>
-                <td>{{ r.v?.nextDueDate || '—' }}</td>
-                <td class="strong">{{ r.v?.name || r.v?.type || '—' }}</td>
-                <td>{{ r.animalName }}</td>
-                <td class="muted">{{ r.v?.notes || '—' }}</td>
-              </tr>
+            <tr *ngFor="let r of vaccSoon">
+              <td>
+                <span [class]="badgeClassForVacc(r.daysLeft)">
+                  {{ r.daysLeft < 0 ? 'po terminie' : (r.daysLeft === 0 ? 'dzisiaj' : 'za ' + r.daysLeft + ' d') }}
+                </span>
+              </td>
+              <td>{{ r.v?.nextDueDate || '—' }}</td>
+              <td class="strong">{{ r.v?.name || r.v?.type || '—' }}</td>
+              <td>{{ r.animalName }}</td>
+              <td class="muted">{{ r.v?.notes || '—' }}</td>
+            </tr>
             </tbody>
           </table>
           <ng-template #noVacc>
@@ -115,38 +119,38 @@
 
           <table class="tbl compact" *ngIf="latestResults.length; else noRes">
             <thead>
-              <tr>
-                <th>Zwierz</th>
-                <th>Krew</th>
-                <th>Mocz</th>
-                <th>Temperatura</th>
-                <th>Waga</th>
-                <th></th>
-              </tr>
+            <tr>
+              <th>Zwierz</th>
+              <th>Krew</th>
+              <th>Mocz</th>
+              <th>Temperatura</th>
+              <th>Waga</th>
+              <th></th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let r of latestResults">
-                <td class="strong">{{ r.animalName }}</td>
-                <td>
-                  <div *ngIf="r.blood; else dash"> {{ r.blood.date }} · HGB: {{ r.blood.hemoglobin ?? '—' }} </div>
-                  <ng-template #dash>—</ng-template>
-                </td>
-                <td>
-                  <div *ngIf="r.urine; else dash2"> {{ r.urine.date }} · pH: {{ r.urine.pH ?? '—' }} </div>
-                  <ng-template #dash2>—</ng-template>
-                </td>
-                <td>
-                  <div *ngIf="r.temperature; else dash3"> {{ r.temperature.date }} · {{ r.temperature.temperature }}°C </div>
-                  <ng-template #dash3>—</ng-template>
-                </td>
-                <td>
-                  <div *ngIf="r.weight; else dash4"> {{ r.weight.date }} · {{ r.weight.weightKg ?? r.weight.value ?? '—' }} kg </div>
-                  <ng-template #dash4>—</ng-template>
-                </td>
-                <td class="actions">
-                  <button class="ghost" (click)="openAnimal(r.animalId)">Otwórz</button>
-                </td>
-              </tr>
+            <tr *ngFor="let r of latestResults">
+              <td class="strong">{{ r.animalName }}</td>
+              <td>
+                <div *ngIf="r.blood; else dash1"> {{ r.blood.date }} · HGB: {{ r.blood.hemoglobin ?? '—' }} </div>
+                <ng-template #dash1>—</ng-template>
+              </td>
+              <td>
+                <div *ngIf="r.urine; else dash2"> {{ r.urine.date }} · pH: {{ r.urine.pH ?? '—' }} </div>
+                <ng-template #dash2>—</ng-template>
+              </td>
+              <td>
+                <div *ngIf="r.temperature; else dash3"> {{ r.temperature.date }} · {{ r.temperature.temperature }}°C </div>
+                <ng-template #dash3>—</ng-template>
+              </td>
+              <td>
+                <div *ngIf="r.weight; else dash4"> {{ r.weight.date }} · {{ r.weight.weightKg ?? r.weight.value ?? '—' }} kg </div>
+                <ng-template #dash4>—</ng-template>
+              </td>
+              <td class="actions">
+                <button class="ghost" (click)="openAnimal(r.animalId)">Otwórz</button>
+              </td>
+            </tr>
             </tbody>
           </table>
           <ng-template #noRes>
@@ -158,29 +162,28 @@
         <section class="card">
           <div class="card-head">
             <h3>Moi weterynarze</h3>
-            <!-- <button class="ghost" (click)="openCalendar()">Terminy</button> -->
           </div>
 
           <table class="tbl" *ngIf="myVets.length; else noVets">
             <thead>
-              <tr>
-                <th>Klinika</th>
-                <th>Lekarz</th>
-                <th>Miasto</th>
-                <th>Kontakt</th>
-                <th></th>
-              </tr>
+            <tr>
+              <th>Klinika</th>
+              <th>Lekarz</th>
+              <th>Miasto</th>
+              <th>Kontakt</th>
+              <th></th>
+            </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let v of myVets; trackBy: trackVet">
-                <td class="strong">{{ v.clinicName }}</td>
-                <td>{{ v.vetName || '—' }}</td>
-                <td>{{ v.address?.city || '—' }}</td>
-                <td class="muted">{{ v.email || '—' }} <span *ngIf="v.phone"> · {{ v.phone }}</span></td>
-                <td class="actions">
-                  <button class="ghost" (click)="openVet(v._id)">Profil</button>
-                </td>
-              </tr>
+            <tr *ngFor="let v of myVets; trackBy: trackVet">
+              <td class="strong">{{ v.clinicName }}</td>
+              <td>{{ v.vetName || '—' }}</td>
+              <td>{{ v.address?.city || '—' }}</td>
+              <td class="muted">{{ v.email || '—' }} <span *ngIf="v.phone"> · {{ v.phone }}</span></td>
+              <td class="actions">
+                <button class="ghost" (click)="openVetModal(v._id)">Profil</button>
+              </td>
+            </tr>
             </tbody>
           </table>
           <ng-template #noVets>
@@ -189,6 +192,13 @@
         </section>
       </div>
     </div>
+
+    <!-- === Popup: profil veta (dla klienta) === -->
+    <app-vet-profile-modal
+      *ngIf="showVetModal"
+      [vetId]="modalVetId!"
+      (close)="closeVetModal()"
+    ></app-vet-profile-modal>
 
   </div>
 </div>

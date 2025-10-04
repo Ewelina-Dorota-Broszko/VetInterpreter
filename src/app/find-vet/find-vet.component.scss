@@ -208,8 +208,10 @@
     }
 
     .card-actions {
-      margin-top: 0.75rem;
-
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 10px 0;
       button {
         width: 100%;
         padding: 0.6rem;

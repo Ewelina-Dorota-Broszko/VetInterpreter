@@ -1,104 +1,123 @@
 <div class="dashboard-menu-container">
-    <div class="container">
-<div class="find-vet">
-  <h2>Znajdź weterynarza</h2>
+  <div class="container">
+    <div class="find-vet">
+      <h2>Znajdź weterynarza</h2>
 
-  <!-- ========== Twoi weterynarze (NAD wyszukiwarką) ========== -->
-  <section class="my-vets">
-    <h3>Twoi weterynarze</h3>
+      <!-- ========== Twoi weterynarze (NAD wyszukiwarką) ========== -->
+      <section class="my-vets">
+        <h3>Twoi weterynarze</h3>
 
-    <div *ngIf="loadingMyVets">Ładowanie…</div>
+        <div *ngIf="loadingMyVets">Ładowanie…</div>
 
-    <div *ngIf="!loadingMyVets && myVetGroups.length === 0" class="empty">
-      Nie masz jeszcze przypiętych wetów.
-    </div>
+        <div *ngIf="!loadingMyVets && myVetGroups.length === 0" class="empty">
+          Nie masz jeszcze przypiętych wetów.
+        </div>
 
-    <div *ngFor="let g of myVetGroups; trackBy: trackVet" class="my-vet-card">
-      <div class="head">
-        <div>
-          <div class="title">{{ g.vet?.clinicName || 'Weterynarz' }}</div>
-          <div class="meta">
-            <div class="title">
-        {{ g.vet?.clinicName || 'Klinika' }}
-      </div>
-            <span *ngIf="g.vet?.address?.city">{{ g.vet?.address?.city }}</span>
-            <span *ngIf="(g.vet?.specialties?.length || 0) > 0">
-              · {{ (g.vet?.specialties || []).slice(0,2).join(', ') }}
+        <div *ngFor="let g of myVetGroups; trackBy: trackVet" class="my-vet-card">
+          <div class="head">
+            <div>
+              <div class="title">{{ g.vet?.clinicName || 'Weterynarz' }}</div>
+              <div class="meta">
+                <div class="title">
+                  {{ g.vet?.clinicName || 'Klinika' }}
+                </div>
+                <span *ngIf="g.vet?.address?.city">{{ g.vet?.address?.city }}</span>
+                <span *ngIf="(g.vet?.specialties?.length || 0) > 0">
+                  · {{ (g.vet?.specialties || []).slice(0,2).join(', ') }}
+                </span>
+              </div>
+            </div>
+            <div class="head-actions">
+              <button type="button" class="outline" (click)="goVetProfile(g.vetId)">Profil</button>
+            </div>
+          </div>
+
+          <div class="animals-line" *ngIf="g.animals?.length">
+            <span *ngFor="let a of g.animals; trackBy: trackAnimal" class="pill">
+              {{ a.name }} ({{ a.species }})
+              <button class="x" title="Odepnij" (click)="unassign(a)" [disabled]="unassigning[a._id]">
+                ×
+              </button>
             </span>
           </div>
         </div>
-        <div class="head-actions">
-          <button type="button" class="outline" (click)="goVetProfile(g.vetId)">Profil</button>
+      </section>
+
+      <!-- ===== Pasek narzędzi wyszukiwarki ===== -->
+      <div class="toolbar">
+        <input type="text" [(ngModel)]="search" placeholder="Szukaj po klinice, mieście, specjalizacjach..." />
+
+        <div class="pick-animal" *ngIf="!animalIdFromQuery">
+          <label for="animalSelect">Przypisz do:</label>
+          <select id="animalSelect" [(ngModel)]="selectedAnimalId">
+            <option [ngValue]="undefined">— wybierz zwierzaka —</option>
+            <option *ngFor="let a of myAnimals" [value]="a._id">{{ a.name }} ({{ a.species }})</option>
+          </select>
+        </div>
+
+        <div class="locked-animal" *ngIf="animalIdFromQuery">
+          Przypisujesz do wskazanego zwierzaka (z adresu URL).
         </div>
       </div>
 
-      <div class="animals-line" *ngIf="g.animals?.length">
-        <span *ngFor="let a of g.animals; trackBy: trackAnimal" class="pill">
-          {{ a.name }} ({{ a.species }})
-          <button class="x" title="Odepnij" (click)="unassign(a)" [disabled]="unassigning[a._id]">
-            ×
-          </button>
-        </span>
-      </div>
-    </div>
-  </section>
+      <!-- ===== KATALOG WETÓW ===== -->
+      <div *ngIf="loading">Ładowanie…</div>
+      <p class="error" *ngIf="!loading && error">{{ error }}</p>
 
-  <!-- ===== Pasek narzędzi wyszukiwarki ===== -->
-  <div class="toolbar">
-    <input type="text" [(ngModel)]="search" placeholder="Szukaj po klinice, mieście, specjalizacjach..." />
+      <div class="grid">
+        <div class="vet-card" *ngFor="let v of filtered()">
+          <div class="meta">
+            <h3>
+              {{ v.clinicName }}
+              <span class="badge" *ngIf="isAlreadyMyVet(v._id)">mój wet</span>
+            </h3>
+            <p class="muted">
+              <span *ngIf="v.address?.city">{{ v.address?.city }}</span>
+              <span *ngIf="(v.specialties?.length || 0) > 0">
+                · {{ (v.specialties || []).join(', ') }}
+              </span>
+            </p>
+            <p class="about" *ngIf="v.about">{{ v.about }}</p>
+            <p class="muted small">{{ v.email }} · {{ v.phone }}</p>
+          </div>
 
-    <div class="pick-animal" *ngIf="!animalIdFromQuery">
-      <label for="animalSelect">Przypisz do:</label>
-      <select id="animalSelect" [(ngModel)]="selectedAnimalId">
-        <option [ngValue]="undefined">— wybierz zwierzaka —</option>
-        <option *ngFor="let a of myAnimals" [value]="a._id">{{ a.name }} ({{ a.species }})</option>
-      </select>
-    </div>
+          <div class="card-actions">
+            <!-- (opcjonalnie) podgląd profilu z katalogu -->
+            <button
+              type="button"
+              class="outline"
+              (click)="goVetProfile(v._id)"
+              style="margin-right: 8px;"
+            >
+              Profil
+            </button>
 
-    <div class="locked-animal" *ngIf="animalIdFromQuery">
-      Przypisujesz do wskazanego zwierzaka (z adresu URL).
-    </div>
-  </div>
-
-  <!-- ===== KATALOG WETÓW ===== -->
-  <div *ngIf="loading">Ładowanie…</div>
-  <p class="error" *ngIf="!loading && error">{{ error }}</p>
-
-  <div class="grid">
-    <div class="vet-card" *ngFor="let v of filtered()">
-      <div class="meta">
-        <h3>
-          {{ v.clinicName }}
-          <span class="badge" *ngIf="isAlreadyMyVet(v._id)">mój wet</span>
-        </h3>
-        <p class="muted">
-          <span *ngIf="v.address?.city">{{ v.address?.city }}</span>
-          <span *ngIf="(v.specialties?.length || 0) > 0">
-            · {{ (v.specialties || []).join(', ') }}
-          </span>
-        </p>
-        <p class="about" *ngIf="v.about">{{ v.about }}</p>
-        <p class="muted small">{{ v.email }} · {{ v.phone }}</p>
+            <button
+              type="button"
+              (click)="assign(v._id)"
+              [disabled]="assigning[v._id] || !canAssign()"
+              [title]="!canAssign() ? 'Wybierz zwierzaka aby przypisać' : ''"
+            >
+              {{ assigning[v._id] ? 'Przypisywanie…' : (isAlreadyMyVet(v._id) ? 'Przypisz do innego zwierzaka' : 'Przypisz') }}
+            </button>
+          </div>
+        </div>
       </div>
 
-      <div class="card-actions">
-        <button
-          type="button"
-          (click)="assign(v._id)"
-          [disabled]="assigning[v._id] || !canAssign()"
-          [title]="!canAssign() ? 'Wybierz zwierzaka aby przypisać' : ''"
-        >
-          {{ assigning[v._id] ? 'Przypisywanie…' : (isAlreadyMyVet(v._id) ? 'Przypisz do innego zwierzaka' : 'Przypisz') }}
-        </button>
+      <div *ngIf="!loading && !error && filtered().length === 0" class="empty">
+        Brak wyników dla podanych filtrów.
       </div>
+
+      <!-- ===== MODAL: profil weta (popup) ===== -->
+      <app-vet-profile-modal
+        *ngIf="profileOpen && openVetId"
+        [vetId]="openVetId"
+        [myAnimals]="myAnimals"
+        [lockedAnimalId]="animalIdFromQuery"
+        [preselectedAnimalId]="selectedAnimalId"
+        (assigned)="onModalAssigned($event)"
+        (close)="closeVetProfile()"
+      ></app-vet-profile-modal>
     </div>
   </div>
-
-  <div *ngIf="!loading && !error && filtered().length === 0" class="empty">
-    Brak wyników dla podanych filtrów.
-  </div>
-</div>
-
-    </div>
-
 </div>

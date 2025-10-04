@@ -49,6 +49,8 @@ import { MyVetComponent } from './my-vet/my-vet.component';
 import { VetPatientProfileComponent } from './vet-patient-profile/vet-patient-profile.component';
 import { VetAnimalProfileComponent } from './vet-animal-profile/vet-animal-profile.component';
 import { VetAddDocumentComponent } from './vet-add-document/vet-add-document.component';
+import { VetProfileModalComponent } from './vet-profile-modal/vet-profile-modal.component';
+import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.component';
 
 
 @NgModule({
@@ -93,7 +95,9 @@ import { VetAddDocumentComponent } from './vet-add-document/vet-add-document.com
     MyVetComponent,
     VetPatientProfileComponent,
     VetAnimalProfileComponent,
-    VetAddDocumentComponent
+    VetAddDocumentComponent,
+    VetProfileModalComponent,
+    ClinicalNotesComponent
   ],
   imports: [
     BrowserModule,

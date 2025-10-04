@@ -42,8 +42,9 @@ export class VetPatientsService {
     );
   }
 
-  getPatient(ownerId: string): Observable<VetPatientDetail> {
-    return this.http.get<VetPatientDetail>(`${this.api}/vets/me/patients/${ownerId}`);
-  }
+ getPatient(ownerId: string): Observable<VetPatientDetail> {
+  return this.http.get<VetPatientDetail>(`${this.api}/vets/patients/${ownerId}`);
+}
+
   
 }

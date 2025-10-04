@@ -1,0 +1,62 @@
+:host-context(body.modal-open) {
+  overflow: hidden;
+}
+
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  display: grid; place-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  position: relative;
+  width: min(720px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  background-color: #1c222c;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  padding: 20px 20px 12px;
+  color: white;
+}
+
+.x {
+  position: sticky;
+  top: 0; float: right;
+  border: 0; background: transparent; font-size: 24px; line-height: 1;
+  cursor: pointer; color: #666;
+}
+
+.header {
+  padding-right: 24px;
+  h3 { margin: 0 0 4px; }
+  .sub { color: #666; font-size: 14px; }
+  margin-bottom: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.assign {
+  margin-top: 12px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+}
+
+.assign-row {
+  display: flex; align-items: center; gap: 8px;
+}
+
+.assign-actions {
+  display: flex; align-items: center; gap: 10px; margin-top: 8px;
+}
+
+.muted { color: #666; }
+.small { font-size: 14px; }
+.error { color: #c00; }
+.ok { color: #0a7c36; }
+.hours ul { margin: 6px 0 0; padding-left: 16px; }

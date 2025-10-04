@@ -14,7 +14,8 @@ const WorkingHourSchema = new Schema(
 
 const VetSchema = new Schema(
   {
-    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true, unique: true, index: true },
+
     clinicName: { type: String, required: true },
     licenseNo: { type: String, required: true },
     phone: { type: String, required: true },
