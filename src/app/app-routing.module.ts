@@ -38,6 +38,7 @@ import { VetProfileComponent } from './vet-profile/vet-profile.component';
 import { AuthGuard } from './auth/auth.guard';
 import { VetProfileCompleteGuard } from './auth/vet-profile-complete.guard';
 import { VetAddDocumentComponent } from './vet-add-document/vet-add-document.component';
+import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -85,6 +86,8 @@ const routes: Routes = [
       { path: 'animal/:id', component: VetAnimalProfileComponent },         // jw.
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'add-document', component: VetAddDocumentComponent }, 
+      { path: 'notes', component: ClinicalNotesComponent }
+
       
     ]
   },

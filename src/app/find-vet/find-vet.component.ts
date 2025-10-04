@@ -169,9 +169,22 @@ export class FindVetComponent implements OnInit {
       }
     });
   }
+  // ...
+  openVetId: string | null = null;
+  profileOpen = false;
 
   goVetProfile(vetId: string) {
-    this.router.navigate(['/vet', vetId]);
+    this.openVetId = vetId;
+    this.profileOpen = true;
+  }
+  closeVetProfile() {
+    this.profileOpen = false;
+    this.openVetId = null;
+  }
+
+  // gdy modal przypiął – odśwież „Twoi weterynarze”
+  onModalAssigned(_evt: { vetId: string; animalId: string }) {
+    this.loadMySection();
   }
 
   /* ================= KATALOG ================= */

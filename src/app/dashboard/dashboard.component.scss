@@ -50,11 +50,7 @@
   .card-head {
     display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;
     h3 { margin:0; color:#e5e7eb; }
-    .ghost {
-      background:transparent; color:#9bb1ff; border:1px solid #3f4dab;
-      padding:6px 10px; border-radius:8px; cursor:pointer;
-    }
-    .ghost:hover { background:#3f4dab; color:#fff; }
+    
   }
 
   .tbl {
@@ -84,5 +80,10 @@
 
   .link { color:#9bb1ff; cursor:pointer; text-decoration: underline; }
 }
+.ghost {
+      background:transparent; color:#9bb1ff; border:1px solid #3f4dab;
+      padding:6px 10px; border-radius:8px; cursor:pointer;
+    }
+    .ghost:hover { background:#3f4dab; color:#fff; }
 
 }

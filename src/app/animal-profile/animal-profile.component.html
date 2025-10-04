@@ -1,9 +1,15 @@
 <div class="dashboard-menu-container" *ngIf="animal">
   <div class="container">
-    <p *ngIf="animal.vetId; else noVet">
-      Przypisany wet: <a [routerLink]="['/vet', animal.vetId]">zobacz profil</a>
-      <button type="button" class="danger" (click)="unassignVet()">Odepnij</button>
-    </p>
+  <div class="action-animal">
+      <div *ngIf="animal.vetId; else noVet" class="your-vet">
+        <p>Przypisany wet:</p>
+        <button type="button" class="ghost" (click)="openVetModal(animal.vetId)">zobacz profil</button>
+        <button type="button" class="ghost" (click)="unassignVet()">Odepnij</button>
+      </div>
+      <button type="button" class="danger" (click)="onDeleteAnimal()" [disabled]="deleting">
+        {{ deleting ? 'Usuwanie…' : 'Usuń zwierzaka' }}
+      </button>
+    </div>
     <ng-template #noVet>
       <p>Brak przypisanego weta.
         <button type="button" (click)="goAssignVet()">Przypisz weterynarza</button>
@@ -11,10 +17,8 @@
     </ng-template>
 
     <div class="actions">
-      <button type="button" (click)="addNewDocument()">Dodaj nowy dokument</button>
-      <button type="button" class="danger" (click)="onDeleteAnimal()" [disabled]="deleting">
-        {{ deleting ? 'Usuwanie…' : 'Usuń zwierzaka' }}
-      </button>
+      <!-- <button type="button" (click)="addNewDocument()">Dodaj nowy dokument</button> -->
+      
     </div>
 
     <!-- ===== Historia wizyt ===== -->
@@ -82,86 +86,43 @@
         <button [class.active]="activeTab === 'symptoms'" (click)="setTab('symptoms')">Objawy</button>
       </nav>
 
-      <!-- ===== Podsumowanie ===== -->
-      <!-- <section *ngIf="activeTab === 'overview'" class="tab-content">
-        <h2>Podsumowanie</h2>
-
-        <div class="cards">
-          <div class="card" *ngIf="latest(animal.bloodTests) as lastBlood">
-            <h3>Ostatnie badanie krwi</h3>
-            <p>Data: {{ lastBlood.date }}</p>
-            <p>HGB: {{ lastBlood.hemoglobin }} g/dL</p>
-            <p>WBC: {{ lastBlood.wbc }} 10⁹/L</p>
-            <p>Glukoza: {{ lastBlood.glucose }} mg/dL</p>
-          </div>
-
-          <div class="card" *ngIf="latest(animal.urineTests) as lastUrine">
-            <h3>Ostatnie badanie moczu</h3>
-            <p>Data: {{ lastUrine.date }}</p>
-            <p>SG: {{ lastUrine.specificGravity }}</p>
-            <p>pH: {{ lastUrine.pH }}</p>
-            <p>Białko: {{ lastUrine.protein }}</p>
-          </div>
-
-          <div class="card" *ngIf="latest(animal.temperatureLogs) as lastTemp">
-            <h3>Ostatni pomiar temperatury</h3>
-            <p>Data: {{ lastTemp.date }} {{ lastTemp.time }}</p>
-            <p>Temp: {{ lastTemp.temperature }} °C</p>
-          </div>
-
-          <div class="card" *ngIf="latest(animal.diabetesLogs) as lastDiab">
-            <h3>Ostatni zapis cukrzycy</h3>
-            <p>Data: {{ lastDiab.date }} {{ lastDiab.time }}</p>
-            <p>Glukoza: {{ lastDiab.glucose }} mg/dL</p>
-            <p>Typ: {{ lastDiab.measurementType }}</p>
-            <p *ngIf="lastDiab.insulinType">Insulina: {{ lastDiab.insulinType }} ({{ lastDiab.insulinDose || 0 }} j.)</p>
-          </div>
-        </div>
-      </section> -->
-
       <!-- ===== Badania krwi ===== -->
       <section *ngIf="activeTab === 'blood'" class="tab-content">
-        <app-blood-tab [active]="activeTab === 'blood'" [bloodTests]="animal?.bloodTests || []"
+        <app-blood-tab
+          [active]="activeTab === 'blood'"
+          [bloodTests]="animal?.bloodTests || []"
           [referenceRanges]="referenceRanges">
         </app-blood-tab>
       </section>
-
 
       <!-- ===== Badania moczu ===== -->
       <section *ngIf="activeTab === 'urine'" class="tab-content">
         <app-urine-tab [urineTests]="animal?.urineTests || []"></app-urine-tab>
       </section>
 
-
       <!-- ===== Badania kału ===== -->
       <section *ngIf="activeTab === 'stool'" class="tab-content">
         <app-stool-tab [stoolTests]="animal?.stoolTests || []"></app-stool-tab>
       </section>
-
 
       <!-- ===== Pomiary temperatury ===== -->
       <section *ngIf="activeTab === 'temperature'" class="tab-content">
         <app-temperature-tab [temperatureLogs]="animal?.temperatureLogs || []"></app-temperature-tab>
       </section>
 
-
       <!-- ===== Cukrzyca ===== -->
       <section *ngIf="activeTab === 'diabetes'" class="tab-content">
         <app-diabetes-tab [diabetesLogs]="animal?.diabetesLogs || []"></app-diabetes-tab>
       </section>
-
 
       <!-- ===== Waga & BCS ===== -->
       <section *ngIf="activeTab === 'weight'" class="tab-content">
         <app-weight-tab [weightHistory]="animal?.weightHistory || []"></app-weight-tab>
       </section>
 
-
       <!-- ===== Szczepienia ===== -->
-
       <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
-        <app-vaccinations-tab [vaccinations]="animal?.vaccinations || []">
-        </app-vaccinations-tab>
+        <app-vaccinations-tab [vaccinations]="animal?.vaccinations || []"></app-vaccinations-tab>
       </section>
 
       <!-- ===== Leki ===== -->
@@ -169,17 +130,11 @@
         <app-meds-tab [animalId]="animal?._id" [medications]="animal?.medications || []"></app-meds-tab>
       </section>
 
-
       <!-- ===== Objawy ===== -->
       <section *ngIf="activeTab === 'symptoms'" class="tab-content">
         <app-symptoms-tab [symptoms]="animal?.symptoms || []"></app-symptoms-tab>
       </section>
-
-
     </div>
-
-    <!-- (opcjonalnie) kalendarz ogólny aplikacji -->
-    <!-- <app-calendar></app-calendar> -->
   </div>
 </div>
 
@@ -187,3 +142,10 @@
 <div *ngIf="!animal" class="empty-state">
   Ładuję dane profilu…
 </div>
+
+<!-- Popup: profil veta (dla klienta) -->
+<app-vet-profile-modal
+  *ngIf="showVetModal"
+  [vetId]="modalVetId!"
+  (close)="closeVetModal()"
+></app-vet-profile-modal>

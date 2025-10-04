@@ -14,12 +14,13 @@
     padding: 10px;
   }
 }
+
 .mini-calendar-wrapper {
   max-width: 500px;
-//   max-height: 400px;
+  //   max-height: 400px;
   overflow: hidden;
   margin: 0 auto;
-    color: white;
+  color: white;
 
   .fc {
     font-size: 0.75rem; // zmniejsz czcionki
@@ -45,7 +46,7 @@
 
 
 .note-section {
-    color: white;
+  color: white;
 }
 
 .calendar-actions {
@@ -70,7 +71,9 @@
   margin-bottom: 16px;
   background: #fff;
 
-  h4 { margin: 0 0 8px; }
+  h4 {
+    margin: 0 0 8px;
+  }
 
   .row {
     display: flex;
@@ -82,7 +85,8 @@
       margin-bottom: 4px;
     }
 
-    input, textarea {
+    input,
+    textarea {
       padding: 8px 10px;
       border: 1px solid #d1d5db;
       border-radius: 8px;
@@ -107,6 +111,7 @@
     }
   }
 }
+
 .dashboard-menu-container {
   height: 100%;
   background-color: #1d222b;
@@ -130,6 +135,7 @@
   height: auto;
   background-color: #212631;
 }
+
 /* ====== Akcje nad kalendarzem ====== */
 .calendar-actions {
   display: flex;
@@ -151,6 +157,230 @@
     }
   }
 }
+
+/* === Layout / ogólne === */
+.dashboard-menu-container {
+  padding: 1rem 0;
+}
+
+.mini-calendar-wrapper {
+  margin-bottom: 1rem;
+}
+
+.calendar-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: .75rem;
+}
+
+/* === Formularz dodawania === */
+.add-appointment {
+  border: 1px solid #e5e7eb;
+  border-radius: .8rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background: #fff;
+
+  h4 {
+    margin: 0 0 .75rem;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    align-items: center;
+    gap: .75rem;
+    margin-bottom: .65rem;
+
+    label {
+      color: #374151;
+      font-weight: 600;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: .5rem .6rem;
+      border: 1px solid #e5e7eb;
+      border-radius: .5rem;
+      background: #fff;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: .5rem;
+    margin-top: .5rem;
+
+    button {
+      padding: .55rem .9rem;
+      border-radius: .6rem;
+      border: 1px solid #e5e7eb;
+      background: #111827;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #fff;
+      color: #111827;
+    }
+
+    button[disabled] {
+      opacity: .6;
+      cursor: not-allowed;
+    }
+  }
+
+  .error {
+    color: #b91c1c;
+    margin-top: .5rem;
+  }
+}
+
+/* === Tabelki wydarzeń === */
+.tbl {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: .8rem;
+  overflow: hidden;
+  /* zaokrąglone rogi dla thead/tbody */
+
+  thead th {
+    background: #f9fafb;
+    color: #6b7280;
+    font-size: .85rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-align: left;
+    padding: .65rem .9rem;
+    border-bottom: 1px solid #e5e7eb;
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: .65rem .9rem;
+    border-top: 1px solid #f3f4f6;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fcfcfc;
+  }
+
+  tbody tr:hover {
+    background: #f5f7fb;
+  }
+
+  .actions {
+    text-align: right;
+    white-space: nowrap;
+    width: 1%;
+  }
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+/* === Sekcje dzienne i „Najbliższe 5” === */
+.day-events,
+.upcoming {
+  margin-top: 1rem;
+
+  h4 {
+    margin: 0 0 .5rem;
+    font-size: 1.05rem;
+  }
+}
+
+.event-details {
+  margin-top: .75rem;
+  padding: .75rem .9rem;
+  border: 1px solid #e5e7eb;
+  border-radius: .8rem;
+  background: #f9fafb;
+
+  h5 {
+    margin: 0 0 .5rem;
+    font-size: .98rem;
+  }
+
+  p {
+    margin: .15rem 0;
+  }
+}
+
+/* === Teksty pomocnicze === */
+.badge {
+  display: inline-block;
+  padding: .2rem .55rem;
+  font-size: .78rem;
+  line-height: 1;
+  border-radius: 9999px;
+  color: #374151;
+}
+
+td {
+  color: #374151;
+}
+
+td a {
+  background: transparent;
+  color: #9bb1ff;
+  border: 1px solid #3f4dab;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.muted {
+  color: #6b7280;
+}
+
+.small {
+  font-size: .85rem;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+/* === Przyciski w tabelach === */
+button.ghost {
+  background: transparent;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  padding: .4rem .65rem;
+  border-radius: .5rem;
+  cursor: pointer;
+}
+
+button.ghost:hover {
+  background: #f3f4f6;
+}
+
+button.ghost:active {
+  background: #e5e7eb;
+}
+
+/* === Stany === */
+.error {
+  color: #b91c1c;
+}
+
+.loading {
+  color: #6b7280;
+}
+
 
 /* ====== Notatki ====== */
 .note-section {

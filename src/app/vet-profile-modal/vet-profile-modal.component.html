@@ -1,0 +1,119 @@
+<div class="overlay" (click)="onClose()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <button class="x" (click)="onClose()" aria-label="Zamknij">×</button>
+
+    <div *ngIf="loading" class="muted">Ładowanie…</div>
+    <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+    <ng-container *ngIf="!loading && !error && vet as v">
+      <header class="header">
+        <h3>{{ v?.clinicName || 'Weterynarz' }}</h3>
+        <div class="sub">
+          <span *ngIf="v?.address?.city">{{ v?.address?.city }}</span>
+          <span *ngIf="(v?.specialties?.length || 0) > 0">
+            · {{ (v?.specialties || []).slice(0,3).join(', ') }}
+          </span>
+        </div>
+      </header>
+
+      <section class="grid">
+        <div>
+          <h4>Kontakt</h4>
+          <p class="muted small" *ngIf="v?.email">{{ v?.email }}</p>
+          <p class="muted small" *ngIf="v?.phone">{{ v?.phone }}</p>
+          <p class="muted small" *ngIf="v?.website">
+            <a [href]="v?.website" target="_blank" rel="noopener">Strona www</a>
+          </p>
+        </div>
+
+        <div>
+          <h4>Adres</h4>
+
+          <ng-container *ngIf="v?.address as address; else noAddress">
+            <p class="muted small">
+              <span *ngIf="address.line1">{{ address.line1 }}</span>
+              <br *ngIf="address.line1 && (address.line2 || address.city)">
+              <span *ngIf="address.line2">{{ address.line2 }}<br></span>
+              <span *ngIf="address.postalCode || address.city">
+                {{ address.postalCode }} {{ address.city }}
+              </span>
+              <br *ngIf="address.country">
+              <span *ngIf="address.country">{{ address.country }}</span>
+            </p>
+          </ng-container>
+          <ng-template #noAddress>
+            <p class="muted small">—</p>
+          </ng-template>
+        </div>
+
+        <div>
+          <h4>O klinice</h4>
+          <p class="muted small" *ngIf="v?.about; else noAbout">{{ v?.about }}</p>
+          <ng-template #noAbout><p class="muted small">—</p></ng-template>
+        </div>
+
+        <div>
+          <h4>Specjalizacje</h4>
+          <p class="muted small">{{ join(v?.specialties || []) }}</p>
+        </div>
+
+        <div>
+          <h4>Usługi</h4>
+          <p class="muted small">{{ join(v?.servicesOffered || []) }}</p>
+        </div>
+
+        <div>
+          <h4>Języki</h4>
+          <p class="muted small">{{ join(v?.languages || []) }}</p>
+        </div>
+
+        <div>
+          <h4>Przyjmuje nowych pacjentów</h4>
+          <p class="muted small">{{ v?.acceptsNewPatients ? 'Tak' : 'Nie' }}</p>
+        </div>
+
+        <div *ngIf="v?.workingHours?.length" class="hours">
+          <h4>Godziny pracy</h4>
+          <ul>
+            <li *ngFor="let h of v?.workingHours || []">
+              <span class="muted small">
+                {{ days[h.day] }}:
+                {{ h.open ? (h.start + '–' + h.end) : 'nieczynne' }}
+                <span *ngIf="h.breakStart && h.breakEnd"> (przerwa {{ h.breakStart }}–{{ h.breakEnd }})</span>
+              </span>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- CTA: przypisz do zwierzaka -->
+      <section class="assign" *ngIf="lockedAnimalId || (myAnimals?.length || 0) > 0">
+        <h4>Przypisz do zwierzaka</h4>
+
+        <div class="assign-row" *ngIf="lockedAnimalId; else chooseAnimal">
+          <p class="muted small">
+            Przypiszesz do wskazanego zwierzaka (z kontekstu).
+          </p>
+        </div>
+
+        <ng-template #chooseAnimal>
+          <div class="assign-row">
+            <label for="animalSelect">Wybierz zwierzaka</label>
+            <select id="animalSelect" [(ngModel)]="selectedAnimalId" [disabled]="saving">
+              <option [ngValue]="undefined">— wybierz —</option>
+              <option *ngFor="let a of myAnimals" [value]="a._id">{{ a.name }} ({{ a.species }})</option>
+            </select>
+          </div>
+        </ng-template>
+
+        <div class="assign-actions">
+          <button type="button" (click)="doAssign()" [disabled]="!canAssign()">
+            {{ saving ? 'Przypisywanie…' : 'Przypisz' }}
+          </button>
+          <p class="ok" *ngIf="okMsg">{{ okMsg }}</p>
+          <p class="error" *ngIf="!okMsg && error">{{ error }}</p>
+        </div>
+      </section>
+    </ng-container>
+  </div>
+</div>

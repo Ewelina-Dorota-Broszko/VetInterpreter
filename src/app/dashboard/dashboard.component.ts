@@ -54,6 +54,10 @@ export class DashboardComponent implements OnInit {
   }> = [];
   myVets: VetLite[] = [];
 
+  // modal veta
+  showVetModal = false;
+  modalVetId: string | null = null;
+
   today = this.toDateString(new Date());
 
   constructor(
@@ -71,17 +75,28 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    const ensureOwnerId$ = this.auth.getOwnerId()
-      ? of(this.auth.getOwnerId()!)
-      : this.auth.fetchMe().pipe(map(() => this.auth.getOwnerId()!));
+    const ownerIdVal: string | null =
+      typeof (this.auth as any).getOwnerId === 'function'
+        ? (this.auth as any).getOwnerId()
+        : null;
+
+    const ensureOwnerId$ = ownerIdVal
+      ? of(ownerIdVal)
+      : this.auth.fetchMe().pipe(
+          map(() => (typeof (this.auth as any).getOwnerId === 'function' ? (this.auth as any).getOwnerId() : null))
+        );
 
     ensureOwnerId$
       .pipe(
-        switchMap(ownerId => {
+        switchMap((ownerId) => {
           this.ownerId = ownerId;
+          if (!ownerId) {
+            this.loading = false;
+            this.error = 'Nie udało się ustalić właściciela (zaloguj się).';
+            return of<[Animal[], any[]]>([[], []]);
+          }
           return forkJoin([
             this.animalsSvc.getForOwner(ownerId).pipe(catchError(() => of([] as Animal[]))),
-            // jeśli u Ciebie endpoint jest pod /animals/owners/:id/calendar — użyj metody z serwisu
             this.animalsSvc.getOwnerCalendar(ownerId).pipe(catchError(() => of([] as any[])))
           ]);
         })
@@ -216,8 +231,24 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/animal', animalId]);
   }
 
-  openVet(vetId: string) {
-    this.router.navigate(['/vet', vetId]);
+  // popup zamiast nawigacji do /vet/:id
+  openVetModal(vetId: string) {
+    this.modalVetId = vetId;
+    this.showVetModal = true;
+  }
+  closeVetModal() {
+    this.showVetModal = false;
+    this.modalVetId = null;
+  }
+
+  /* ============== Helpers ============== */
+
+  /** Zwraca vetId dla danego zwierzaka (albo null jeśli brak przypiętego weta) */
+  getVetIdForAnimal(animalId: string | null | undefined): string | null {
+    if (!animalId) return null;
+    const a = this.animals.find(x => (x as any)._id === animalId);
+    const vid = (a as any)?.vetId;
+    return vid ? String(vid) : null;
   }
 
   /* ============== Utils / widok ============== */

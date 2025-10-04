@@ -1,0 +1,77 @@
+<div class="dashboard-menu-container">
+  <div class="container clinical-notes">
+
+    <h2>Notatki kliniczne</h2>
+
+    <p class="muted">
+      Tutaj możesz dodawać pliki (PNG, JPG, WEBP, PDF itd.). Pliki zapisują się na Twoim koncie w systemie.
+    </p>
+
+    <!-- Formularz dodawania -->
+    <section class="card add-card">
+      <h3>Dodaj plik</h3>
+
+      <div class="row">
+        <label for="fileInput">Plik</label>
+        <input id="fileInput" type="file"
+               (change)="onFileChange($event)"
+               [disabled]="uploading"
+               accept=".png,.jpg,.jpeg,.webp,.pdf,image/*,application/pdf" />
+      </div>
+
+      <div class="row">
+        <label for="noteInput">Notatka (opcjonalnie)</label>
+        <input id="noteInput" type="text" [(ngModel)]="note" [disabled]="uploading" placeholder="Krótka notatka do pliku" />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" (click)="upload()" [disabled]="!selectedFile || uploading">
+          {{ uploading ? 'Wysyłanie…' : 'Wyślij' }}
+        </button>
+        <button class="secondary" type="button" (click)="clearSelection()" [disabled]="uploading">Wyczyść</button>
+      </div>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </section>
+
+    <!-- Lista plików -->
+    <section class="card list-card">
+      <div class="card-head">
+        <h3>Twoje pliki ({{ files.length }})</h3>
+        <button class="ghost" (click)="reload()" [disabled]="loading">Odśwież</button>
+      </div>
+
+      <div *ngIf="loading" class="loading">Ładowanie…</div>
+      <p class="error" *ngIf="!loading && error">{{ error }}</p>
+
+      <table class="tbl" *ngIf="!loading && files.length">
+        <thead>
+        <tr>
+          <th>Nazwa</th>
+          <th>Typ</th>
+          <th>Rozmiar</th>
+          <th>Notatka</th>
+          <th>Dodano</th>
+          <th class="actions"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let f of files; trackBy: trackById">
+          <td class="strong">{{ f.originalName }}</td>
+          <td class="muted">{{ f.mimeType || '—' }}</td>
+          <td>{{ formatBytes(f.size) }}</td>
+          <td>{{ f.note || '—' }}</td>
+          <td class="muted">{{ f.uploadedAt || '—' }}</td>
+          <td class="actions">
+            <button class="ghost" (click)="download(f)">Pobierz</button>
+            <button class="danger" (click)="remove(f)" [disabled]="deleting[f._id]">Usuń</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+
+      <p *ngIf="!loading && !files.length" class="muted">Brak plików.</p>
+    </section>
+
+  </div>
+</div>
