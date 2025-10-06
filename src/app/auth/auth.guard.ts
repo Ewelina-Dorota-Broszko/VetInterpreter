@@ -10,21 +10,26 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> {
     const requireVet = route.data?.['requireVet'] === true;
+    const requireAdmin = route.data?.['requireAdmin'] === true;
 
     return combineLatest([this.auth.isLoggedIn$, this.auth.user$]).pipe(
       take(1),
       map(([isLoggedIn, user]) => {
-        // 1) niezalogowany -> /login (z powrotem na docelową trasę po zalogowaniu)
         if (!isLoggedIn) {
           return this.router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
         }
 
-        // 2) jeżeli trasa wymaga roli "vet", a user jej nie ma -> /dashboard
-        if (requireVet && !user?.isVet) {
+        if (requireAdmin) {
+          if (user?.role === 'admin') return true;
           return this.router.createUrlTree(['/dashboard']);
         }
 
-        // 3) OK
+        if (requireVet) {
+          // akceptujemy zarówno role: 'vet', jak i legacy: isVet=true
+          if (user?.role === 'vet' || user?.isVet) return true;
+          return this.router.createUrlTree(['/dashboard']);
+        }
+
         return true;
       })
     );

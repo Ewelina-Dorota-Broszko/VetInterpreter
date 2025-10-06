@@ -39,6 +39,9 @@ import { AuthGuard } from './auth/auth.guard';
 import { VetProfileCompleteGuard } from './auth/vet-profile-complete.guard';
 import { VetAddDocumentComponent } from './vet-add-document/vet-add-document.component';
 import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.component';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { AdminOwnersListComponent } from './admin-owners-list/admin-owners-list.component';
+import { AdminVetsListComponent } from './admin-vets-list/admin-vets-list.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -87,8 +90,18 @@ const routes: Routes = [
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
       { path: 'add-document', component: VetAddDocumentComponent }, 
       { path: 'notes', component: ClinicalNotesComponent }
-
-      
+    ]
+  },
+    {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [AuthGuard],
+    data: { requireAdmin: true },
+    children: [
+      { path: 'vets', component: AdminVetsListComponent },
+      { path: 'owners', component: AdminOwnersListComponent },
+      { path: '', pathMatch: 'full', redirectTo: 'vets' },
+       { path: 'panel', component: AdminLayoutComponent }
     ]
   },
   

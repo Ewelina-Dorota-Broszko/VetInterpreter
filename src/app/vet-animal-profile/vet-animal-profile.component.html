@@ -36,8 +36,21 @@
             <p *ngIf="getAgeYears() !== null">Wiek: <strong>{{ getAgeYears() }} lat</strong></p>
 
             <p class="muted small">
-              Widok veta — poniżej pokazuję wyłącznie wpisy dodane przez weterynarzy.
+              Widok veta — filtr: <strong>{{ scopeLabel[scope] }}</strong>
             </p>
+
+            <!-- Filtr scope -->
+            <div class="scope-filter" style="margin: 8px 0 0;">
+              <label>
+                Pokaż wpisy:
+                <select [(ngModel)]="scope" (change)="onScopeChange()">
+                  <option value="mine">Moje</option>
+                  <option value="vet">Wszyscy weterynarze</option>
+                  <option value="owner">Właściciel</option>
+                  <option value="all">Wszystkie</option>
+                </select>
+              </label>
+            </div>
           </div>
 
           <div class="actions">
@@ -59,65 +72,97 @@
           <button [class.active]="activeTab === 'symptoms'" (click)="setTab('symptoms')">Objawy</button>
         </nav>
 
-        <!-- ===== Podsumowanie (opcjonalnie) ===== -->
-        <!-- Możesz tu kiedyś zrobić karty z ostatnimi wpisami jak u ownera -->
-
         <!-- ===== Badania krwi ===== -->
         <section *ngIf="activeTab === 'blood'" class="tab-content">
-          <app-blood-tab
-            [active]="true"
-            [bloodTests]="bloodTestsVet"
-            [referenceRanges]="referenceRanges">
-          </app-blood-tab>
-          <p class="muted" *ngIf="!bloodTestsVet.length">Brak badań krwi dodanych przez veta.</p>
+          <ng-container *ngIf="(bloodTestsVet?.length ?? 0) > 0; else bloodEmpty">
+            <app-blood-tab
+              [bloodTests]="bloodTestsVet"
+              [referenceRanges]="referenceRanges">
+            </app-blood-tab>
+          </ng-container>
+          <ng-template #bloodEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Badania moczu ===== -->
         <section *ngIf="activeTab === 'urine'" class="tab-content">
-          <app-urine-tab [urineTests]="urineTestsVet"></app-urine-tab>
-          <p class="muted" *ngIf="!urineTestsVet.length">Brak badań moczu dodanych przez veta.</p>
+          <ng-container *ngIf="(urineTestsVet?.length ?? 0) > 0; else urineEmpty">
+            <app-urine-tab [urineTests]="urineTestsVet"></app-urine-tab>
+          </ng-container>
+          <ng-template #urineEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Badania kału ===== -->
         <section *ngIf="activeTab === 'stool'" class="tab-content">
-          <app-stool-tab [stoolTests]="stoolTestsVet"></app-stool-tab>
-          <p class="muted" *ngIf="!stoolTestsVet.length">Brak badań kału dodanych przez veta.</p>
+          <ng-container *ngIf="(stoolTestsVet?.length ?? 0) > 0; else stoolEmpty">
+            <app-stool-tab [stoolTests]="stoolTestsVet"></app-stool-tab>
+          </ng-container>
+          <ng-template #stoolEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Temperatura ===== -->
         <section *ngIf="activeTab === 'temperature'" class="tab-content">
-          <app-temperature-tab [temperatureLogs]="temperatureLogsVet"></app-temperature-tab>
-          <p class="muted" *ngIf="!temperatureLogsVet.length">Brak pomiarów dodanych przez veta.</p>
+          <ng-container *ngIf="(temperatureLogsVet?.length ?? 0) > 0; else tempEmpty">
+            <app-temperature-tab [temperatureLogs]="temperatureLogsVet"></app-temperature-tab>
+          </ng-container>
+          <ng-template #tempEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Cukrzyca ===== -->
         <section *ngIf="activeTab === 'diabetes'" class="tab-content">
-          <app-diabetes-tab [diabetesLogs]="diabetesLogsVet"></app-diabetes-tab>
-          <p class="muted" *ngIf="!diabetesLogsVet.length">Brak wpisów cukrzycowych dodanych przez veta.</p>
+          <ng-container *ngIf="(diabetesLogsVet?.length ?? 0) > 0; else diabetesEmpty">
+            <app-diabetes-tab [diabetesLogs]="diabetesLogsVet"></app-diabetes-tab>
+          </ng-container>
+          <ng-template #diabetesEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Waga ===== -->
         <section *ngIf="activeTab === 'weight'" class="tab-content">
-          <app-weight-tab [weightHistory]="weightHistoryVet"></app-weight-tab>
-          <p class="muted" *ngIf="!weightHistoryVet.length">Brak historii wagi dodanej przez veta.</p>
+          <ng-container *ngIf="(weightHistoryVet?.length ?? 0) > 0; else weightEmpty">
+            <app-weight-tab [weightHistory]="weightHistoryVet"></app-weight-tab>
+          </ng-container>
+          <ng-template #weightEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Szczepienia ===== -->
         <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
-          <app-vaccinations-tab [vaccinations]="vaccinationsVet"></app-vaccinations-tab>
-          <p class="muted" *ngIf="!vaccinationsVet.length">Brak szczepień dodanych przez veta.</p>
+          <ng-container *ngIf="(vaccinationsVet?.length ?? 0) > 0; else vaccEmpty">
+            <app-vaccinations-tab [vaccinations]="vaccinationsVet"></app-vaccinations-tab>
+          </ng-container>
+          <ng-template #vaccEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Leki ===== -->
         <section *ngIf="activeTab === 'meds'" class="tab-content">
-          <app-meds-tab [animalId]="animal?._id" [medications]="medicationsVet"></app-meds-tab>
-          <p class="muted" *ngIf="!medicationsVet.length">Brak leków dodanych przez veta.</p>
+          <ng-container *ngIf="(medicationsVet?.length ?? 0) > 0; else medsEmpty">
+            <app-meds-tab [animalId]="animal?._id" [medications]="medicationsVet"></app-meds-tab>
+          </ng-container>
+          <ng-template #medsEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
 
         <!-- ===== Objawy ===== -->
         <section *ngIf="activeTab === 'symptoms'" class="tab-content">
-          <app-symptoms-tab [symptoms]="symptomsVet"></app-symptoms-tab>
-          <p class="muted" *ngIf="!symptomsVet.length">Brak objawów dodanych przez veta.</p>
+          <ng-container *ngIf="(symptomsVet?.length ?? 0) > 0; else symptomsEmpty">
+            <app-symptoms-tab [symptoms]="symptomsVet"></app-symptoms-tab>
+          </ng-container>
+          <ng-template #symptomsEmpty>
+            <p class="muted">Brak danych w wybranym filtrze.</p>
+          </ng-template>
         </section>
       </div>
     </div>

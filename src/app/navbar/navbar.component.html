@@ -1,141 +1,196 @@
-<!-- NAVBAR – WŁAŚCICIEL (isVet = false) -->
-<div class="navbar-container" *ngIf="!(isVet$ | async)">
+<!-- ===== NAVBAR – ADMIN ===== -->
+<div class="navbar-container" *ngIf="isAdmin$ | async">
   <div class="navbar-menu">
-    <div class="logo-container-login">
-      <img src="assets/images/logo-dorota.png" alt="Logo" />
-      <p>VetInterpreter</p>
-    </div>
 
-    <div class="menu">
-      <!-- Profil właściciela -->
-      <div class="menu-elements">
-        <div class="menu-element" routerLink="/profile" routerLinkActive="active">
-          <div class="photo-name">
-            <img src="assets/images/edit.png" alt="profile">
-            <p>Mój Profil</p>
-          </div>
-        </div>
+    <div class="navbar-menu">
+      <div class="logo-container-login">
+        <img src="assets/images/logo-dorota.png" alt="Logo" />
+        <p>VetInterpreter — Admin</p>
       </div>
 
-      <!-- Dashboard -->
-      <div class="menu-elements">
-        <div class="menu-element" (click)="goToDashboard()">
-          <div class="photo-name">
-            <img src="assets/images/dashboard.png" alt="dashboard">
-            <p>Dashboard</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Kalendarz -->
-      <div class="menu-elements">
-        <p>Kalendarz</p>
-        <div class="menu-element" (click)="goToCalendar()">
-          <div class="photo-name">
-            <img src="assets/images/calendar.png" alt="calendar">
-            <p>Kalendarz</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Zwierzęta (lista właściciela) -->
-      <div class="menu-elements">
-        <p>Zwierzęta</p>
-        <div class="menu-element" *ngFor="let animal of animals; trackBy: trackById" (click)="selectAnimal(animal)">
-          <div class="photo-name">
-            <img [src]="getAnimalIcon(animal.species)" alt="{{ animal.species }}">
-            <p>{{ animal.name }}</p>
+      <div class="menu">
+        <!-- Panel -->
+        <div class="menu-elements">
+          <div class="menu-element" routerLink="/admin/panel" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <div class="photo-name">
+              <img src="assets/images/dashboard.png" alt="dashboard">
+              <p>Panel</p>
+            </div>
           </div>
         </div>
 
-        <div class="menu-element" routerLink="animals/new">
-          <div class="photo-name">
-            <img src="assets/images/add.png" alt="add">
-            <p>Dodaj Zwierzę</p>
+        <!-- Użytkownicy -->
+        <div class="menu-elements">
+          <p>Użytkownicy</p>
+          <div class="menu-element" routerLink="/admin/owners" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/paw.png" alt="owners">
+              <p>Właściciele</p>
+            </div>
+          </div>
+          <div class="menu-element" routerLink="/admin/vets" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/pawprint.png" alt="vets">
+              <p>Weterynarze</p>
+            </div>
           </div>
         </div>
-      </div>
 
+        <!-- Ustawienia -->
+        <div class="menu-elements">
+          <p>Ustawienia</p>
+          <div class="menu-element" routerLink="/profile" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/edit.png" alt="profile">
+              <p>Mój profil</p>
+            </div>
+          </div>
+        </div>
 
-      <!-- Dokumenty -->
-      <div class="menu-elements">
-        <p>Dokumenty</p>
-        <div class="menu-element" (click)="goToAddDocument()">
-          <div class="photo-name">
-            <img src="assets/images/add.png" alt="add">
-            <p>Dodaj dokument</p>
-          </div>
-        </div>
-      </div>
-      <!-- znajdz veta -->
-      <div class="menu-elements">
-        <p>Znajdz Weterynarza</p>
-        <div class="menu-element" routerLink="/find-vet">
-          <div class="photo-name">
-            <img src="assets/images/loupe.png" alt="loupe">
-            <p>Szukaj</p>
-          </div>
-        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- NAVBAR – WETERYNARZ (isVet = true) -->
+<!-- ===== NAVBAR – WŁAŚCICIEL (owner) ===== -->
+<div class="navbar-container" *ngIf="isOwner$ | async">
+  <div class="navbar-menu">
+    <div class="navbar-menu">
+      <div class="logo-container-login">
+        <img src="assets/images/logo-dorota.png" alt="Logo" />
+        <p>VetInterpreter</p>
+      </div>
+
+      <div class="menu">
+        <!-- Profil właściciela -->
+        <div class="menu-elements">
+          <div class="menu-element" routerLink="/profile" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/edit.png" alt="profile">
+              <p>Mój Profil</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div class="menu-elements">
+          <div class="menu-element" (click)="goToDashboard()">
+            <div class="photo-name">
+              <img src="assets/images/dashboard.png" alt="dashboard">
+              <p>Dashboard</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kalendarz -->
+        <div class="menu-elements">
+          <p>Kalendarz</p>
+          <div class="menu-element" (click)="goToCalendar()">
+            <div class="photo-name">
+              <img src="assets/images/calendar.png" alt="calendar">
+              <p>Kalendarz</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zwierzęta (lista właściciela) -->
+        <div class="menu-elements">
+          <p>Zwierzęta</p>
+          <div class="menu-element" *ngFor="let animal of animals; trackBy: trackById" (click)="selectAnimal(animal)">
+            <div class="photo-name">
+              <img [src]="getAnimalIcon(animal.species)" alt="{{ animal.species }}">
+              <p>{{ animal.name }}</p>
+            </div>
+          </div>
+          <div class="menu-element" routerLink="animals/new">
+            <div class="photo-name">
+              <img src="assets/images/add.png" alt="add">
+              <p>Dodaj Zwierzę</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dokumenty -->
+        <div class="menu-elements">
+          <p>Dokumenty</p>
+          <div class="menu-element" (click)="goToAddDocument()">
+            <div class="photo-name">
+              <img src="assets/images/add.png" alt="add">
+              <p>Dodaj dokument</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Znajdź weta -->
+        <div class="menu-elements">
+          <p>Znajdź Weterynarza</p>
+          <div class="menu-element" routerLink="/find-vet">
+            <div class="photo-name">
+              <img src="assets/images/loupe.png" alt="loupe">
+              <p>Szukaj</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== NAVBAR – WETERYNARZ (vet) ===== -->
 <div class="navbar-container" *ngIf="isVet$ | async">
   <div class="navbar-menu">
-    <div class="logo-container-login">
-      <img src="assets/images/logo-dorota.png" alt="Logo" />
-      <p>VetInterpreter</p>
-    </div>
-
-    <div class="menu">
-      <!-- Profil weterynarza -->
-  
-       <div class="menu-elements">
-        <div class="menu-element" routerLink="/vet/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          <div class="photo-name">
-            <img src="assets/images/edit.png" alt="profile">
-            <p>Mój profil (wet.)</p>
-          </div>
-        </div>
+    <div class="navbar-menu">
+      <div class="logo-container-login">
+        <img src="assets/images/logo-dorota.png" alt="Logo" />
+        <p>VetInterpreter</p>
       </div>
 
-
-      <!-- Kalendarz przyjęć (wet) -->
-      <div class="menu-elements">
-        <p>Kalendarz</p>
-        <div class="menu-element" routerLink="/calendar" routerLinkActive="active">
-          <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="paw">
-            <p>Kalendarz wizyt</p>
+      <div class="menu">
+        <!-- Profil weterynarza -->
+        <div class="menu-elements">
+          <div class="menu-element" routerLink="/vet/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            <div class="photo-name">
+              <img src="assets/images/edit.png" alt="profile">
+              <p>Mój profil (wet.)</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Pacjenci (opcjonalnie: lista pacjentów kliniki) -->
-      <div class="menu-elements">
-        <p>Pacjenci</p>
-        <div class="menu-element" routerLink="/vet/patients" routerLinkActive="active">
-          <div class="photo-name">
-            <img src="assets/images/pawprint.png" alt="paw">
-            <p>Lista pacjentów</p>
+        <!-- Kalendarz przyjęć (wet) -->
+        <div class="menu-elements">
+          <p>Kalendarz</p>
+          <div class="menu-element" routerLink="/calendar" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/pawprint.png" alt="paw">
+              <p>Kalendarz wizyt</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Notatki kliniczne / dokumentacja (opcjonalnie) -->
-      <div class="menu-elements">
-        <p>Dokumentacja</p>
-        <div class="menu-element" routerLink="/vet/notes" routerLinkActive="active">
-          <div class="photo-name">
-            <img src="assets/images/add.png" alt="add">
-            <p>Notatki kliniczne</p>
+        <!-- Pacjenci -->
+        <div class="menu-elements">
+          <p>Pacjenci</p>
+          <div class="menu-element" routerLink="/vet/patients" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/pawprint.png" alt="paw">
+              <p>Lista pacjentów</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Możesz dodać inne sekcje weterynaryjne tutaj -->
+        <!-- Dokumentacja -->
+        <div class="menu-elements">
+          <p>Dokumentacja</p>
+          <div class="menu-element" routerLink="/vet/notes" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/add.png" alt="add">
+              <p>Notatki kliniczne</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

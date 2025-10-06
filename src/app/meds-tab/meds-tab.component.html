@@ -1,9 +1,9 @@
 <!-- meds-tab.component.html -->
 <h2>Plan leków</h2>
 
-<canvas #medsChart *ngIf="sorted?.length"></canvas>
+<canvas #medsChart *ngIf="(sorted?.length ?? 0) > 0"></canvas>
 
-<table *ngIf="sorted?.length; else noMeds">
+<table *ngIf="(sorted?.length ?? 0) > 0; else noMeds">
   <thead>
     <tr>
       <th>Nazwa</th>
@@ -13,7 +13,7 @@
       <th>Start</th>
       <th>Koniec</th>
       <th>Aktywna</th>
-      <th>Akcja</th>
+      <th>Akcje</th>
       <th>Uwagi</th>
     </tr>
   </thead>
@@ -30,13 +30,22 @@
           {{ m.isActive ? 'Tak' : 'Nie' }}
         </span>
       </td>
-      <td>
+      <td class="actions">
         <button
           type="button"
           class="pill toggle"
-          [disabled]="!animalId || !m._id || saving.has(m._id)"
+          [disabled]="!animalId || !m._id || saving.has(m._id!)"
           (click)="onToggleActive(m)">
           {{ m.isActive ? 'Wyłącz' : 'Włącz' }}
+        </button>
+
+        <button
+          type="button"
+          class="pill danger"
+          [disabled]="!animalId || !m._id || saving.has(m._id!)"
+          (click)="onDelete(m)"
+          aria-label="Usuń lek">
+          Usuń
         </button>
       </td>
       <td>{{ m.notes || '—' }}</td>
@@ -45,5 +54,5 @@
 </table>
 
 <ng-template #noMeds>
-  <p>Brak aktywnych leków.</p>
+  <p>Brak leków.</p>
 </ng-template>

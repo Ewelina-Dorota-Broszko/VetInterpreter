@@ -1,0 +1,24 @@
+<div class="dashboard-menu-container">
+  <div class="container admin-layout">
+
+    <aside class="sidebar">
+      <div class="brand">Panel administratora</div>
+
+      <nav class="nav">
+        <a routerLink="/admin/vets" routerLinkActive="active">Weterynarze</a>
+        <a routerLink="/admin/owners" routerLinkActive="active">Klienci</a>
+      </nav>
+
+      <div class="me">
+        <div class="email">{{ user?.email }}</div>
+        <div class="role">Rola: {{ user?.role || (user?.isVet ? 'vet' : 'owner') }}</div>
+        <button (click)="logout()">Wyloguj</button>
+      </div>
+    </aside>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+</div>

@@ -1,6 +1,8 @@
 <div class="dashboard-menu-container" *ngIf="animal">
   <div class="container">
-  <div class="action-animal">
+
+    <!-- Pasek akcji nad profilem -->
+    <div class="action-animal">
       <div *ngIf="animal.vetId; else noVet" class="your-vet">
         <p>Przypisany wet:</p>
         <button type="button" class="ghost" (click)="openVetModal(animal.vetId)">zobacz profil</button>
@@ -10,19 +12,16 @@
         {{ deleting ? 'Usuwanie…' : 'Usuń zwierzaka' }}
       </button>
     </div>
+
     <ng-template #noVet>
-      <p>Brak przypisanego weta.
+      <div class="my-vet">
+        <p>Brak przypisanego weta.</p>
         <button type="button" (click)="goAssignVet()">Przypisz weterynarza</button>
-      </p>
+      </div>
     </ng-template>
 
-    <div class="actions">
-      <!-- <button type="button" (click)="addNewDocument()">Dodaj nowy dokument</button> -->
-      
-    </div>
-
-    <!-- ===== Historia wizyt ===== -->
-    <section class="visit-history" *ngIf="animal.visitHistory?.length">
+    <!-- ===== Historia wizyt (bez filtra – zwykle to notatki weta) ===== -->
+    <section class="visit-history" *ngIf="(animal.visitHistory?.length ?? 0) > 0">
       <h3>Historia wizyt</h3>
 
       <div *ngFor="let visit of animal.visitHistory; trackBy: trackByIndex" class="visit-card">
@@ -36,7 +35,7 @@
           <p><strong>Objawy:</strong> {{ visit.symptoms || '—' }}</p>
           <p><strong>Leczenie:</strong> {{ visit.treatments || '—' }}</p>
 
-          <div *ngIf="visit.medications?.length">
+          <div *ngIf="(visit.medications?.length ?? 0) > 0">
             <strong>Leki:</strong>
             <ul>
               <li *ngFor="let med of visit.medications">
@@ -65,6 +64,21 @@
             <span *ngIf="animal.weightKg"> | Waga: <strong>{{ animal.weightKg }} kg</strong></span>
           </p>
           <p *ngIf="getAgeYears() !== null">Wiek: <strong>{{ getAgeYears() }} lat</strong></p>
+
+          <!-- FILTR wpisów (klient może obejrzeć tylko swoje / tylko wetów / wszystkie) -->
+          <div class="scope-filter" style="margin-top: 8px;">
+            <label>
+              Pokaż wpisy:
+              <select [(ngModel)]="scope" (change)="onScopeChange()">
+                <option value="all">Wszystkie</option>
+                <option value="owner">Tylko moje</option>
+                <option value="vet">Tylko weterynarzy</option>
+              </select>
+            </label>
+            <span class="muted small" style="margin-left: 8px;">
+              Filtr: <strong>{{ scopeLabel[scope] }}</strong>
+            </span>
+          </div>
         </div>
 
         <div class="actions">
@@ -88,51 +102,95 @@
 
       <!-- ===== Badania krwi ===== -->
       <section *ngIf="activeTab === 'blood'" class="tab-content">
-        <app-blood-tab
-          [active]="activeTab === 'blood'"
-          [bloodTests]="animal?.bloodTests || []"
-          [referenceRanges]="referenceRanges">
-        </app-blood-tab>
+        <ng-container *ngIf="(bloodTestsFiltered?.length ?? 0) > 0; else bloodEmpty">
+          <app-blood-tab
+            [bloodTests]="bloodTestsFiltered"
+            [referenceRanges]="referenceRanges">
+          </app-blood-tab>
+        </ng-container>
+        <ng-template #bloodEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Badania moczu ===== -->
       <section *ngIf="activeTab === 'urine'" class="tab-content">
-        <app-urine-tab [urineTests]="animal?.urineTests || []"></app-urine-tab>
+        <ng-container *ngIf="(urineTestsFiltered?.length ?? 0) > 0; else urineEmpty">
+          <app-urine-tab [urineTests]="urineTestsFiltered"></app-urine-tab>
+        </ng-container>
+        <ng-template #urineEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Badania kału ===== -->
       <section *ngIf="activeTab === 'stool'" class="tab-content">
-        <app-stool-tab [stoolTests]="animal?.stoolTests || []"></app-stool-tab>
+        <ng-container *ngIf="(stoolTestsFiltered?.length ?? 0) > 0; else stoolEmpty">
+          <app-stool-tab [stoolTests]="stoolTestsFiltered"></app-stool-tab>
+        </ng-container>
+        <ng-template #stoolEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Pomiary temperatury ===== -->
       <section *ngIf="activeTab === 'temperature'" class="tab-content">
-        <app-temperature-tab [temperatureLogs]="animal?.temperatureLogs || []"></app-temperature-tab>
+        <ng-container *ngIf="(temperatureLogsFiltered?.length ?? 0) > 0; else tempEmpty">
+          <app-temperature-tab [temperatureLogs]="temperatureLogsFiltered"></app-temperature-tab>
+        </ng-container>
+        <ng-template #tempEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Cukrzyca ===== -->
       <section *ngIf="activeTab === 'diabetes'" class="tab-content">
-        <app-diabetes-tab [diabetesLogs]="animal?.diabetesLogs || []"></app-diabetes-tab>
+        <ng-container *ngIf="(diabetesLogsFiltered?.length ?? 0) > 0; else diabetesEmpty">
+          <app-diabetes-tab [diabetesLogs]="diabetesLogsFiltered"></app-diabetes-tab>
+        </ng-container>
+        <ng-template #diabetesEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Waga & BCS ===== -->
       <section *ngIf="activeTab === 'weight'" class="tab-content">
-        <app-weight-tab [weightHistory]="animal?.weightHistory || []"></app-weight-tab>
+        <ng-container *ngIf="(weightHistoryFiltered?.length ?? 0) > 0; else weightEmpty">
+          <app-weight-tab [weightHistory]="weightHistoryFiltered"></app-weight-tab>
+        </ng-container>
+        <ng-template #weightEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Szczepienia ===== -->
       <section *ngIf="activeTab === 'vaccinations'" class="tab-content">
-        <app-vaccinations-tab [vaccinations]="animal?.vaccinations || []"></app-vaccinations-tab>
+        <ng-container *ngIf="(vaccinationsFiltered?.length ?? 0) > 0; else vaccEmpty">
+          <app-vaccinations-tab [vaccinations]="vaccinationsFiltered"></app-vaccinations-tab>
+        </ng-container>
+        <ng-template #vaccEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Leki ===== -->
       <section *ngIf="activeTab === 'meds'" class="tab-content">
-        <app-meds-tab [animalId]="animal?._id" [medications]="animal?.medications || []"></app-meds-tab>
+        <ng-container *ngIf="(medicationsFiltered?.length ?? 0) > 0; else medsEmpty">
+          <app-meds-tab [animalId]="animal?._id" [medications]="medicationsFiltered"></app-meds-tab>
+        </ng-container>
+        <ng-template #medsEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
 
       <!-- ===== Objawy ===== -->
       <section *ngIf="activeTab === 'symptoms'" class="tab-content">
-        <app-symptoms-tab [symptoms]="animal?.symptoms || []"></app-symptoms-tab>
+        <ng-container *ngIf="(symptomsFiltered?.length ?? 0) > 0; else symptomsEmpty">
+          <app-symptoms-tab [symptoms]="symptomsFiltered"></app-symptoms-tab>
+        </ng-container>
+        <ng-template #symptomsEmpty>
+          <p class="muted">Brak danych w wybranym filtrze.</p>
+        </ng-template>
       </section>
     </div>
   </div>

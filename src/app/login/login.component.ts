@@ -21,20 +21,28 @@ export class LoginComponent {
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {}
 
   onSubmit() {
-    this.error = '';
-    if (this.form.invalid) return;
-    const { email, password } = this.form.value as { email: string; password: string };
+  this.error = '';
+  if (this.form.invalid) return;
 
-    this.loading = true;
-    this.auth.login(email, password).subscribe({
-      next: () => {
-        this.loading = false;
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err: any) => {
-        this.loading = false;
-        this.error = err?.error?.error || 'Nie udało się zalogować';
-      }
-    });
-  }
+  const { email, password } = this.form.value as { email: string; password: string };
+
+  this.loading = true;
+  this.auth.login(email, password).subscribe({
+    next: (res: any) => {
+      this.loading = false;
+
+      // rola z backendu; fallback na isVet (zgodność wstecz)
+      const role = res?.user?.role ?? (res?.user?.isVet ? 'vet' : 'owner');
+
+      // admin + klient -> /profile, wet -> /vet/profile
+      const target = role === 'vet' ? '/vet/profile' : '/profile';
+      this.router.navigateByUrl(target);
+    },
+    error: (err: any) => {
+      this.loading = false;
+      this.error = err?.error?.error || 'Nie udało się zalogować';
+    }
+  });
+}
+
 }
