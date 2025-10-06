@@ -13,8 +13,24 @@ export class NavbarComponent implements OnInit {
   animals: Animal[] = [];
   isLogin = false;
 
-  /** Strumień czy użytkownik jest weterynarzem */
-  isVet$: Observable<boolean> = this.auth.user$.pipe(map(u => !!u?.isVet));
+  // Proste, rozłączne strumienie roli (działają i z nowym polem role, i ze starym isVet)
+  isAdmin$: Observable<boolean> = this.auth.user$.pipe(
+    map(u => !!u && (u as any).role === 'admin')
+  );
+  isVet$: Observable<boolean> = this.auth.user$.pipe(
+    map(u => {
+      if (!u) return false;
+      const role = (u as any).role as 'owner'|'vet'|'admin'|undefined;
+      return role ? role === 'vet' : !!u.isVet;
+    })
+  );
+  isOwner$: Observable<boolean> = this.auth.user$.pipe(
+    map(u => {
+      if (!u) return false;
+      const role = (u as any).role as 'owner'|'vet'|'admin'|undefined;
+      return role ? role === 'owner' : !u.isVet;
+    })
+  );
 
   constructor(
     private router: Router,
@@ -23,15 +39,13 @@ export class NavbarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Stan zalogowania — jeśli masz inny mechanizm, możesz go podmienić
-    this.auth.user$.subscribe(u => this.isLogin = !!u);
+    this.auth.user$.subscribe(u => (this.isLogin = !!u));
 
-    // Jeśli NIE weterynarz, to ładuj zwierzęta właściciela
-    this.isVet$.subscribe(isVet => {
-      if (!isVet) this.loadAnimalsForOwner();
+    // Ładuj listę zwierząt tylko w widoku właściciela
+    this.isOwner$.subscribe(isOwner => {
+      if (isOwner) this.loadAnimalsForOwner();
       else this.animals = [];
     });
-    
   }
 
   private loadAnimalsForOwner() {
@@ -45,29 +59,25 @@ export class NavbarComponent implements OnInit {
       this.fetchAnimals();
     }
   }
-  
 
   private fetchAnimals() {
     const ownerId = this.auth.getOwnerId();
     if (!ownerId) return;
     this.animalService.getForOwner(ownerId).subscribe({
-      next: (res) => this.animals = res || [],
-      error: (err) => console.error('Błąd pobierania zwierząt', err),
+      next: res => (this.animals = res || []),
+      error: err => console.error('Błąd pobierania zwierząt', err),
     });
   }
+
   getAnimalIcon(species: string): string {
-  switch (species) {
-    case 'dog':
-      return 'assets/images/bone.png';
-    case 'cat':
-      return 'assets/images/paw.png';
-    default:
-      return 'assets/images/bed.png'; // np. królik, chomik itp.
+    switch (species) {
+      case 'dog': return 'assets/images/bone.png';
+      case 'cat': return 'assets/images/paw.png';
+      default:    return 'assets/images/bed.png';
+    }
   }
-}
 
-
-  // --- Akcje / nawigacja ---
+  // Nawigacja
   goToDashboard() { this.router.navigate(['/dashboard']); }
   goToCalendar()  { this.router.navigate(['/calendar']); }
   goToAddDocument() { this.router.navigate(['/add-document']); }

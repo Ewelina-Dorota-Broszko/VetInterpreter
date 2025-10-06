@@ -51,6 +51,9 @@ import { VetAnimalProfileComponent } from './vet-animal-profile/vet-animal-profi
 import { VetAddDocumentComponent } from './vet-add-document/vet-add-document.component';
 import { VetProfileModalComponent } from './vet-profile-modal/vet-profile-modal.component';
 import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.component';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { AdminOwnersListComponent } from './admin-owners-list/admin-owners-list.component';
+import { AdminVetsListComponent } from './admin-vets-list/admin-vets-list.component';
 
 
 @NgModule({
@@ -97,7 +100,10 @@ import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.componen
     VetAnimalProfileComponent,
     VetAddDocumentComponent,
     VetProfileModalComponent,
-    ClinicalNotesComponent
+    ClinicalNotesComponent,
+    AdminLayoutComponent,
+    AdminOwnersListComponent,
+    AdminVetsListComponent
   ],
   imports: [
     BrowserModule,

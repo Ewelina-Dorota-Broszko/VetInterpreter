@@ -4,6 +4,8 @@ import Chart from 'chart.js/auto';
 import { AnimalsService } from '../services/animals.service';
 import { VetService } from '../services/vet.service';
 
+type ScopeOwner = 'all' | 'owner' | 'vet';
+
 @Component({
   selector: 'app-animal-profile',
   templateUrl: './animal-profile.component.html',
@@ -11,6 +13,14 @@ import { VetService } from '../services/vet.service';
 })
 export class AnimalProfileComponent implements OnInit {
   animal: any;
+
+  // filtr źródła wpisów
+  scope: ScopeOwner = 'all';
+  scopeLabel: Record<ScopeOwner, string> = {
+    all: 'Wszystkie',
+    owner: 'Tylko moje',
+    vet: 'Tylko weterynarzy'
+  };
 
   activeTab:
     | 'overview'
@@ -32,6 +42,17 @@ export class AnimalProfileComponent implements OnInit {
   // modal profilu weta
   showVetModal = false;
   modalVetId: string | null = null;
+
+  // zbiory po filtrze (to przekazujemy do tabów)
+  bloodTestsFiltered: any[] = [];
+  urineTestsFiltered: any[] = [];
+  stoolTestsFiltered: any[] = [];
+  temperatureLogsFiltered: any[] = [];
+  diabetesLogsFiltered: any[] = [];
+  weightHistoryFiltered: any[] = [];
+  vaccinationsFiltered: any[] = [];
+  medicationsFiltered: any[] = [];
+  symptomsFiltered: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -75,7 +96,9 @@ export class AnimalProfileComponent implements OnInit {
     this.animalsService.getById(id).subscribe({
       next: (res: any) => {
         this.animal = res;
-        // odśwież wykresy dla aktywnej zakładki
+        this.rebuildAllFiltered();
+
+        // odśwież ewentualne lokalne wykresy w tej klasie
         setTimeout(() => {
           if (this.activeTab === 'blood') this.renderBloodChart();
           if (this.activeTab === 'temperature') this.renderTemperatureChart();
@@ -91,15 +114,55 @@ export class AnimalProfileComponent implements OnInit {
   /** Zakładki */
   setTab(tab: typeof this.activeTab) {
     this.activeTab = tab;
+    // jeżeli używasz lokalnych wykresów zamiast tych w child-komponentach
     setTimeout(() => {
       if (tab === 'blood') this.renderBloodChart();
       if (tab === 'temperature') this.renderTemperatureChart();
     }, 0);
   }
 
-  /** ====== Wykresy ====== */
+  /** Reakcja na zmianę filtra */
+  onScopeChange() {
+    this.rebuildAllFiltered();
+    setTimeout(() => {
+      if (this.activeTab === 'blood') this.renderBloodChart();
+      if (this.activeTab === 'temperature') this.renderTemperatureChart();
+    }, 0);
+  }
+
+  /** ====== Filtracja wg scope ====== */
+  private getScoped<T extends { addedBy?: string; addedByRole?: string }>(arr?: T[] | null): T[] {
+    if (!Array.isArray(arr)) return [];
+    if (this.scope === 'all') return [...arr];
+
+    // 'owner' → wpisy dodane przez właściciela
+    if (this.scope === 'owner') {
+      return arr.filter(x => x.addedBy === 'owner');
+    }
+
+    // 'vet' → wpisy dodane przez weterynarzy
+    return arr.filter(x => (x.addedBy === 'vet') || (x.addedByRole === 'vet'));
+  }
+
+  private rebuildAllFiltered() {
+    const a = this.animal || {};
+
+    this.bloodTestsFiltered      = this.getScoped(a.bloodTests);
+    this.urineTestsFiltered      = this.getScoped(a.urineTests);
+    this.stoolTestsFiltered      = this.getScoped(a.stoolTests);
+    this.temperatureLogsFiltered = this.getScoped(a.temperatureLogs);
+    this.diabetesLogsFiltered    = this.getScoped(a.diabetesLogs);
+    this.weightHistoryFiltered   = this.getScoped(a.weightHistory);
+    this.vaccinationsFiltered    = this.getScoped(a.vaccinations);
+    this.medicationsFiltered     = this.getScoped(a.medications);
+    this.symptomsFiltered        = this.getScoped(a.symptoms);
+  }
+
+  /** ====== (opcjonalne) Wykresy lokalne w tym komponencie ====== */
   private renderBloodChart() {
-    if (!this.animal?.bloodTests?.length) return;
+    // Uwaga: w tym widoku używasz <app-blood-tab>, więc ta metoda może nie być potrzebna.
+    // Zostawiam – jeśli jednak masz lokalny <canvas id="bloodChart"> w innej wersji szablonu.
+    if (!this.bloodTestsFiltered?.length) return;
 
     const canvas = document.getElementById('bloodChart') as HTMLCanvasElement | null;
     if (!canvas) return;
@@ -108,17 +171,17 @@ export class AnimalProfileComponent implements OnInit {
 
     if (this.chartInstance) this.chartInstance.destroy();
 
-    const labels = this.animal.bloodTests.map((t: any) => t.date);
+    const labels = this.bloodTestsFiltered.map((t: any) => t.date);
     this.chartInstance = new Chart(ctx, {
       type: 'line',
       data: {
         labels,
         datasets: [
-          { label: 'HGB (g/dL)', data: this.animal.bloodTests.map((t: any) => t.hemoglobin), fill: false, tension: 0.3 },
-          { label: 'WBC (10⁹/L)', data: this.animal.bloodTests.map((t: any) => t.wbc), fill: false, tension: 0.3 },
-          { label: 'Glukoza (mg/dL)', data: this.animal.bloodTests.map((t: any) => t.glucose), fill: false, tension: 0.3 },
-          { label: 'Kreatynina (mg/dL)', data: this.animal.bloodTests.map((t: any) => t.creatinine), fill: false, tension: 0.3 },
-          { label: 'ALT (U/L)', data: this.animal.bloodTests.map((t: any) => t.alt), fill: false, tension: 0.3 }
+          { label: 'HGB (g/dL)',       data: this.bloodTestsFiltered.map((t: any) => t.hemoglobin), fill: false, tension: 0.3 },
+          { label: 'WBC (10⁹/L)',      data: this.bloodTestsFiltered.map((t: any) => t.wbc),       fill: false, tension: 0.3 },
+          { label: 'Glukoza (mg/dL)',  data: this.bloodTestsFiltered.map((t: any) => t.glucose),   fill: false, tension: 0.3 },
+          { label: 'Kreatynina (mg/dL)', data: this.bloodTestsFiltered.map((t: any) => t.creatinine), fill: false, tension: 0.3 },
+          { label: 'ALT (U/L)',        data: this.bloodTestsFiltered.map((t: any) => t.alt),       fill: false, tension: 0.3 }
         ]
       },
       options: {
@@ -131,7 +194,8 @@ export class AnimalProfileComponent implements OnInit {
   }
 
   private renderTemperatureChart() {
-    if (!this.animal?.temperatureLogs?.length) return;
+    // jw. – tylko jeśli masz <canvas id="temperatureChart">
+    if (!this.temperatureLogsFiltered?.length) return;
 
     const canvas = document.getElementById('temperatureChart') as HTMLCanvasElement | null;
     if (!canvas) return;
@@ -140,8 +204,8 @@ export class AnimalProfileComponent implements OnInit {
 
     if (this.chartTempInstance) this.chartTempInstance.destroy();
 
-    const labels = this.animal.temperatureLogs.map((t: any) => `${t.date} ${t.time}`);
-    const temps = this.animal.temperatureLogs.map((t: any) => t.temperature);
+    const labels = this.temperatureLogsFiltered.map((t: any) => `${t.date} ${t.time}`);
+    const temps  = this.temperatureLogsFiltered.map((t: any) => t.temperature);
 
     this.chartTempInstance = new Chart(ctx, {
       type: 'bar',

@@ -170,43 +170,51 @@ table {
 
 
 
-}.ghost {
-    background: transparent;
-    color: #9bb1ff;
-    border: 1px solid #3f4dab;
-    padding: 6px 10px;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+}
 
-  .ghost:hover {
-    background: #3f4dab;
-    color: #fff;
-  }
-  .your-vet {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    margin: 10px 0;
-    color: white;
-  }
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-  }
-   button {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-  }
-  .action-animal  {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    .danger {
+.ghost {
+  background: transparent;
+  color: #9bb1ff;
+  border: 1px solid #3f4dab;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.ghost:hover {
+  background: #3f4dab;
+  color: #fff;
+}
+
+.your-vet {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0;
+  color: white;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.action-animal {
+  display: flex;
+  color: white;
+  justify-content: space-between;
+  align-items: center;
+
+  .danger {
     background: #dc3545;
     color: #fff;
   }
@@ -219,4 +227,8 @@ table {
     opacity: .6;
     cursor: not-allowed;
   }
+}  .my-vet {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }

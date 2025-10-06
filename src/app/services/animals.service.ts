@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 
@@ -21,7 +21,7 @@ export interface CalendarEntry {
   note?: string;
 }
 
-// === DODAJ POD INTERFEJSAMI ===
+/** DODATKOWO – zgodnie z Twoim typem */
 export interface TemperatureLog {
   _id?: string;
   date: string;            // YYYY-MM-DD
@@ -35,48 +35,20 @@ export interface TemperatureLog {
   addedAt?: string;        // ISO
 }
 
+type Scope = 'all' | 'vet' | 'owner' | 'mine';
 
 @Injectable({ providedIn: 'root' })
 export class AnimalsService {
   private api = environment.apiUrl;
   constructor(private http: HttpClient) { }
 
-  // === W KLASIE AnimalsService – DODAJ TE TRZY METODY ===
-
-  // tylko wpisy dodane przez ZALOGOWANEGO weta (backend: ?mine=1)
-  getTemperatureLogsVet(animalId: string) {
-    return this.http.get<TemperatureLog[]>(
-      `${this.api}/animals/${animalId}/temperature-logs`,
-      { params: { mine: '1' } }
-    );
+  /** ========== POMOCNICZE ========== */
+  private getWithScope<T>(url: string, scope?: Scope): Observable<T> {
+    const params = scope ? new HttpParams().set('scope', scope) : undefined;
+    return this.http.get<T>(url, { params });
   }
 
-  // wszystkie pomiary (owner + wszyscy weci)
-  getTemperatureLogsAll(animalId: string) {
-    return this.http.get<TemperatureLog[]>(
-      `${this.api}/animals/${animalId}/temperature-logs`
-    );
-  }
-
-  // usunięcie pojedynczego pomiaru (wet może usuwać TYLKO swoje)
-  deleteTemperatureLog(animalId: string, logId: string) {
-    return this.http.delete<{ message: string }>(
-      `${this.api}/animals/${animalId}/temperature-logs/${logId}`
-    );
-  }
-  // DODAJ — zgodne z backendem:
-  addVisitHistoryEntry(animalId: string, body: any) {
-    // POST /animals/:id/visit-history
-    return this.http.post<any>(`${this.api}/animals/${animalId}/visit-history`, body);
-  }
-
-  deleteVisitHistoryEntry(animalId: string, visitId: string) {
-    // DELETE /animalsti/:id/visit-history/:visitId
-    return this.http.delete<any>(`${this.api}/animals/${animalId}/visit-history/${visitId}`);
-  }
-
-
-  /** CRUD */
+  /** ========== CRUD ========== */
   getById(id: string) {
     return this.http.get<Animal>(`${this.api}/animals/${id}`);
   }
@@ -89,40 +61,125 @@ export class AnimalsService {
     return this.http.post<Animal>(`${this.api}/animals/owners/${ownerId}/animals`, body);
   }
 
-  /** Badania – przykładowe metody */
+  deleteAnimal(id: string) {
+    return this.http.delete<{ message: string }>(`${this.api}/animals/${id}`);
+  }
+
+  /** ========== SUBKOLEKCJE z obsługą ?scope= ========== */
+  // BLOOD
+  getBloodTests(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/blood-tests`, scope);
+  }
   addBloodTest(animalId: string, body: any) {
     return this.http.post(`${this.api}/animals/${animalId}/blood-tests`, body);
+  }
+  deleteBloodTest(animalId: string, testId: string) {
+    return this.http.delete(`${this.api}/animals/${animalId}/blood-tests/${testId}`);
+  }
+
+  // URINE
+  getUrineTests(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/urine-tests`, scope);
   }
   addUrineTest(animalId: string, body: any) {
     return this.http.post(`${this.api}/animals/${animalId}/urine-tests`, body);
   }
+  deleteUrineTest(animalId: string, testId: string) {
+    return this.http.delete(`${this.api}/animals/${animalId}/urine-tests/${testId}`);
+  }
+
+  // STOOL
+  getStoolTests(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/stool-tests`, scope);
+  }
   addStoolTest(animalId: string, body: any) {
     return this.http.post(`${this.api}/animals/${animalId}/stool-tests`, body);
+  }
+  deleteStoolTest(animalId: string, testId: string) {
+    return this.http.delete(`${this.api}/animals/${animalId}/stool-tests/${testId}`);
+  }
+
+  // TEMPERATURE
+  getTemperatureLogs(animalId: string, scope?: Scope) {
+    return this.getWithScope<TemperatureLog[]>(`${this.api}/animals/${animalId}/temperature-logs`, scope);
   }
   addTemperature(animalId: string, body: any) {
     return this.http.post(`${this.api}/animals/${animalId}/temperature-logs`, body);
   }
-  addWeight(animalId: string, body: any) {
-    return this.http.post<any>(`${this.api}/animals/${animalId}/weight-history`, body);
+  deleteTemperatureLog(animalId: string, logId: string) {
+    return this.http.delete<{ message: string }>(`${this.api}/animals/${animalId}/temperature-logs/${logId}`);
   }
-  addVaccination(animalId: string, body: any) {
-    return this.http.post<any>(`${this.api}/animals/${animalId}/vaccinations`, body);
-  }
-  addMedication(animalId: string, body: any) {
-    return this.http.post<any>(`${this.api}/animals/${animalId}/medications`, body);
-  }
-  addSymptom(animalId: string, body: any) {
-    return this.http.post<any>(`${this.api}/animals/${animalId}/symptoms`, body);
-  }
-  addVisit(animalId: string, body: any) {
-    return this.http.post<any>(`${this.api}/animals/${animalId}/visits`, body);
+
+  // DIABETES
+  getDiabetesLogs(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/diabetes-logs`, scope);
   }
   addDiabetesLog(animalId: string, body: any) {
     return this.http.post<any>(`${this.api}/animals/${animalId}/diabetes-logs`, body);
   }
+  deleteDiabetesLog(animalId: string, entryId: string) {
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/diabetes-logs/${entryId}`);
+  }
+
+  // WEIGHT
+  getWeightHistory(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/weight-history`, scope);
+  }
+  addWeight(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/weight-history`, body);
+  }
+  deleteWeight(animalId: string, entryId: string) {
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/weight-history/${entryId}`);
+  }
+
+  // VACCINATIONS
+  getVaccinations(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/vaccinations`, scope);
+  }
+  addVaccination(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/vaccinations`, body);
+  }
+  deleteVaccination(animalId: string, vaccId: string) {
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/vaccinations/${vaccId}`);
+  }
+
+  // MEDICATIONS
+  getMedications(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/medications`, scope);
+  }
+  addMedication(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/medications`, body);
+  }
   updateMedication(animalId: string, medId: string, body: Partial<{ isActive: boolean }>) {
     return this.http.patch<any>(`${this.api}/animals/${animalId}/medications/${medId}`, body);
   }
+  deleteMedication(animalId: string, medId: string) {
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/medications/${medId}`);
+  }
+
+  // SYMPTOMS
+  getSymptoms(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/symptoms`, scope);
+  }
+  addSymptom(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/symptoms`, body);
+  }
+  deleteSymptom(animalId: string, symptomId: string) {
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/symptoms/${symptomId}`);
+  }
+
+  // VISIT HISTORY (uwaga: ścieżka to /visit-history)
+  getVisitHistory(animalId: string, scope?: Scope) {
+    return this.getWithScope<any[]>(`${this.api}/animals/${animalId}/visit-history`, scope);
+  }
+  addVisitHistoryEntry(animalId: string, body: any) {
+    return this.http.post<any>(`${this.api}/animals/${animalId}/visit-history`, body);
+  }
+  deleteVisitHistoryEntry(animalId: string, visitId: string) {
+    return this.http.delete<any>(`${this.api}/animals/${animalId}/visit-history/${visitId}`);
+  }
+
+  /** ========== OWNER (kalendarz) ========== */
   getMyOwner() {
     return this.http.get<{ _id: string; userId: string; name: string; email?: string; phone?: string }>(
       `${this.api}/owners/me`
@@ -137,11 +194,10 @@ export class AnimalsService {
   deleteOwnerCalendarEvent(ownerId: string, eventId: string) {
     return this.http.delete<any>(`${this.api}/animals/owners/${ownerId}/calendar/${eventId}`);
   }
-  deleteAnimal(id: string) {
-    return this.http.delete<{ message: string }>(`${this.api}/animals/${id}`);
+  // w AnimalsService – opcjonalny alias dla starego kodu
+  getTemperatureLogsVet(animalId: string) {
+    return this.getTemperatureLogs(animalId, 'mine');
   }
-
-
-
+  
 
 }
