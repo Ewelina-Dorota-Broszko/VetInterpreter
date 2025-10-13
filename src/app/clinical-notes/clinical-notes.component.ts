@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { VetService, ClinicalFile } from '../services/vet.service';
+import { VetService, ClinicalFile } from 'src/app/services/vet.service';
 
 @Component({
   selector: 'app-clinical-notes',
@@ -7,122 +7,123 @@ import { VetService, ClinicalFile } from '../services/vet.service';
   styleUrls: ['./clinical-notes.component.scss']
 })
 export class ClinicalNotesComponent implements OnInit {
-
-  loading = false;
+  files: ClinicalFile[] = [];
+  fileToUpload?: File | null;
+  note = '';
   uploading = false;
   error = '';
 
-  files: ClinicalFile[] = [];
+  constructor(private vet: VetService) {}
 
-  selectedFile: File | null = null;
-  note = '';
-
-  deleting: Record<string, boolean> = {};
-  
-
-  constructor(private vetSvc: VetService) {}
-
-  
-  ngOnInit(): void {
-    this.reload();
+  ngOnInit() {
+    this.loadFiles();
   }
 
-  reload(): void {
-    this.loading = true;
-    this.error = '';
-    this.vetSvc.getMyClinicalFiles().subscribe({
-      next: (list) => {
-        this.files = (list || []).sort((a, b) => {
-          // najnowsze na górze
-          const ta = a.uploadedAt ? new Date(a.uploadedAt).getTime() : 0;
-          const tb = b.uploadedAt ? new Date(b.uploadedAt).getTime() : 0;
-          return tb - ta;
-        });
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = err?.error?.error || 'Nie udało się pobrać listy plików.';
-        this.loading = false;
-      }
+  loadFiles() {
+    this.vet.getMyClinicalFilesV2().subscribe({
+      next: (res) => this.files = res,
+      error: (err) => this.error = err?.error?.error || 'Nie udało się pobrać listy plików'
     });
   }
 
-  onFileChange(ev: Event): void {
-    const input = ev.target as HTMLInputElement;
-    const file = input.files?.[0] || null;
-    this.selectedFile = file;
+  onFileChange(e: Event) {
+    const input = e.target as HTMLInputElement;
+    this.fileToUpload = input.files && input.files[0] ? input.files[0] : null;
   }
 
-  clearSelection(): void {
-    this.selectedFile = null;
-    this.note = '';
-    const el = document.getElementById('fileInput') as HTMLInputElement | null;
-    if (el) el.value = '';
-  }
-
-  upload(): void {
-    if (!this.selectedFile) return;
-
+  upload() {
+    if (!this.fileToUpload) {
+      this.error = 'Wybierz plik przed wysłaniem.';
+      return;
+    }
     this.uploading = true;
-    this.error = '';
-
-    this.vetSvc.uploadMyClinicalFile(this.selectedFile, this.note).subscribe({
-      next: (created) => {
-        // dołóż na początek listy
-        this.files = [created, ...this.files];
-        this.uploading = false;
-        this.clearSelection();
-      },
-      error: (err) => {
-        this.error = err?.error?.error || 'Nie udało się wysłać pliku.';
-        this.uploading = false;
-      }
-    });
-  }
-
-  download(f: ClinicalFile): void {
-    this.vetSvc.downloadMyClinicalFile(f._id).subscribe({
-      next: (blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = f.originalName || 'plik';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      },
-      error: (err) => {
-        this.error = err?.error?.error || 'Nie udało się pobrać pliku.';
-      }
-    });
-  }
-
-  remove(f: ClinicalFile): void {
-    if (!confirm('Usunąć ten plik?')) return;
-    this.deleting[f._id] = true;
-    this.vetSvc.deleteMyClinicalFile(f._id).subscribe({
+    this.vet.uploadMyClinicalFileV2(this.fileToUpload, this.note).subscribe({
       next: () => {
-        this.files = this.files.filter(x => x._id !== f._id);
-        this.deleting[f._id] = false;
+        this.uploading = false;
+        this.fileToUpload = null;
+        this.note = '';
+        this.loadFiles();
       },
       error: (err) => {
-        this.error = err?.error?.error || 'Nie udało się usunąć pliku.';
-        this.deleting[f._id] = false;
+        this.uploading = false;
+        this.error = err?.error?.error || 'Nie udało się wgrać pliku';
       }
     });
   }
 
-  trackById(_: number, f: ClinicalFile) { return f._id; }
-
-  formatBytes(bytes?: number): string {
-    if (!bytes && bytes !== 0) return '—';
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B','KB','MB','GB','TB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    const val = (bytes / Math.pow(k, i)).toFixed(1);
-    return `${val} ${sizes[i]}`;
+  open(file: ClinicalFile) {
+    this.vet.downloadClinicalFileV2Blob(file._id).subscribe({
+      next: (res) => {
+        const mime = res.headers.get('Content-Type') || 'application/octet-stream';
+        const blob = new Blob([res.body as BlobPart], { type: mime });
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      },
+      error: () => this.error = 'Nie udało się otworzyć pliku'
+    });
   }
-  
+
+  delete(file: ClinicalFile) {
+    if (!confirm(`Usunąć plik "${file.originalName}"?`)) return;
+    this.vet.deleteClinicalFileV2(file._id).subscribe({
+      next: () => this.loadFiles(),
+      error: (err) => this.error = err?.error?.error || 'Nie udało się usunąć pliku'
+    });
+  }
+
+  /** ikony wg rozszerzenia */
+  getFileIcon(name: string): string {
+    const ext = name.split('.').pop()?.toLowerCase() || '';
+    switch (ext) {
+      case 'pdf': return 'assets/images/pdf.png';
+      case 'png': return 'assets/images/png.png';
+      case 'jpg': return 'assets/images/jpg.png';
+      case 'jpeg': return 'assets/images/jpg.png';
+      case 'webp': return 'assets/images/webp.png';
+      case 'doc': return 'assets/images/doc.png';
+      case 'docx': return 'assets/images/doc.png';
+      default: return 'assets/images/file.png';
+    }
+  }
+
+  /** klasa stylu wg typu */
+  fileTypeClass(name: string): string {
+    const ext = name.split('.').pop()?.toLowerCase() || '';
+    if (ext === 'pdf') return 'pdf';
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return 'img';
+    if (['doc', 'docx'].includes(ext)) return 'doc';
+    return 'other';
+  }
+  truncateName(name: string, limit: number = 30): string {
+  if (!name) return '';
+  return name.length > limit ? name.substring(0, limit) + '…' : name;
+}
+isDragOver = false;
+
+triggerFileInput() {
+  const input = document.getElementById('fileInput') as HTMLInputElement;
+  input?.click();
+}
+
+onDragOver(event: DragEvent) {
+  event.preventDefault();
+  this.isDragOver = true;
+}
+
+onDragLeave(event: DragEvent) {
+  event.preventDefault();
+  this.isDragOver = false;
+}
+
+onDrop(event: DragEvent) {
+  event.preventDefault();
+  this.isDragOver = false;
+
+  if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+    this.fileToUpload = event.dataTransfer.files[0];
+  }
+}
+
+
 }

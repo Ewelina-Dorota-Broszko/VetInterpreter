@@ -76,7 +76,7 @@ export interface ClinicalFile {
 export class VetService {
   private api = environment.apiUrl;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /* ========= PROFIL ========= */
   getMe(): Observable<VetProfile> {
@@ -84,7 +84,7 @@ export class VetService {
       map((res: any) => {
         if (!res?.id && res?._id) res.id = String(res._id);
         if (res?.userId && typeof res.userId !== 'string') {
-          try { res.userId = String(res.userId); } catch {}
+          try { res.userId = String(res.userId); } catch { }
         }
         return res as VetProfile;
       })
@@ -96,7 +96,7 @@ export class VetService {
       map((res: any) => {
         if (!res?.id && res?._id) res.id = String(res._id);
         if (res?.userId && typeof res.userId !== 'string') {
-          try { res.userId = String(res.userId); } catch {}
+          try { res.userId = String(res.userId); } catch { }
         }
         return res as VetProfile;
       })
@@ -152,7 +152,7 @@ export class VetService {
   private _useLocalForMe = this.CALENDAR_DISCOVERY_MODE === 'local';
   private _useLocalForId: Record<string, boolean> = {};
 
-  private async resolveMeBaseOrLocal(): Promise<{mode:'api'|'local', base?:string}> {
+  private async resolveMeBaseOrLocal(): Promise<{ mode: 'api' | 'local', base?: string }> {
     if (this._useLocalForMe) return { mode: 'local' };
     if (this._meCalBase) return { mode: 'api', base: this._meCalBase };
     const url = this.meCandidates()[0];
@@ -166,7 +166,7 @@ export class VetService {
     }
   }
 
-  private async resolveByIdBaseOrLocal(vetId: string): Promise<{mode:'api'|'local', base?:string}> {
+  private async resolveByIdBaseOrLocal(vetId: string): Promise<{ mode: 'api' | 'local', base?: string }> {
     if (this._useLocalForId[vetId] || this.CALENDAR_DISCOVERY_MODE === 'local') return { mode: 'local' };
     if (this._byIdCalBase[vetId]) return { mode: 'api', base: this._byIdCalBase[vetId] };
     const url = this.byIdCandidates(vetId)[0];
@@ -218,43 +218,27 @@ export class VetService {
     } catch { return []; }
   }
   private localSaveList(vetId: string | undefined, list: VetCalendarEvent[]) {
-    try { localStorage.setItem(this.localKey(vetId), JSON.stringify(list)); } catch {}
+    try { localStorage.setItem(this.localKey(vetId), JSON.stringify(list)); } catch { }
   }
-  private randId(): string { return `${Date.now().toString(16)}${Math.random().toString(16).slice(2,10)}`; }
+  private randId(): string { return `${Date.now().toString(16)}${Math.random().toString(16).slice(2, 10)}`; }
 
-  /* ========= CLINICAL FILES — API-ONLY ========= */
-  private clinicalBase = `${this.api}/vets/me/clinical-files`;
-
-  /** Lista plików z bazy */
-  getMyClinicalFiles(): Observable<ClinicalFile[]> {
-    return this.http.get<ClinicalFile[]>(this.clinicalBase);
+  /* ========= NOWE: PLIKI KLINICZNE (osobny router /vet-files) ========= */
+  getMyClinicalFilesV2() { return this.http.get<ClinicalFile[]>(`${this.api}/vet-files/me`); }
+  uploadMyClinicalFileV2(file: File, note?: string) {
+    const form = new FormData(); form.append('file', file); if (note) form.append('note', note);
+    return this.http.post<ClinicalFile>(`${this.api}/vet-files/me`, form);
   }
+  downloadClinicalFileV2(id: string) { return `${this.api}/vet-files/${id}/download`; }
+  deleteClinicalFileV2(id: string) { return this.http.delete<{ ok: boolean }>(`${this.api}/vet-files/${id}`); }
 
-  /** Upload pojedynczego pliku z opcjonalną notatką (multipart/form-data) */
-  uploadMyClinicalFile(file: File, note?: string): Observable<ClinicalFile> {
-    const form = new FormData();
-    form.append('file', file);
-    if (note && note.trim()) form.append('note', note.trim());
-    return this.http.post<ClinicalFile>(this.clinicalBase, form);
-  }
-
-  /** Upload z progressem (jeśli chcesz progressbar) */
-  uploadMyClinicalFileWithProgress(file: File, note?: string): Observable<HttpEvent<unknown>> {
-    const form = new FormData();
-    form.append('file', file);
-    if (note && note.trim()) form.append('note', note.trim());
-    return this.http.post(this.clinicalBase, form, { reportProgress: true, observe: 'events' });
+  // POBIERANIE Z AUTORYZACJĄ – blob
+  downloadClinicalFileV2Blob(id: string) {
+    return this.http.get(`${this.api}/vet-files/${id}/download`, {
+      responseType: 'blob',
+      observe: 'response'
+    });
   }
 
-  /** Usuń plik */
-  deleteMyClinicalFile(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.clinicalBase}/${id}`);
-  }
-
-  /** Pobierz plik (BLOB) */
-  downloadMyClinicalFile(id: string): Observable<Blob> {
-    return this.http.get(`${this.clinicalBase}/${id}/download`, { responseType: 'blob' });
-  }
 }
 
 /** Helper dla guarda — eksport wymagany przez vet-profile-complete.guard.ts */
