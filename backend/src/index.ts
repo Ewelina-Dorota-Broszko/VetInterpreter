@@ -9,6 +9,7 @@ import ownersRouter from './routes/owners';
 import animalsRouter from './routes/animals';
 import vetRoutes from './routes/vets';
 import adminRoutes from './routes/admin';
+import vetFiles from './routes/vetFiles';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/owners', ownersRouter);
 app.use('/animals', animalsRouter);
 app.use('/vets', vetRoutes); 
 app.use('/admin', adminRoutes);
+app.use('/vet-files', vetFiles);
 // app.use((req, _res, next) => {
 //   console.log('[APP]', req.method, req.url);
 //   next();

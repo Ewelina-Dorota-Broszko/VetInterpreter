@@ -1,77 +1,73 @@
 <div class="dashboard-menu-container">
   <div class="container clinical-notes">
-
     <h2>Notatki kliniczne</h2>
 
-    <p class="muted">
-      Tutaj możesz dodawać pliki (PNG, JPG, WEBP, PDF itd.). Pliki zapisują się na Twoim koncie w systemie.
+    <!-- === Uploader === -->
+   <section class="upload-box"
+         [class.active]="fileToUpload"
+         [class.dragover]="isDragOver"
+         (dragover)="onDragOver($event)"
+         (dragleave)="onDragLeave($event)"
+         (drop)="onDrop($event)">
+
+  <div class="upload-content" (click)="triggerFileInput()">
+    <div class="icon">
+      <i class="fas fa-cloud-upload-alt"></i>
+    </div>
+
+    <p *ngIf="!fileToUpload">Przeciągnij plik tutaj lub kliknij, aby wybrać</p>
+    <p *ngIf="fileToUpload">
+      <strong>{{ truncateName(fileToUpload.name, 40) }}</strong> — gotowy do wysłania
     </p>
 
-    <!-- Formularz dodawania -->
-    <section class="card add-card">
-      <h3>Dodaj plik</h3>
+    <input id="fileInput"
+           type="file"
+           #fileInput
+           (change)="onFileChange($event)"
+           accept=".png,.jpg,.jpeg,.webp,.pdf,.doc,.docx,image/*,application/pdf"
+           hidden />
+  </div>
 
-      <div class="row">
-        <label for="fileInput">Plik</label>
-        <input id="fileInput" type="file"
-               (change)="onFileChange($event)"
-               [disabled]="uploading"
-               accept=".png,.jpg,.jpeg,.webp,.pdf,image/*,application/pdf" />
+  <div class="note-row">
+    <input type="text"
+           [(ngModel)]="note"
+           placeholder="Dodaj notatkę (opcjonalnie)" />
+    <button class="btn send"
+            (click)="upload()"
+            [disabled]="uploading || !fileToUpload">
+      {{ uploading ? 'Wysyłanie...' : 'Wyślij plik' }}
+    </button>
+  </div>
+
+  <div class="error" *ngIf="error">{{ error }}</div>
+</section>
+
+
+    <!-- === Lista plików === -->
+    <div class="files-grid" *ngIf="files.length; else emptyList">
+      <div class="file-card" *ngFor="let f of files" [ngClass]="fileTypeClass(f.originalName)">
+        <div class="file-icon">
+          <img [src]="getFileIcon(f.originalName)" alt="Ikona pliku" />
+        </div>
+
+        <div class="file-info">
+          <h4 title="{{ f.originalName }}">{{ truncateName(f.originalName, 20) }}</h4>
+          <p>{{ f.uploadedAt | date:'yyyy-MM-dd HH:mm' }}</p>
+          <p title="{{ f.originalName }}" class="note">{{ f.note || '—' }}</p>
+
+        </div>
+
+        <div class="file-actions">
+          <button class="ghost" (click)="open(f)">Otwórz</button>
+          <button class="ghost" (click)="delete(f)">Usuń</button>
+        </div>
       </div>
+    </div>
 
-      <div class="row">
-        <label for="noteInput">Notatka (opcjonalnie)</label>
-        <input id="noteInput" type="text" [(ngModel)]="note" [disabled]="uploading" placeholder="Krótka notatka do pliku" />
-      </div>
-
-      <div class="form-actions">
-        <button type="button" (click)="upload()" [disabled]="!selectedFile || uploading">
-          {{ uploading ? 'Wysyłanie…' : 'Wyślij' }}
-        </button>
-        <button class="secondary" type="button" (click)="clearSelection()" [disabled]="uploading">Wyczyść</button>
-      </div>
-
-      <p class="error" *ngIf="error">{{ error }}</p>
-    </section>
-
-    <!-- Lista plików -->
-    <section class="card list-card">
-      <div class="card-head">
-        <h3>Twoje pliki ({{ files.length }})</h3>
-        <button class="ghost" (click)="reload()" [disabled]="loading">Odśwież</button>
-      </div>
-
-      <div *ngIf="loading" class="loading">Ładowanie…</div>
-      <p class="error" *ngIf="!loading && error">{{ error }}</p>
-
-      <table class="tbl" *ngIf="!loading && files.length">
-        <thead>
-        <tr>
-          <th>Nazwa</th>
-          <th>Typ</th>
-          <th>Rozmiar</th>
-          <th>Notatka</th>
-          <th>Dodano</th>
-          <th class="actions"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let f of files; trackBy: trackById">
-          <td class="strong">{{ f.originalName }}</td>
-          <td class="muted">{{ f.mimeType || '—' }}</td>
-          <td>{{ formatBytes(f.size) }}</td>
-          <td>{{ f.note || '—' }}</td>
-          <td class="muted">{{ f.uploadedAt || '—' }}</td>
-          <td class="actions">
-            <button class="ghost" (click)="download(f)">Pobierz</button>
-            <button class="danger" (click)="remove(f)" [disabled]="deleting[f._id]">Usuń</button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-
-      <p *ngIf="!loading && !files.length" class="muted">Brak plików.</p>
-    </section>
-
+    <ng-template #emptyList>
+      <section class="empty">
+        <p>Brak plików — dodaj pierwszy powyżej.</p>
+      </section>
+    </ng-template>
   </div>
 </div>
