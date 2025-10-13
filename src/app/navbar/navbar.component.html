@@ -11,7 +11,8 @@
       <div class="menu">
         <!-- Panel -->
         <div class="menu-elements">
-          <div class="menu-element" routerLink="/admin/panel" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <div class="menu-element" routerLink="/admin/panel" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
             <div class="photo-name">
               <img src="assets/images/dashboard.png" alt="dashboard">
               <p>Panel</p>
@@ -120,7 +121,16 @@
             </div>
           </div>
         </div>
-
+        <div class="menu-elements">
+          <p>Wiadomości</p>
+          <div class="menu-element" routerLink="/messages" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/bubble-chat.png" alt="chat">
+              <p>Panel wiadomości</p>
+              <span class="badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+            </div>
+          </div>
+        </div>
         <!-- Znajdź weta -->
         <div class="menu-elements">
           <p>Znajdź Weterynarza</p>
@@ -149,7 +159,8 @@
       <div class="menu">
         <!-- Profil weterynarza -->
         <div class="menu-elements">
-          <div class="menu-element" routerLink="/vet/profile" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <div class="menu-element" routerLink="/vet/profile" routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }">
             <div class="photo-name">
               <img src="assets/images/edit.png" alt="profile">
               <p>Mój profil (wet.)</p>
@@ -162,7 +173,7 @@
           <p>Kalendarz</p>
           <div class="menu-element" routerLink="/calendar" routerLinkActive="active">
             <div class="photo-name">
-              <img src="assets/images/pawprint.png" alt="paw">
+              <img src="assets/images/calendar.png" alt="paw">
               <p>Kalendarz wizyt</p>
             </div>
           </div>
@@ -179,6 +190,18 @@
           </div>
         </div>
 
+        <!-- Wiadomości (vet) -->
+        <div class="menu-elements">
+          <p>Wiadomości</p>
+          <div class="menu-element" routerLink="/vet/messages" routerLinkActive="active">
+            <div class="photo-name">
+              <img src="assets/images/bubble-chat.png" alt="chat">
+              <p>Panel wiadomości</p>
+              <span class="badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Dokumentacja -->
         <div class="menu-elements">
           <p>Dokumentacja</p>
@@ -189,6 +212,7 @@
             </div>
           </div>
         </div>
+
 
       </div>
     </div>

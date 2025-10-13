@@ -54,6 +54,9 @@ import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.componen
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { AdminOwnersListComponent } from './admin-owners-list/admin-owners-list.component';
 import { AdminVetsListComponent } from './admin-vets-list/admin-vets-list.component';
+import { ClientMessagesPanelComponent } from './client-messages-panel/client-messages-panel.component';
+import { VetMessagesPanelComponent } from './vet-messages-panel/vet-messages-panel.component';
+import { ChatRoomComponent } from './chat-room/chat-room.component';
 
 
 @NgModule({
@@ -103,7 +106,10 @@ import { AdminVetsListComponent } from './admin-vets-list/admin-vets-list.compon
     ClinicalNotesComponent,
     AdminLayoutComponent,
     AdminOwnersListComponent,
-    AdminVetsListComponent
+    AdminVetsListComponent,
+    ClientMessagesPanelComponent,
+    VetMessagesPanelComponent,
+    ChatRoomComponent
   ],
   imports: [
     BrowserModule,

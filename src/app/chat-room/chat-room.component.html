@@ -1,0 +1,23 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+        <div class="chat">
+            <div class="history">
+                <ng-container *ngFor="let m of msgs">
+                    <div class="divider" *ngIf="m.kind==='window-start'">
+                        <span>{{ m.text }} ({{ m.sentAt | date:'yyyy-MM-dd HH:mm' }})</span>
+                    </div>
+                    <div class="msg" [class.vet]="m.authorRole==='vet'" [class.owner]="m.authorRole==='owner'">
+                        <div class="bubble">{{ m.text }}</div>
+                        <div class="meta">{{ m.sentAt | date:'HH:mm dd.MM.yyyy' }}</div>
+                    </div>
+                </ng-container>
+            </div>
+
+            <div class="composer">
+                <input [disabled]="!thread?.canSend" [(ngModel)]="text"
+                    placeholder="{{ thread?.canSend ? 'Napisz wiadomość...' : 'Okno zamknięte – tylko odczyt' }}" />
+                <button (click)="send()" [disabled]="!thread?.canSend || !text.trim()">Wyślij</button>
+            </div>
+        </div>
+    </div>
+</div>

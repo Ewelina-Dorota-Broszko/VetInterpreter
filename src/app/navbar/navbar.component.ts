@@ -3,6 +3,10 @@ import { Router } from '@angular/router';
 import { AnimalsService, Animal } from '../services/animals.service';
 import { AuthService } from '../auth/auth.service';
 import { Observable, map } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+import { ChatService, ChatThreadVM } from 'src/app/services/chat.service';
+
 
 @Component({
   selector: 'app-navbar',
@@ -12,6 +16,10 @@ import { Observable, map } from 'rxjs';
 export class NavbarComponent implements OnInit {
   animals: Animal[] = [];
   isLogin = false;
+  threads: ChatThreadVM[] = [];
+unreadCount = 0;
+private chatSub?: Subscription;
+
 
   // Proste, rozłączne strumienie roli (działają i z nowym polem role, i ze starym isVet)
   isAdmin$: Observable<boolean> = this.auth.user$.pipe(
@@ -35,7 +43,8 @@ export class NavbarComponent implements OnInit {
   constructor(
     private router: Router,
     private animalService: AnimalsService,
-    public auth: AuthService
+    public auth: AuthService,
+    private chat: ChatService,
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +55,48 @@ export class NavbarComponent implements OnInit {
       if (isOwner) this.loadAnimalsForOwner();
       else this.animals = [];
     });
+     this.chatSub = interval(30000)
+    .pipe(switchMap(() => this.chat.myThreads()))
+    .subscribe(ts => {
+      this.threads = ts;
+      this.unreadCount = this.computeUnread(ts);
+    });
+
+  // pierwsze pobranie od razu
+  this.chat.myThreads().subscribe(ts => {
+    this.threads = ts;
+    this.unreadCount = this.computeUnread(ts);
+  });
   }
+  computeUnread(ts: ChatThreadVM[]): number {
+  // Prosty heurystyczny licznik:
+  // jeśli wątek miał wiadomości (hadMessages) i user nie jest na ekranie czatu,
+  // można tu kiedyś powiązać z flagą "lastSeen". Na razie zliczmy aktywne wątki.
+  return ts.filter(t => t.hadMessages).length;
+}
+
+// kliknięcie w pływający launcher: przejdź do głównego panelu wg roli
+openQuickChat() {
+  if (this.isVetSnapshot()) {
+    this.router.navigate(['/vet/messages']);
+  } else {
+    this.router.navigate(['/messages']);
+  }
+}
+
+// jeśli potrzebujesz synchronicznego sprawdzenia roli:
+isVetSnapshot(): boolean {
+  // jeśli masz BehaviorSubject w isVet$, możesz użyć getValue()
+  // tutaj wersja awaryjna – dopasuj do Twojej implementacji:
+  let isVet = false;
+  (this.isVet$ as any)?.subscribe?.((v: boolean) => (isVet = !!v))?.unsubscribe?.();
+  return isVet;
+}
+
+ngOnDestroy() {
+  this.chatSub?.unsubscribe();
+}
+
 
   private loadAnimalsForOwner() {
     const ownerId = this.auth.getOwnerId();

@@ -1,0 +1,37 @@
+<div class="dashboard-menu-container">
+    <div class="container">
+        <h2>Wiadomości – klient</h2>
+
+        <div class="search">
+            <input [(ngModel)]="vetQuery" placeholder="Szukaj weterynarza..." />
+            <button (click)="searchVets()">Szukaj</button>
+        </div>
+
+        <div class="results" *ngIf="vets.length">
+            <div class="item" *ngFor="let v of vets">
+                <div>{{ v.clinicName || v.userId?.name }} • {{ v.email }}</div>
+                <button (click)="request(v._id)">Wyślij prośbę</button>
+            </div>
+        </div>
+
+        <h3>Twoje wątki</h3>
+        <table>
+            <tr>
+                <th>Weterynarz</th>
+                <th>Status</th>
+                <th>Akcja</th>
+            </tr>
+            <tr *ngFor="let t of threads">
+                <td>{{ t.vet?.clinicName || t.vet?.email }}</td>
+                <td>
+                    <span [ngClass]="t.status">{{ t.status }}</span>
+                    <ng-container *ngIf="t.windowTo"> (do {{ t.windowTo | date:'yyyy-MM-dd HH:mm' }})</ng-container>
+                </td>
+                <td>
+                    <button *ngIf="t.canSend" (click)="openChat(t)">Wyślij wiadomość</button>
+                    <button *ngIf="t.hadMessages" (click)="openChat(t)">Zobacz poprzednie wiadomości</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

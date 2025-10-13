@@ -10,6 +10,7 @@ import animalsRouter from './routes/animals';
 import vetRoutes from './routes/vets';
 import adminRoutes from './routes/admin';
 import vetFiles from './routes/vetFiles';
+import chatRouter from './routes/chat';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/animals', animalsRouter);
 app.use('/vets', vetRoutes); 
 app.use('/admin', adminRoutes);
 app.use('/vet-files', vetFiles);
+app.use('/chat', chatRouter);
 // app.use((req, _res, next) => {
 //   console.log('[APP]', req.method, req.url);
 //   next();
