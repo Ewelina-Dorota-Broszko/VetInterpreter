@@ -42,6 +42,9 @@ import { ClinicalNotesComponent } from './clinical-notes/clinical-notes.componen
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { AdminOwnersListComponent } from './admin-owners-list/admin-owners-list.component';
 import { AdminVetsListComponent } from './admin-vets-list/admin-vets-list.component';
+import { ChatRoomComponent } from './chat-room/chat-room.component';
+import { ClientMessagesPanelComponent } from './client-messages-panel/client-messages-panel.component';
+import { VetMessagesPanelComponent } from './vet-messages-panel/vet-messages-panel.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -88,11 +91,11 @@ const routes: Routes = [
       { path: 'patients/:ownerId', component: VetPatientProfileComponent }, // jw.
       { path: 'animal/:id', component: VetAnimalProfileComponent },         // jw.
       { path: '', redirectTo: 'profile', pathMatch: 'full' },
-      { path: 'add-document', component: VetAddDocumentComponent }, 
+      { path: 'add-document', component: VetAddDocumentComponent },
       { path: 'notes', component: ClinicalNotesComponent }
     ]
   },
-    {
+  {
     path: 'admin',
     component: AdminLayoutComponent,
     canActivate: [AuthGuard],
@@ -101,10 +104,13 @@ const routes: Routes = [
       { path: 'vets', component: AdminVetsListComponent },
       { path: 'owners', component: AdminOwnersListComponent },
       { path: '', pathMatch: 'full', redirectTo: 'vets' },
-       { path: 'panel', component: AdminLayoutComponent }
+      { path: 'panel', component: AdminLayoutComponent }
     ]
   },
-  
+  { path: 'messages', component: ClientMessagesPanelComponent },
+  { path: 'vet/messages', component: VetMessagesPanelComponent },
+ { path: 'chat/:id', component: ChatRoomComponent },
+
   // **ALIAS** dla starych linków /vet/patient/:ownerId  -> przekierowanie na /vet/patients/:ownerId
   { path: 'vet/patient/:ownerId', redirectTo: 'vet/patients/:ownerId', pathMatch: 'full' },
 
@@ -116,4 +122,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
