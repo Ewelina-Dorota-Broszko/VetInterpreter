@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import {
-  CanActivate, CanActivateChild, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { VetService, isVetProfileComplete } from '../services/vet.service';
 
 @Injectable({ providedIn: 'root' })
-export class VetProfileCompleteGuard implements CanActivate, CanActivateChild {
+export class VetProfileCompleteGuard  {
 
   constructor(private vet: VetService, private router: Router) {}
 
