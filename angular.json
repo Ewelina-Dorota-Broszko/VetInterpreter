@@ -75,10 +75,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "VetInterpreter:build:production"
+              "buildTarget": "VetInterpreter:build:production"
             },
             "development": {
-              "browserTarget": "VetInterpreter:build:development"
+              "buildTarget": "VetInterpreter:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "VetInterpreter:build"
+            "buildTarget": "VetInterpreter:build"
           }
         },
         "test": {
