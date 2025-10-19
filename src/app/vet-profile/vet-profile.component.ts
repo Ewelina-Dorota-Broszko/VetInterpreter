@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { VetService, VetProfile, WorkingHour } from '../services/vet.service';
 
@@ -90,10 +90,10 @@ export class VetProfileComponent implements OnInit {
     workingHours: this.fb.array([])
   });
 
-  get hoursFA(): FormArray { return this.form.get('workingHours') as FormArray; }
+  get hoursFA(): UntypedFormArray { return this.form.get('workingHours') as UntypedFormArray; }
 
   constructor(
-    private fb: FormBuilder,
+    private fb: UntypedFormBuilder,
     private vet: VetService,
     private route: ActivatedRoute,
     private router: Router
@@ -287,7 +287,7 @@ export class VetProfileComponent implements OnInit {
       consultPrice:           p.consultPrice           ?? 0
     });
 
-    (this.form.get('address') as FormGroup).patchValue({
+    (this.form.get('address') as UntypedFormGroup).patchValue({
       line1:      p.address?.line1      ?? '',
       line2:      p.address?.line2      ?? '',
       city:       p.address?.city       ?? '',
@@ -338,7 +338,7 @@ export class VetProfileComponent implements OnInit {
     value: string,
     checked: boolean
   ) {
-    const ctrl = this.form.get(controlName) as FormControl;
+    const ctrl = this.form.get(controlName) as UntypedFormControl;
     const current = (ctrl.value as string[]) ?? [];
     const set = new Set(current);
     if (checked) set.add(value); else set.delete(value);
@@ -350,7 +350,7 @@ export class VetProfileComponent implements OnInit {
     controlName: 'specialties'|'servicesOffered'|'languages'|'paymentMethods',
     value: string
   ) {
-    const v = (this.form.get(controlName) as FormControl)?.value as string[] || [];
+    const v = (this.form.get(controlName) as UntypedFormControl)?.value as string[] || [];
     return v.map(x => x.toLowerCase()).includes(value.toLowerCase());
   }
 
@@ -373,7 +373,7 @@ export class VetProfileComponent implements OnInit {
 
     if (controlName === 'specialties') {
       items.forEach(s => this.customSpecialtiesSet.add(s));
-      const ctrl = this.form.get('specialties') as FormControl;
+      const ctrl = this.form.get('specialties') as UntypedFormControl;
       const cur = (ctrl.value as string[]) ?? [];
       const set = new Set(cur);
       items.forEach(s => set.add(s));
@@ -382,7 +382,7 @@ export class VetProfileComponent implements OnInit {
       this.newSpecialties = '';
     } else {
       items.forEach(s => this.customServicesSet.add(s));
-      const ctrl = this.form.get('servicesOffered') as FormControl;
+      const ctrl = this.form.get('servicesOffered') as UntypedFormControl;
       const cur = (ctrl.value as string[]) ?? [];
       const set = new Set(cur);
       items.forEach(s => set.add(s));
@@ -395,13 +395,13 @@ export class VetProfileComponent implements OnInit {
   removeOption(controlName: 'specialties'|'servicesOffered', value: string) {
     if (controlName === 'specialties') {
       this.customSpecialtiesSet.delete(value);
-      const ctrl = this.form.get('specialties') as FormControl;
+      const ctrl = this.form.get('specialties') as UntypedFormControl;
       const cur = (ctrl.value as string[]) ?? [];
       ctrl.setValue(cur.filter(v => v.toLowerCase() !== value.toLowerCase()));
       ctrl.markAsDirty();
     } else {
       this.customServicesSet.delete(value);
-      const ctrl = this.form.get('servicesOffered') as FormControl;
+      const ctrl = this.form.get('servicesOffered') as UntypedFormControl;
       const cur = (ctrl.value as string[]) ?? [];
       ctrl.setValue(cur.filter(v => v.toLowerCase() !== value.toLowerCase()));
       ctrl.markAsDirty();
