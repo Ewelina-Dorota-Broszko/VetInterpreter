@@ -102,16 +102,19 @@
 
       <!-- ===== Badania krwi ===== -->
       <section *ngIf="activeTab === 'blood'" class="tab-content">
-        <ng-container *ngIf="(bloodTestsFiltered?.length ?? 0) > 0; else bloodEmpty">
-          <app-blood-tab
-            [bloodTests]="bloodTestsFiltered"
-            [referenceRanges]="referenceRanges">
-          </app-blood-tab>
-        </ng-container>
-        <ng-template #bloodEmpty>
-          <p class="muted">Brak danych w wybranym filtrze.</p>
-        </ng-template>
-      </section>
+  <ng-container *ngIf="(bloodTestsFiltered?.length ?? 0) > 0; else bloodEmpty">
+    <app-blood-tab
+      [bloodTests]="bloodTestsFiltered"
+      [referenceRanges]="referenceRanges"
+      [active]="activeTab === 'blood'">
+    </app-blood-tab>
+  </ng-container>
+
+  <ng-template #bloodEmpty>
+    <p class="muted">Brak danych w wybranym filtrze.</p>
+  </ng-template>
+</section>
+
 
       <!-- ===== Badania moczu ===== -->
       <section *ngIf="activeTab === 'urine'" class="tab-content">

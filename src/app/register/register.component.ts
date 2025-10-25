@@ -50,9 +50,22 @@ export class RegisterComponent {
 
     this.loading = true;
     this.auth.register(payload).subscribe({
-      next: () => {
+      next: (res: any) => {
         this.loading = false;
-        this.router.navigate(['/dashboard']);
+
+        // 🔹 Przykładowa odpowiedź z backendu może zawierać dane usera
+        const user = res?.user || res;
+
+        // 🔸 Logika przekierowania po roli
+       
+        if (user?.role === 'admin') {
+          this.router.navigate(['/admin/panel']);
+
+        } else if (user?.isVet) {
+          this.router.navigate(['/vet/profile']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err) => {
         this.loading = false;

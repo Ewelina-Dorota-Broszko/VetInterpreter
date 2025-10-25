@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminService, OwnerRow } from '../services/admin.service';
 
-type OwnerUi = OwnerRow & { _editingPass?: boolean; _newPass?: string; _busy?: boolean; _expanded?: boolean };
+type OwnerUi = OwnerRow & {
+  _editingPass?: boolean;
+  _newPass?: string;
+  _busy?: boolean;
+  _expanded?: boolean;
+};
 
 @Component({
   selector: 'app-admin-owners-list',
@@ -18,23 +23,49 @@ export class AdminOwnersListComponent implements OnInit {
   limit = 10;
   total = 0;
   limits = [10, 25, 50];
+  showingAll = false;
 
   constructor(private admin: AdminService) {}
 
-  ngOnInit(): void { this.load(); }
+  ngOnInit(): void {
+    this.load();
+  }
 
+  /** 🔹 Pobieranie listy użytkowników (bez admina) */
   load() {
     this.loading = true;
     this.error = '';
-    this.admin.listOwners({
-      search: this.q || undefined,
+
+    const params: any = {
       page: this.page,
       limit: this.limit,
       includeAnimals: '1'
-    }).subscribe({
+    };
+
+    if (!this.showingAll && this.q) {
+      params.search = this.q;
+    }
+
+    this.admin.listOwners(params).subscribe({
       next: (res) => {
-        this.rows = (res.rows || []).map(r => ({ ...r, _editingPass: false, _newPass: '', _busy: false, _expanded: false }));
-        this.total = res.total || 0;
+        const allUsers = res.rows || [];
+
+        // 🔹 Filtr — usuń admina (po mailu lub nazwie)
+        const filtered = allUsers.filter(
+          (u: any) =>
+            u.email?.toLowerCase() !== 'admin@vetinterpreter.com' &&
+            u.name?.toLowerCase() !== 'admin user'
+        );
+
+        this.rows = filtered.map((r) => ({
+          ...r,
+          _editingPass: false,
+          _newPass: '',
+          _busy: false,
+          _expanded: false
+        }));
+
+        this.total = res.total || filtered.length;
         this.loading = false;
       },
       error: (e) => {
@@ -44,15 +75,37 @@ export class AdminOwnersListComponent implements OnInit {
     });
   }
 
-  onSearch() { this.page = 1; this.load(); }
-  onLimitChange() { this.page = 1; this.load(); }
+  onSearch() {
+    this.page = 1;
+    this.showingAll = false;
+    this.load();
+  }
+
+  onLimitChange() {
+    this.page = 1;
+    this.load();
+  }
+
+  showAll() {
+    this.q = '';
+    this.page = 1;
+    this.showingAll = true;
+    this.load();
+  }
 
   prev() {
-    if (this.page > 1) { this.page--; this.load(); }
+    if (this.page > 1) {
+      this.page--;
+      this.load();
+    }
   }
+
   next() {
     const maxPage = Math.max(1, Math.ceil(this.total / this.limit));
-    if (this.page < maxPage) { this.page++; this.load(); }
+    if (this.page < maxPage) {
+      this.page++;
+      this.load();
+    }
   }
 
   rangeText(): string {
@@ -62,7 +115,9 @@ export class AdminOwnersListComponent implements OnInit {
     return `${start}–${end} z ${this.total}`;
   }
 
-  toggleExpand(r: OwnerUi) { r._expanded = !r._expanded; }
+  toggleExpand(r: OwnerUi) {
+    r._expanded = !r._expanded;
+  }
 
   togglePass(row: OwnerUi) {
     row._editingPass = !row._editingPass;
@@ -75,6 +130,7 @@ export class AdminOwnersListComponent implements OnInit {
       return;
     }
     if (row._busy) return;
+
     row._busy = true;
     this.admin.resetOwnerPassword(row.ownerId, row._newPass).subscribe({
       next: () => {
@@ -91,9 +147,15 @@ export class AdminOwnersListComponent implements OnInit {
   }
 
   deleteOwner(row: OwnerUi) {
-    if (!confirm(`Usunąć konto klienta ${row.email}? Spowoduje to również usunięcie jego zwierząt.`)) return;
+    if (
+      !confirm(
+        `Usunąć konto klienta ${row.email}? Spowoduje to również usunięcie jego zwierząt.`
+      )
+    )
+      return;
     if (row._busy) return;
     row._busy = true;
+
     this.admin.deleteOwner(row.ownerId).subscribe({
       next: () => {
         row._busy = false;
@@ -106,6 +168,11 @@ export class AdminOwnersListComponent implements OnInit {
     });
   }
 
-  trackByOwnerId(_: number, r: OwnerUi) { return r.ownerId; }
-  trackByAnimalId(_: number, a: any) { return a?._id; }
+  trackByOwnerId(_: number, r: OwnerUi) {
+    return r.ownerId;
+  }
+
+  trackByAnimalId(_: number, a: any) {
+    return a?._id;
+  }
 }

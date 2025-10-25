@@ -18,6 +18,7 @@
     justify-content: space-between;
     height: 100%;
     align-items: flex-start;
+    width: 100%;
 
     .logo-container-login {
       display: flex;
@@ -25,13 +26,14 @@
       align-items: center;
       border-bottom: 1px solid #333a49;
       width: 100%;
+      gap: 10px;
 
       img {
         height: 60px;
+    filter: invert(100%) hue-rotate(188deg);
       }
 
       p {
-        margin-left: 25px;
         font-size: 19px;
       }
     }
@@ -112,3 +114,112 @@
     }
   }
 }
+
+.toggle-navbar {
+  position: absolute;
+  top: 15px;
+  right: -15px;
+  background-color: #212631;
+  border: 1px solid #333a49;
+  border-left: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.3s;
+  color: white;
+
+  img {
+    width: 16px;
+    height: 16px;
+    filter: invert(100%);
+  }
+
+  &:hover {
+    background-color: #2a303d;
+  }
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin; /* dla Firefoxa */
+  scrollbar-color: #333a49 transparent; /* kolory paska */
+
+  /* === elegancki pasek tylko gdy potrzebny === */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #333a49;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* żeby nie było marginesu między menu a bokiem */
+  margin: 0;
+  padding-right: 10px;
+}
+
+.navbar-container {
+  width: 20%;
+  transition: width 0.4s ease, transform 0.4s ease;
+
+  &.collapsed {
+    width: 90px;
+    // overflow: hidden;
+
+    .menu-elements p,
+    .logo-container-login p {
+      display: none;
+    }
+
+    .logo-container-login {
+      justify-content: center;
+    }
+
+    .photo-name {
+      justify-content: center;
+    }
+
+    .menu {
+      padding: 15px 5px;
+    }
+
+    .toggle-navbar {
+      right: -15px;
+    }
+  }
+}
+
+@media all and (min-width: 640px) and (max-width: 1200px) {
+.navbar-container {
+  width: 30%;}
+}
+
+@media all and  (max-width: 640px) {
+.navbar-container {
+  width: 60%;}
+
+.logo-container-login {
+  justify-content: flex-start !important;
+  gap: 0 !important;
+p {
+      font-size: 17px !important;
+      }
+      img {
+        height: 50px !important;
+      }
+}}

@@ -1,26 +1,238 @@
+/* === GŁÓWNY KONTAINER === */
 .dashboard-menu-container {
-  height: 100%;
-  background-color: #1d222b;
-  width: 80vw;
-  height: 100vh;
-  position: absolute;
-  right: -8px;
+  position: fixed;
   top: 52px;
+  right: 0;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 52px);
+  background-color: #1d222b;
   display: flex;
   justify-content: center;
-  align-items: center;
-  color: white;
+  align-items: flex-start;
+  overflow-y: auto;
+  color: #e5e7eb;
+  padding: 60px 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333a49;
+    border-radius: 10px;
+  }
 }
 
-.container {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 100px 1.5rem;
-  border: 1px solid #383c46;
-  margin: 60px;
-  height: auto;
+/* === KONTAINER WNĘTRZA === */
+.container.vet-add-doc {
   background-color: #212631;
+  border: 1px solid #383c46;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  width: 90%;
+  // max-width: 900px;
+  padding: 3rem;
+  margin-bottom: 80px;
+  animation: fadeIn 0.6s ease-out;
 
-  
+  h2 {
+    color: #9bb1ff;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .muted {
+    color: #9ca3af;
+  }
+
+  .error {
+    color: #ff9b9b;
+    background: #3b2323;
+    border: 1px solid #722020;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-top: 8px;
+    text-align: center;
+  }
+
+  .tip {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 0.9rem;
+  }
+}
+
+/* === TOPBAR === */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  button.ghost {
+    background: transparent;
+    border: 1px solid #3f4dab;
+    color: #9bb1ff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background: #2b3150;
+      color: #fff;
+    }
+  }
+}
+
+/* === WYBÓR ZWIERZAKA === */
+.pick {
+  background: #2b303a;
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 2rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: #cfd5e1;
+    margin-bottom: 10px;
+
+    span {
+      margin-bottom: 4px;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
+
+    input {
+      background: #1d222b;
+      border: 1px solid #555;
+      color: #fff;
+      border-radius: 6px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+
+      &:focus {
+        border-color: #3498db;
+        outline: none;
+      }
+    }
+  }
+
+  .animal-brief {
+    margin-top: 10px;
+    background: #242933;
+    border: 1px solid #383c46;
+    border-radius: 8px;
+    padding: 10px 14px;
+
+    .title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #fff;
+
+      .muted {
+        color: #9ca3af;
+        font-weight: 400;
+      }
+    }
+
+    .small {
+      font-size: 0.85rem;
+      color: #b5bbc9;
+    }
+  }
+}
+
+/* === KAFELKI DOKUMENTÓW === */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 10px;
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 18px 20px;
+    background: #2b303a;
+    border: 1px solid #383c46;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    color: #fff;
+    text-align: left;
+    min-height: 140px;
+
+    .title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
+    .cta {
+      font-size: 0.85rem;
+      color: #4db6ac;
+      font-weight: 600;
+    }
+
+    &:hover:not([disabled]) {
+      border-color: #4db6ac;
+      background: #323844;
+      transform: translateY(-3px);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+}
+
+/* === ANIMACJA === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 768px) {
+  .container.vet-add-doc {
+    width: 95%;
+    padding: 2rem;
+  }
+
+  .topbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 480px) {
+    .cards {
+      grid-template-columns: 1fr;
+    }
+  }
 }

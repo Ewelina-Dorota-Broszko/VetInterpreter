@@ -1,24 +1,382 @@
+/* === GŁÓWNY KONTENER === */
 .dashboard-menu-container {
-  height: 100%;
-  background-color: #1d222b;
-  width: 80vw;
-  height: 100vh;
-  position: absolute;
-  right: -8px;
+  position: fixed;
   top: 52px;
+  right: 0;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 52px);
+  background-color: #1d222b;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  color: #e5e7eb;
+  padding: 60px 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333a49;
+    border-radius: 10px;
+  }
 }
 
+/* === GŁÓWNA SEKCJA === */
 .container {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 100px 1.5rem;
-  border: 1px solid #383c46;
-  margin: 60px;
-  height: auto;
   background-color: #212631;
-  color: white;
+  border: 1px solid #383c46;
+  border-radius: 14px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  width: 90%;
+  // max-width: 1100px;
+  padding: 3rem;
+  margin-bottom: 80px;
+  animation: fadeIn 0.6s ease-out;
+
+  h2 {
+    text-align: center;
+    color: #9bb1ff;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+
+  h3 {
+    color: #9bb1ff;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* === LISTA PROŚB === */
+.requests {
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #383c46;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    span {
+      color: #cfd5e1;
+      font-size: 0.95rem;
+    }
+
+    button {
+      margin-left: 8px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: 0.3s;
+
+      &:first-of-type {
+        background: #4b6fff;
+        color: #fff;
+
+        &:hover {
+          background: #3a59d1;
+        }
+      }
+
+      &:last-of-type {
+        background: #722020;
+        color: #fff;
+
+        &:hover {
+          background: #8b2a2a;
+        }
+      }
+    }
+  }
+}
+
+/* === TABELA ROZMÓW === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  background: #2b303a;
+  color: #e5e7eb;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+
+  th {
+    text-align: left;
+    padding: 12px 14px;
+    color: #9bb1ff;
+    font-weight: 600;
+    background: #252a33;
+    border-bottom: 1px solid #3a4050;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #3a4050;
+  }
+
+  tr:hover {
+    background: #323845;
+    transition: 0.25s ease;
+  }
+
+  button {
+    background: linear-gradient(135deg, #5b68eb 0%, #28e1fd 100%);
+    color: #fff;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: 0.3s;
+
+    &:hover {
+      background: linear-gradient(135deg, #6b77f5 0%, #3af0ff 100%);
+    }
+  }
+}
+
+/* === SEKCJA STARTU NOWEJ KONWERSACJI === */
+.start {
+  background: #2a2f3d;
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-top: 2rem;
+  animation: fadeIn 0.5s ease-out;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #9bb1ff;
+  }
+
+  input {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    background: #1d222b;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: 0.3s;
+
+    &:focus {
+      border-color: #4e87f0;
+      background: #232835;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(75, 111, 255, 0.25);
+    }
+  }
+
+  .owner-result {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1d222b;
+    border: 1px solid #383c46;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    transition: 0.25s ease;
+    animation: fadeIn 0.3s ease;
+
+    &:hover {
+      background: #252a33;
+      border-color: #4b6fff;
+      transform: translateY(-1px);
+    }
+
+    .data-client {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 70%;
+      color: #cfd5e1;
+      font-size: 0.9rem;
+
+      span:first-child {
+        color: #9bb1ff;
+        font-weight: 600;
+      }
+    }
+
+    .button-choose {
+      width: 30%;
+      display: flex;
+      justify-content: flex-end;
+
+      button {
+        background: linear-gradient(135deg, #5b68eb 0%, #28e1fd 100%);
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: 0.3s;
+
+        &:hover {
+          background: linear-gradient(135deg, #6b77f5 0%, #3af0ff 100%);
+          transform: translateY(-1px);
+        }
+      }
+    }
+  }
+
+  p {
+    color: #cfd5e1;
+    font-size: 0.95rem;
+    background: #212631;
+    border: 1px solid #3a4050;
+    padding: 10px 14px;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+
+    strong {
+      color: #9bb1ff;
+    }
+  }
+
+  button {
+    background: #4b6fff;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background: #3a59d1;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* === ANIMACJE === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 900px) {
+  .container {
+    width: 95%;
+    padding: 2rem;
+  }
+
+  table {
+    font-size: 0.85rem;
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: block;
+      background: #262b35;
+      border: 1px solid #3a4050;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      padding: 10px;
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border: none;
+
+        &::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: #9bb1ff;
+        }
+      }
+    }
+  }
+
+  .requests div {
+    flex-direction: column;
+    align-items: flex-start;
+
+    button {
+      margin-top: 6px;
+    }
+  }
+
+  .start {
+    padding: 1.2rem;
+
+    .owner-result {
+      flex-direction: column;
+      align-items: flex-start;
+
+      .data-client {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+
+        span {
+          font-size: 0.9rem;
+        }
+      }
+
+      .button-choose {
+        width: 100%;
+        justify-content: flex-start;
+        margin-top: 10px;
+
+        button {
+          width: 100%;
+          text-align: center;
+          padding: 10px;
+          border-radius: 12px;
+        }
+      }
+    }
+
+    input {
+      font-size: 0.9rem;
+      padding: 8px 10px;
+    }
+
+    button {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+    }
+  }
+}
+
+.action {
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }

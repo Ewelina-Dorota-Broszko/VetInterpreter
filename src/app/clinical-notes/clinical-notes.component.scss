@@ -1,7 +1,7 @@
 .dashboard-menu-container {
   height: 100%;
   background-color: #1d222b;
-  width: 80vw;
+  width: calc(100vw - 90px);
   position: fixed;
   right: 0;
   top: 52px;
@@ -13,8 +13,7 @@
 }
 
 .container {
-  width: 100%;
-  max-width: 900px;
+  width: 90%;
   margin: 0 auto;
   padding: 2rem;
   background-color: #212631;
