@@ -13,6 +13,7 @@
     <div class="filters">
       <input type="text" placeholder="Szukaj (klinika, email, licencja…)" [(ngModel)]="q" (keyup.enter)="onSearch()">
       <button (click)="onSearch()">Szukaj</button>
+      <button class="ghost" (click)="showAll()">Pokaż wszystkich</button>
 
       <div class="spacer"></div>
 
@@ -22,6 +23,7 @@
         </select>
       </label>
     </div>
+
 
     <div *ngIf="loading" class="muted">Ładowanie…</div>
     <p class="error" *ngIf="!loading && error">{{ error }}</p>

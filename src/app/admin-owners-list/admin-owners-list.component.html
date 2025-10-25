@@ -10,18 +10,21 @@
       </div>
     </div>
 
-    <div class="filters">
-      <input type="text" placeholder="Szukaj (nazwa, email, telefon…)" [(ngModel)]="q" (keyup.enter)="onSearch()">
-      <button (click)="onSearch()">Szukaj</button>
+<div class="filters">
+  <input type="text" placeholder="Szukaj (nazwa, email, telefon…)" [(ngModel)]="q" (keyup.enter)="onSearch()">
+  <button (click)="onSearch()">Szukaj</button>
+  <button class="ghost" (click)="showAll()">Pokaż wszystkich</button>
 
-      <div class="spacer"></div>
+  <div class="spacer"></div>
 
-      <label>Na stronę:
-        <select [(ngModel)]="limit" (change)="onLimitChange()">
-          <option *ngFor="let l of limits" [value]="l">{{ l }}</option>
-        </select>
-      </label>
-    </div>
+  <label>Na stronę:
+    <select [(ngModel)]="limit" (change)="onLimitChange()">
+      <option *ngFor="let l of limits" [value]="l">{{ l }}</option>
+    </select>
+  </label>
+</div>
+
+
 
     <div *ngIf="loading" class="muted">Ładowanie…</div>
     <p class="error" *ngIf="!loading && error">{{ error }}</p>

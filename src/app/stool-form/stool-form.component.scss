@@ -2,7 +2,7 @@
   position: fixed;
   top: 52px;
   right: 0;
-  width: 80vw;
+ width: calc(100vw - 90px);
   height: calc(100vh - 52px);
   background-color: #1d222b;
   overflow-y: auto;

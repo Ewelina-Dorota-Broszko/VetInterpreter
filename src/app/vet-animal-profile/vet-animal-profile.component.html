@@ -75,11 +75,11 @@
         <!-- ===== Badania krwi ===== -->
         <section *ngIf="activeTab === 'blood'" class="tab-content">
           <ng-container *ngIf="(bloodTestsVet?.length ?? 0) > 0; else bloodEmpty">
-            <app-blood-tab
-              [bloodTests]="bloodTestsVet"
-              [referenceRanges]="referenceRanges">
+            <app-blood-tab [bloodTests]="bloodTestsVet" [referenceRanges]="referenceRanges"
+              [active]="activeTab === 'blood'">
             </app-blood-tab>
           </ng-container>
+
           <ng-template #bloodEmpty>
             <p class="muted">Brak danych w wybranym filtrze.</p>
           </ng-template>

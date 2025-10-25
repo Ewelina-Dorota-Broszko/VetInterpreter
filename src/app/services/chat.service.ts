@@ -28,6 +28,8 @@ export interface ChatMessageVM {
 @Injectable({ providedIn: 'root' })
 export class ChatService {
   private api = environment.apiUrl;
+    private baseUrl = 'http://localhost:4000/owners';
+
 
   constructor(private http: HttpClient) {}
 
@@ -62,4 +64,15 @@ export class ChatService {
   sendMessage(threadId: string, text: string) {
     return this.http.post<ChatMessageVM>(`${this.api}/chat/threads/${threadId}/messages`, { text });
   }
+   requestThread(vetId: string): Observable<any> {
+    return this.http.post(`/api/chat/request`, { vetId });
+  }
+
+  listOwners(query?: string) {
+  const url = query
+    ? `http://localhost:4000/owners/vets/patients?search=${encodeURIComponent(query)}`
+    : 'http://localhost:4000/owners/vets/patients';
+  return this.http.get<any[]>(url);
+}
+
 }

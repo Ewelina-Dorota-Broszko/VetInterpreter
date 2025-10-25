@@ -75,6 +75,10 @@ private chatSub?: Subscription;
   return ts.filter(t => t.hadMessages).length;
 }
 
+isCollapsed = false;
+toggleNavbar() {
+    this.isCollapsed = !this.isCollapsed;
+  }
 // kliknięcie w pływający launcher: przejdź do głównego panelu wg roli
 openQuickChat() {
   if (this.isVetSnapshot()) {
@@ -84,10 +88,7 @@ openQuickChat() {
   }
 }
 
-// jeśli potrzebujesz synchronicznego sprawdzenia roli:
 isVetSnapshot(): boolean {
-  // jeśli masz BehaviorSubject w isVet$, możesz użyć getValue()
-  // tutaj wersja awaryjna – dopasuj do Twojej implementacji:
   let isVet = false;
   (this.isVet$ as any)?.subscribe?.((v: boolean) => (isVet = !!v))?.unsubscribe?.();
   return isVet;

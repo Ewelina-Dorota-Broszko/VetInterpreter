@@ -14,21 +14,36 @@
             <tr>
                 <th>Klient</th>
                 <th>Status</th>
-                <th>Akcja</th>
+                <th class="action">Akcja</th>
             </tr>
             <tr *ngFor="let t of threads">
-                <td>{{ t.owner?.name || t.owner?.email }}</td>
-                <td>{{ t.status }} <ng-container *ngIf="t.windowTo"> (do {{ t.windowTo | date:'yyyy-MM-dd HH:mm'
+                <td class="name">{{ t.owner?.name || t.owner?.email }}</td>
+                <td class="status">{{ t.status }} <ng-container *ngIf="t.windowTo"> (do {{ t.windowTo | date:'yyyy-MM-dd HH:mm'
                         }})</ng-container></td>
-                <td><button (click)="openChat(t)">Otwórz czat</button></td>
+                <td class="action"><button (click)="openChat(t)">Otwórz czat</button></td>
             </tr>
         </table>
 
         <div class="start">
             <h3>Napisz do klienta</h3>
-            <input [(ngModel)]="ownerId" placeholder="OwnerId" />
-            <input [(ngModel)]="firstText" placeholder="Pierwsza wiadomość (opcjonalnie)" />
-            <button (click)="start()">Wyślij</button>
+
+            <input [(ngModel)]="ownerQuery" placeholder="Szukaj właściciela (imię, mail, tel, ID)"
+                (input)="searchOwners()" />
+
+            <div *ngIf="owners.length">
+                <div *ngFor="let o of owners" class="owner-result">
+                    <div class="data-client"><span>{{ o.name }} </span><span> {{ o.email }} </span><span> {{ o.phone || 'brak telefonu'
+                            }}</span></div>
+                    <div class="button-choose"><button (click)="selectOwner(o)">Wybierz</button></div>
+                </div>
+            </div>
+
+            <div *ngIf="selectedOwner">
+                <p><strong>Wybrany właściciel:</strong> {{ selectedOwner.name }} ({{ selectedOwner.email }})</p>
+                <input [(ngModel)]="firstText" placeholder="Pierwsza wiadomość (opcjonalnie)" />
+                <button (click)="start()">Wyślij</button>
+            </div>
         </div>
+
     </div>
 </div>

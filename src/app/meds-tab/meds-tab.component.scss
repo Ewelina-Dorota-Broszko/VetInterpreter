@@ -92,7 +92,7 @@ table {
 .dashboard-menu-container {
   // height: 100vh;
   background-color: #1d222b;
-  width: 80vw;
+ width: calc(100vw - 90px);
   // height: 100vh;
   position: absolute;
   right: -10px;

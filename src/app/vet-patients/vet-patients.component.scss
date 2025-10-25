@@ -1,72 +1,209 @@
+/* === GŁÓWNY KONTENER === */
 .dashboard-menu-container {
-  height: 100%;
-  background-color: #1d222b;
-  width: 80vw;
-  height: 100vh;
-  position: absolute;
-  right: -8px;
+  position: fixed;
   top: 52px;
+  right: 0;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 52px);
+  background-color: #1d222b;
   display: flex;
   justify-content: center;
-  align-items: center;
-  color: white;
+  align-items: flex-start;
+  overflow-y: auto;
+  color: #e5e7eb;
+  padding: 40px 0;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333a49;
+    border-radius: 10px;
+  }
 }
 
+/* === WNĘTRZE KONTENERA === */
 .container {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 100px 1.5rem;
-  border: 1px solid #383c46;
-  margin: 60px;
-  height: auto;
+  width: 90%;
+  // max-width: 900px;
   background-color: #212631;
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  padding: 3rem;
+  margin-bottom: 60px;
+  animation: fadeIn 0.5s ease;
+  box-sizing: border-box;
 
-  .toolbar {
+  h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    color: #9bb1ff;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+}
+
+/* === TOOLBAR === */
+.toolbar {
   display: flex;
-  gap: 8px;
-  margin-bottom: 1rem;
+  gap: 10px;
+  margin-bottom: 1.5rem;
 
   input {
     flex: 1;
-    padding: 8px;
-    border-radius: 6px;
+    padding: 10px 14px;
+    border-radius: 8px;
     border: 1px solid #444;
     background: #2b2f3a;
     color: #fff;
+    font-size: 0.95rem;
+    transition: 0.2s;
+
+    &:focus {
+      border-color: #4e87f0;
+      background: #232835;
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #aaa;
+    }
   }
 
   button {
-    padding: 8px 12px;
-    border-radius: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
     border: none;
-    background: #4cafef;
+    background: linear-gradient(135deg, #5b68eb 0%, #28e1fd 100%);
     color: #fff;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 8px rgba(91, 104, 235, 0.3);
 
     &:hover {
-      background: #3a9ed1;
+      background: linear-gradient(135deg, #6b77f5 0%, #3af0ff 100%);
+      transform: translateY(-2px);
     }
   }
 }
 
+/* === TABELA PACJENTÓW === */
 table.patients {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 1rem;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  background: #2b303a;
+  color: #e5e7eb;
 
-  th, td {
-    padding: 10px;
-    border-bottom: 1px solid #444;
+  thead {
+    background: #252a33;
+    th {
+      text-align: left;
+      padding: 12px 14px;
+      color: #9bb1ff;
+      font-weight: 600;
+      border-bottom: 1px solid #3a4050;
+    }
   }
 
-  tr {
-    cursor: pointer;
+  tbody {
+    tr {
+      cursor: pointer;
+      transition: 0.2s ease;
 
-    &:hover {
-      background: #2b2f3a;
+      &:hover {
+        background: #323845;
+      }
+
+      td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #3a4050;
+      }
+
+      &:last-child td {
+        border-bottom: none;
+      }
     }
   }
 }
 
+/* === KOMUNIKATY === */
+.error {
+  color: #ff9b9b;
+  background: #3b2323;
+  border: 1px solid #722020;
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+}
+
+.empty {
+  color: #9ea4b3;
+  text-align: center;
+  background: #2a2f3a;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px dashed #444;
+  margin-top: 20px;
+}
+
+/* === ANIMACJA === */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  table.patients {
+    font-size: 0.85rem;
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: block;
+      background: #262b35;
+      border: 1px solid #3a4050;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 10px;
+
+      td {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border: none;
+
+        &::before {
+          content: attr(data-label);
+          font-weight: 600;
+          color: #9bb1ff;
+        }
+      }
+    }
+  }
 }

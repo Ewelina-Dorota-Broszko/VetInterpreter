@@ -1,210 +1,106 @@
+/* === GŁÓWNY KONTENER === */
+.dashboard-menu-container {
+  position: fixed;
+  top: 52px;
+  right: 0;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 52px);
+  background-color: #1d222b;
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 60px 0;
+  box-sizing: border-box;
+  color: #e5e7eb;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #333a49;
+    border-radius: 10px;
+  }
+}
+
+/* === KONTENER WEWNĘTRZNY === */
 .container {
-  padding: 40px;
-  background: #212631;
-  color: white;
-
-  h2 {
-    margin-bottom: 20px;
-  }
-
-  ::ng-deep .fc {
-    background-color: white;
-    color: black;
-    border-radius: 6px;
-    padding: 10px;
-  }
+  background-color: #212631;
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  width: 85%;
+  max-width: 1100px;
+  margin-bottom: 80px;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  box-sizing: border-box;
 }
 
-.mini-calendar-wrapper {
-  max-width: 500px;
-  //   max-height: 400px;
-  overflow: hidden;
-  margin: 0 auto;
-  color: white;
-
-  .fc {
-    font-size: 0.75rem; // zmniejsz czcionki
-    color: white;
-  }
-
-  .fc-toolbar {
-    font-size: 0.8rem;
-    flex-wrap: wrap;
-    color: white;
-  }
-
-  .fc-daygrid-day-number {
-    font-size: 0.7rem;
-    color: white;
-  }
-
-  .fc-event-title {
-    font-size: 0.65rem;
-    color: white;
-  }
-}
-
-
-.note-section {
-  color: white;
-}
-
+/* === NAGŁÓWEK I PRZYCISKI === */
 .calendar-actions {
   display: flex;
-  justify-content: flex-start;
-  margin-bottom: 12px;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
 
   button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 10px;
-    background: #111827;
+    background: #4e87f0;
     color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
     cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+
+    &:hover {
+      background: #6399ff;
+      transform: translateY(-2px);
+    }
   }
 }
 
+/* === FORMULARZ DODAWANIA === */
 .add-appointment {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 16px;
-  background: #fff;
+  background: #2a2f3a;
+  border: 1px solid #383c46;
+  border-radius: 10px;
+  padding: 1.5rem;
+  color: #e5e7eb;
 
   h4 {
-    margin: 0 0 8px;
+    margin: 0 0 1rem;
+    color: #9bb1ff;
+    font-weight: 600;
   }
 
   .row {
     display: flex;
     flex-direction: column;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
 
     label {
       font-weight: 600;
       margin-bottom: 4px;
-    }
-
-    input,
-    textarea {
-      padding: 8px 10px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-    }
-  }
-
-  .form-actions {
-    display: flex;
-    gap: 8px;
-
-    button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 8px;
-      background: #111827;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .secondary {
-      background: #6b7280;
-    }
-  }
-}
-
-.dashboard-menu-container {
-  height: 100%;
-  background-color: #1d222b;
-  width: 80vw;
-  height: 100vh;
-  position: absolute;
-  right: -8px;
-  top: 52px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 100px 1.5rem;
-  border: 1px solid #383c46;
-  margin: 60px;
-  height: auto;
-  background-color: #212631;
-}
-
-/* ====== Akcje nad kalendarzem ====== */
-.calendar-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 10px;
-
-  button {
-    background: #28a745;
-    color: #fff;
-    padding: 8px 14px;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background .2s;
-
-    &:hover {
-      background: #218838;
-    }
-  }
-}
-
-/* === Layout / ogólne === */
-.dashboard-menu-container {
-  padding: 1rem 0;
-}
-
-.mini-calendar-wrapper {
-  margin-bottom: 1rem;
-}
-
-.calendar-actions {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: .75rem;
-}
-
-/* === Formularz dodawania === */
-.add-appointment {
-  border: 1px solid #e5e7eb;
-  border-radius: .8rem;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background: #fff;
-
-  h4 {
-    margin: 0 0 .75rem;
-  }
-
-  .row {
-    display: grid;
-    grid-template-columns: 160px 1fr;
-    align-items: center;
-    gap: .75rem;
-    margin-bottom: .65rem;
-
-    label {
-      color: #374151;
-      font-weight: 600;
+      color: #bfc4cf;
     }
 
     input,
     select,
     textarea {
-      width: 100%;
-      padding: .5rem .6rem;
-      border: 1px solid #e5e7eb;
-      border-radius: .5rem;
-      background: #fff;
+      padding: 10px 12px;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #1d222b;
+      color: #fff;
+      font-size: 0.95rem;
+
+      &:focus {
+        border-color: #4e87f0;
+        outline: none;
+      }
     }
 
     textarea {
@@ -214,236 +110,242 @@
 
   .form-actions {
     display: flex;
-    gap: .5rem;
-    margin-top: .5rem;
+    gap: 10px;
+    margin-top: 10px;
 
     button {
-      padding: .55rem .9rem;
-      border-radius: .6rem;
-      border: 1px solid #e5e7eb;
-      background: #111827;
-      color: #fff;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      font-weight: 600;
       cursor: pointer;
-    }
+      transition: 0.3s;
 
-    button.secondary {
-      background: #fff;
-      color: #111827;
-    }
+      &:first-child {
+        background: #4e87f0;
+        color: #fff;
 
-    button[disabled] {
-      opacity: .6;
-      cursor: not-allowed;
+        &:hover {
+          background: #6399ff;
+        }
+      }
+
+      &.secondary {
+        background: #444;
+        color: #ddd;
+
+        &:hover {
+          background: #555;
+        }
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
     }
   }
 
   .error {
-    color: #b91c1c;
-    margin-top: .5rem;
+    color: #ff6b6b;
+    margin-top: 8px;
   }
 }
 
-/* === Tabelki wydarzeń === */
-.tbl {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: .8rem;
-  overflow: hidden;
-  /* zaokrąglone rogi dla thead/tbody */
+/* === MINI-KALENDARZ === */
+.mini-calendar-wrapper {
+  background: #1b2029;
+  border: 1px solid #333a49;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
 
-  thead th {
-    background: #f9fafb;
-    color: #6b7280;
-    font-size: .85rem;
-    font-weight: 700;
-    letter-spacing: .02em;
-    text-align: left;
-    padding: .65rem .9rem;
-    border-bottom: 1px solid #e5e7eb;
-    white-space: nowrap;
+  ::ng-deep .fc {
+    background: transparent;
+    color: #fff;
+    font-size: 0.85rem;
   }
 
-  tbody td {
-    padding: .65rem .9rem;
-    border-top: 1px solid #f3f4f6;
-    vertical-align: top;
+  ::ng-deep .fc-toolbar-title {
+    color: #9bb1ff;
+  }
+
+  ::ng-deep .fc-daygrid-day-number {
+    color: #e5e7eb;
+  }
+
+  ::ng-deep .fc-button {
+    background: #4e87f0 !important;
+    border: none !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+
+    &:hover {
+      background: #6399ff !important;
+    }
+  }
+
+  p.muted {
+    font-size: 0.9rem;
+    color: #9ea4b3;
+    margin-top: 10px;
+  }
+}
+
+/* === TABELKI WYDARZEŃ === */
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid #383c46;
+  border-radius: 8px;
+  overflow: hidden;
+
+  thead {
+    background: #2a2f3a;
+    color: #9ea4b3;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+  }
+
+  th,
+  td {
+    border-bottom: 1px solid #333a49;
+    padding: 10px 14px;
+    text-align: left;
+    color: #e5e7eb;
   }
 
   tbody tr:nth-child(even) {
-    background: #fcfcfc;
+    background: #252a35;
   }
 
   tbody tr:hover {
-    background: #f5f7fb;
+    background: #2e3441;
   }
 
   .actions {
     text-align: right;
-    white-space: nowrap;
-    width: 1%;
+  }
+
+  button.ghost {
+    background: transparent;
+    border: 1px solid #4e87f0;
+    color: #9bb1ff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background: #4e87f0;
+      color: #fff;
+    }
   }
 }
 
-.clickable {
-  cursor: pointer;
-}
-
-/* === Sekcje dzienne i „Najbliższe 5” === */
+/* === SEKCJE WYDARZEŃ === */
 .day-events,
 .upcoming {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
 
   h4 {
-    margin: 0 0 .5rem;
-    font-size: 1.05rem;
+    color: #9bb1ff;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
   }
 }
 
 .event-details {
-  margin-top: .75rem;
-  padding: .75rem .9rem;
-  border: 1px solid #e5e7eb;
-  border-radius: .8rem;
-  background: #f9fafb;
+  margin-top: 1rem;
+  background: #2a2f3a;
+  border: 1px solid #383c46;
+  border-radius: 10px;
+  padding: 1rem;
 
   h5 {
-    margin: 0 0 .5rem;
-    font-size: .98rem;
+    color: #9bb1ff;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
   }
 
   p {
-    margin: .15rem 0;
+    margin: 0.3rem 0;
+    color: #e5e7eb;
+  }
+
+  a {
+    color: #9bb1ff;
+    text-decoration: none;
+    border: 1px solid #3f4dab;
+    border-radius: 6px;
+    padding: 2px 8px;
+
+    &:hover {
+      background: #3f4dab;
+      color: #fff;
+    }
   }
 }
 
-/* === Teksty pomocnicze === */
+/* === TEKSTY, BADGE, MUTED === */
 .badge {
-  display: inline-block;
-  padding: .2rem .55rem;
-  font-size: .78rem;
-  line-height: 1;
-  border-radius: 9999px;
-  color: #374151;
-}
-
-td {
-  color: #374151;
-}
-
-td a {
-  background: transparent;
-  color: #9bb1ff;
-  border: 1px solid #3f4dab;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
+  background: #4e87f0;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .muted {
-  color: #6b7280;
+  color: #9ea4b3;
 }
 
 .small {
-  font-size: .85rem;
+  font-size: 0.85rem;
 }
 
-.strong {
-  font-weight: 600;
-}
-
-/* === Przyciski w tabelach === */
-button.ghost {
-  background: transparent;
-  border: 1px solid #e5e7eb;
-  color: #111827;
-  padding: .4rem .65rem;
-  border-radius: .5rem;
-  cursor: pointer;
-}
-
-button.ghost:hover {
-  background: #f3f4f6;
-}
-
-button.ghost:active {
-  background: #e5e7eb;
-}
-
-/* === Stany === */
 .error {
-  color: #b91c1c;
+  color: #ff6b6b;
 }
 
-.loading {
-  color: #6b7280;
-}
-
-
-/* ====== Notatki ====== */
-.note-section {
-  // background: #fff;
-  // border: 1px solid #eee;
-  border-radius: 8px;
-  padding: 15px;
-  margin-bottom: 20px;
-
-  h4 {
-    margin-bottom: 10px;
-    font-size: 16px;
+/* === RESPONSYWNOŚĆ === */
+@media (max-width: 900px) {
+  .container {
+    width: 95%;
+    padding: 2rem;
   }
 
-  ul {
-    list-style: disc;
-    padding-left: 20px;
+  .add-appointment .row {
+    flex-direction: column;
 
-    li {
-      margin-bottom: 6px;
-      font-size: 14px;
+    label {
+      margin-bottom: 4px;
     }
   }
 
-  p {
-    font-size: 14px;
-    color: #666;
+  .tbl th,
+  .tbl td {
+    font-size: 0.85rem;
+    padding: 8px;
+  }
+
+  .mini-calendar-wrapper {
+    padding: 10px;
   }
 }
 
-/* ====== Lista wszystkich terminów ====== */
-ul {
-  list-style: none;
-  padding-left: 0;
-
-  li {
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 8px 12px;
-    margin-bottom: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    button {
-      background: #dc3545;
-      color: #fff;
-      border: none;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background .2s;
-
-      &:hover {
-        background: #c82333;
-      }
-    }
+@media (max-width: 600px) {
+  .container {
+    padding: 1.5rem;
   }
-}
 
-/* ====== Status ====== */
-.error {
-  color: #d9534f;
-  font-weight: 500;
+  .tbl th,
+  .tbl td {
+    font-size: 0.8rem;
+  }
+
+  .calendar-actions button {
+    width: 100%;
+  }
 }

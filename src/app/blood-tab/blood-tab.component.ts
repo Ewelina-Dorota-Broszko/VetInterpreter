@@ -47,6 +47,7 @@ export class BloodTabComponent implements OnChanges, AfterViewInit, OnDestroy {
   
   ngAfterViewInit(): void {
     this.maybeRenderChart();
+    setTimeout(() => this.maybeRenderChart());
   }
 
   ngOnChanges(changes: SimpleChanges): void {

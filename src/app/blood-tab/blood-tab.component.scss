@@ -96,7 +96,7 @@ table {
 .dashboard-menu-container {
   // height: 100vh;
   background-color: #1d222b;
-  width: 80vw;
+ width: calc(100vw - 90px);
   // height: 100vh;
   position: absolute;
   right: -10px;
@@ -108,6 +108,122 @@ table {
   // padding: 60px 0;
 
 }
+.blood-wrapper {
+  color: #fff;
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  .no-data {
+    color: #aaa;
+    text-align: center;
+    margin-top: 40px;
+  }
+}
+
+/* === WYKRES === */
+.chart-container {
+  background: #1b2029;
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+
+  canvas {
+    // width: 100% !important;
+    // height: 620px !important;
+  }
+}
+
+/* === KARTY === */
+.blood-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+}
+
+.blood-card {
+  background: #1f2430;
+  border: 1px solid #383c46;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: 0.3s ease;
+
+  &:hover {
+    background: #262b37;
+    transform: translateY(-3px);
+  }
+
+  .header {
+    h3 {
+      margin: 0;
+      color: #9bb1ff;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+  }
+
+  .section {
+    h4 {
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      border-left: 3px solid #4e87f0;
+      padding-left: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 10px;
+    }
+
+    .cell {
+      background: #2b303a;
+      border: 1px solid #3a4050;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .label {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        margin-bottom: 4px;
+      }
+
+      .value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e5e7eb;
+      }
+
+      small {
+        font-size: 0.75rem;
+        color: #9ca3af;
+      }
+    }
+  }
+}
+
+/* === Kolorowanie wyników === */
+.low {
+  border-color: #4dabf7 !important;
+
+  .value {
+    color: #4dabf7 !important;
+  }
+}
+
 
 .container {
   display: flex;

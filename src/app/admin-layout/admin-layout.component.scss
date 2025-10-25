@@ -1,27 +1,39 @@
 .dashboard-menu-container {
-  height: 100%;
-  background-color: #1d222b;
-  width: 80vw;
-  height: 100vh;
-  position: absolute;
-  right: -8px;
+  position: fixed;
   top: 52px;
+  right: 0;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 52px);   
+  background: #1d222b;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;         
+  color: #fff;
+}
+
+.dashboard-menu-container .scroll {
+  overflow-y: auto;
+  width: 100%;
+  padding: 40px 0;              
+  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: #333a49 transparent;
+}
+.dashboard-menu-container .scroll::-webkit-scrollbar { width: 8px; }
+.dashboard-menu-container .scroll::-webkit-scrollbar-thumb {
+  background: #333a49; border-radius: 10px;
 }
 
 .container {
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  padding: 100px 1.5rem;
+  width: 80%;
+  margin: 0 auto;
+  padding: 2rem;
+  background: #212631;
   border: 1px solid #383c46;
-  margin: 60px;
-  height: auto;
-  background-color: #212631;
-  color: white;
+  border-radius: 10px;
 }
+
+.container { padding-bottom: 3rem; }
 
 .ghost {
   background: transparent;
@@ -38,7 +50,6 @@
 }
 .admin-layout {
   display: grid;
-  grid-template-columns: 240px 1fr;
   min-height: 70vh; // korzysta z Twojego otoczenia .dashboard-menu-container
 
   .sidebar {

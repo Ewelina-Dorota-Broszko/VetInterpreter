@@ -18,31 +18,42 @@ export class LoginComponent {
     password: ['', [Validators.required]]
   });
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router
+  ) {}
 
   onSubmit() {
-  this.error = '';
-  if (this.form.invalid) return;
+    this.error = '';
+    if (this.form.invalid) return;
 
-  const { email, password } = this.form.value as { email: string; password: string };
+    const { email, password } = this.form.value as { email: string; password: string };
 
-  this.loading = true;
-  this.auth.login(email, password).subscribe({
-    next: (res: any) => {
-      this.loading = false;
+    this.loading = true;
+    this.auth.login(email, password).subscribe({
+      next: (res: any) => {
+        this.loading = false;
 
-      // rola z backendu; fallback na isVet (zgodność wstecz)
-      const role = res?.user?.role ?? (res?.user?.isVet ? 'vet' : 'owner');
+        const user = res?.user || {};
+        const role = user.role ?? (user.isVet ? 'vet' : 'owner');
+        let target = '/dashboard'; // domyślnie klient
+        if (role === 'admin') {
 
-      // admin + klient -> /profile, wet -> /vet/profile
-      const target = role === 'vet' ? '/vet/profile' : '/profile';
-      this.router.navigateByUrl(target);
-    },
-    error: (err: any) => {
-      this.loading = false;
-      this.error = err?.error?.error || 'Nie udało się zalogować';
-    }
-  });
-}
+          target = '/admin/panel';
+        } else if (role === 'vet') {
+                     console.log("rola: ", user);
 
+          target = '/vet/profile';
+        }
+
+        // 🔹 Przejdź do odpowiedniego panelu
+        this.router.navigateByUrl(target);
+      },
+      error: (err: any) => {
+        this.loading = false;
+        this.error = err?.error?.error || 'Nie udało się zalogować';
+      }
+    });
+  }
 }

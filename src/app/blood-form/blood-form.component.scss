@@ -1,27 +1,47 @@
 .dashboard-menu-container {
-  height: 100%;
-  background-color: #1d222b;
-  width: 80vw;
   position: fixed;
-  right: 0;
   top: 52px;
-  overflow-y: auto;
+  right: 0;
+  width: calc(100vw - 90px);
+  height: calc(100vh - 52px);   /* wysokość MUSI być stała, nie min-height */
+  background: #1d222b;
   display: flex;
   justify-content: center;
-  align-items: flex-start; // nie wyśrodkowujemy w pionie
-  padding: 40px 0;
+  align-items: stretch;          /* ważne */
+  color: #fff;
 }
 
+/* to przewija się w środku */
+.dashboard-menu-container .scroll {
+  overflow-y: auto;
+  width: 100%;
+  padding: 40px 0;               /* możesz to zostawić */
+  box-sizing: border-box;
+
+  /* ładny, cienki scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: #333a49 transparent;
+}
+.dashboard-menu-container .scroll::-webkit-scrollbar { width: 8px; }
+.dashboard-menu-container .scroll::-webkit-scrollbar-thumb {
+  background: #333a49; border-radius: 10px;
+}
+
+/* Twój box z formularzem */
 .container {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: #212631;
+  background: #212631;
   border: 1px solid #383c46;
   border-radius: 10px;
-  color: white;
 }
+
+/* (opcjonalnie) zapas miejsca na samym dole, żeby przycisk nie kleił się do krawędzi */
+.container { padding-bottom: 3rem; }
+
+
 
 h2 {
   margin-bottom: 20px;

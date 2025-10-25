@@ -97,6 +97,65 @@ p {
   }
 }
 
+.mini {
+  justify-content: flex-end !important;
+}
+
+.toolbar-container-mini {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #212631;
+  color: #ffffff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+  font-weight: 600;
+  z-index: 999;
+  position: fixed;
+  width: 100%;
+  transition: 0.6s;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.menu-items-mini {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  padding-left: 50px;
+  color: #2a2a2a;
+  text-decoration: none;
+
+  .menu-item a {
+    color: #ffffff;
+    font-size: 15px;
+    text-decoration: none;
+    letter-spacing: 1px;
+  }
+
+  .menu-item a.active {
+    color: #4b8ef1;
+  }
+
+  .login {
+    padding: 10px 20px;
+    background: linear-gradient(105deg, #5b68eb 0%, #28e1fd 100%);
+    border-radius: 25px;
+
+    a {
+      color: white;
+    }
+
+    &:hover {
+      padding: 10px 20px;
+      background: linear-gradient(105deg, #5b68eb 40%, #28e1fd 80%);
+      border-radius: 25px;
+    }
+  }
+}
+
 .menu-container {
   justify-content: space-between;
   align-items: center;
@@ -171,7 +230,7 @@ p {
 
 
 .footer-login {
-  width: 80vw;
+  width: calc(100vw - 90px);
   position: fixed;
   right: 0;
   bottom: 0;
@@ -383,6 +442,7 @@ footer {
             cursor: pointer;
             border-radius: 5px;
             transition: 500ms;
+
             p {
               color: #757980;
             }
@@ -435,7 +495,7 @@ footer {
 }
 
 .move-80 {
-  width: 80vw;
+  width: calc(100vw - 90px);
   height: 100%;
   right: 0;
 }
