@@ -210,8 +210,8 @@
         <ng-container *ngIf="isVetView">
           <p><strong>Klient:</strong>
             <ng-container *ngIf="selectedEntry?.ownerId; else dashOwner">
-              <a href="" (click)="openOwner(selectedEntry?.ownerId, $event)">
-                {{ selectedEntry?.ownerName || selectedEntry?.ownerId }}
+              <a href="" (click)="openOwner(selectedEntry.ownerId, $event)">
+                {{ selectedEntry.ownerName || selectedEntry.ownerId }}
               </a>
             </ng-container>
             <ng-template #dashOwner> — </ng-template>
@@ -219,8 +219,8 @@
 
           <p><strong>Zwierz:</strong>
             <ng-container *ngIf="selectedEntry?.animalId; else dashAnimal">
-              <a href="" (click)="openAnimal(selectedEntry?.animalId, $event)">
-                {{ selectedEntry?.animalName || selectedEntry?.animalId }}
+              <a href="" (click)="openAnimal(selectedEntry.animalId, $event)">
+                {{ selectedEntry.animalName || selectedEntry.animalId }}
               </a>
             </ng-container>
             <ng-template #dashAnimal> — </ng-template>
