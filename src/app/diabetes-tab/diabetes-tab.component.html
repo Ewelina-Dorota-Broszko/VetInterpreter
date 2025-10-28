@@ -1,9 +1,11 @@
 <h2>Zapisy cukrzycy</h2>
 
-<!-- Wykres -->
-<canvas #diabetesChart *ngIf="sorted?.length"></canvas>
+<!-- Wykres glukozy -->
+<div class="chart-container" *ngIf="sorted?.length">
+  <canvas #diabetesChart></canvas>
+</div>
 
-<!-- Tabela -->
+<!-- Tabela z pomiarami -->
 <table *ngIf="sorted?.length; else noDiab" class="diabetes-table">
   <thead>
     <tr>
@@ -16,12 +18,26 @@
       <th>Uwagi</th>
     </tr>
   </thead>
+
   <tbody>
     <tr *ngFor="let d of sorted; trackBy: trackByIndex">
-      <td>{{ d.date }}</td>
-      <td>{{ d.time }}</td>
-      <td>{{ d.glucose }}</td>
-      <td>
+      <td data-label="Data">{{ d.date }}</td>
+      <td data-label="Godzina">{{ d.time }}</td>
+
+      <!-- Kolorowanie poziomu glukozy -->
+      <td
+        data-label="Glukoza (mg/dL)"
+        [ngClass]="{
+          'low': d.glucose < 70,
+          'normal': d.glucose >= 70 && d.glucose <= 140,
+          'high': d.glucose > 140
+        }"
+      >
+        {{ d.glucose }}
+      </td>
+
+      <!-- Typ pomiaru -->
+      <td data-label="Rodzaj pomiaru">
         <ng-container [ngSwitch]="d.measurementType">
           <span *ngSwitchCase="'fasting'">Na czczo</span>
           <span *ngSwitchCase="'postMeal'">Po posiłku</span>
@@ -29,9 +45,11 @@
           <span *ngSwitchDefault>-</span>
         </ng-container>
       </td>
-      <td>{{ d.insulinType || '-' }}</td>
-      <td>{{ d.insulinDose != null ? d.insulinDose : '-' }}</td>
-      <td>{{ d.comments || '-' }}</td>
+
+      <!-- Insulina -->
+      <td data-label="Insulina">{{ d.insulinType || '—' }}</td>
+      <td data-label="Dawka">{{ d.insulinDose != null ? d.insulinDose : '—' }}</td>
+      <td data-label="Uwagi">{{ d.comments || '—' }}</td>
     </tr>
   </tbody>
 </table>

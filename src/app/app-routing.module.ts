@@ -45,6 +45,7 @@ import { AdminVetsListComponent } from './admin-vets-list/admin-vets-list.compon
 import { ChatRoomComponent } from './chat-room/chat-room.component';
 import { ClientMessagesPanelComponent } from './client-messages-panel/client-messages-panel.component';
 import { VetMessagesPanelComponent } from './vet-messages-panel/vet-messages-panel.component';
+import { SymptomsFormComponent } from './symptoms-form/symptoms-form.component';
 
 const routes: Routes = [
   { path: '', component: FrontPageComponent },
@@ -74,6 +75,7 @@ const routes: Routes = [
   { path: 'form/vaccination', component: VaccinationFormComponent, canActivate: [AuthGuard] },
   { path: 'form/diabetes', component: DiabetesFormComponent, canActivate: [AuthGuard] },
   { path: 'form/visit-notes', component: VisitNotesComponent, canActivate: [AuthGuard] },
+   { path: 'form/symptoms', component: SymptomsFormComponent, canActivate: [AuthGuard] },
 
   // Właściciel – weterynarze
   { path: 'find-vet', component: FindVetComponent, canActivate: [AuthGuard] },

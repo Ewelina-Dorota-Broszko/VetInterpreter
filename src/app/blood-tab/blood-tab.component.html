@@ -1,160 +1,125 @@
 <div class="blood-wrapper" *ngIf="bloodTests?.length; else noBlood">
   <h2>Badania krwi</h2>
 
-  <!-- === WYKRES TRENDU / HISTOGRAM === -->
+  <!-- WYKRES -->
   <div class="chart-container" *ngIf="bloodTests?.length">
     <canvas #bloodChartCanvas></canvas>
   </div>
 
-  <!-- === KARTY Z DANYMI === -->
-  <div class="blood-grid">
-    <div class="blood-card" *ngFor="let test of bloodTests">
-      <div class="header">
-        <h3>{{ test.date }}</h3>
-      </div>
+  <div *ngFor="let test of bloodTests" class="blood-report">
+    <h3>{{ test.date }}</h3>
 
-      <div class="section">
-    <h4>Morfologia</h4>
-    <div class="row">
-      <div class="cell" [ngClass]="getValueStatus(test.hemoglobin!, 'hemoglobin')" *ngFor="let test of bloodTests">
-        <span class="label">HGB</span>
-        <span class="value">{{ test.hemoglobin }}</span>
-        <small>{{ getRangeText('hemoglobin') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.rbc!, 'rbc')" *ngFor="let test of bloodTests">
-        <span class="label">RBC</span>
-        <span class="value">{{ test.rbc }}</span>
-        <small>{{ getRangeText('rbc') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.wbc!, 'wbc')" *ngFor="let test of bloodTests">
-        <span class="label">WBC</span>
-        <span class="value">{{ test.wbc }}</span>
-        <small>{{ getRangeText('wbc') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.hematocrit!, 'hematocrit')" *ngFor="let test of bloodTests">
-        <span class="label">Hematokryt</span>
-        <span class="value">{{ test.hematocrit }}</span>
-        <small>{{ getRangeText('hematocrit') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.platelets!, 'platelets')" *ngFor="let test of bloodTests">
-        <span class="label">Płytki</span>
-        <span class="value">{{ test.platelets }}</span>
-        <small>{{ getRangeText('platelets') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.mcv!, 'mcv')" *ngFor="let test of bloodTests">
-        <span class="label">MCV</span>
-        <span class="value">{{ test.mcv }}</span>
-        <small>{{ getRangeText('mcv') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.mch!, 'mch')" *ngFor="let test of bloodTests">
-        <span class="label">MCH</span>
-        <span class="value">{{ test.mch }}</span>
-        <small>{{ getRangeText('mch') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.mchc!, 'mchc')" *ngFor="let test of bloodTests">
-        <span class="label">MCHC</span>
-        <span class="value">{{ test.mchc }}</span>
-        <small>{{ getRangeText('mchc') }}</small>
-      </div>
+    <!-- MORFOLOGIA -->
+    <div class="blood-table">
+      <h4>Morfodwlogia</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>PARAMETR</th>
+            <th>WARTOŚĆ</th>
+            <th>J.M.</th>
+            <th>MIN</th>
+            <th>MAX</th>
+            <th>Zakres</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let param of morphologyParams">
+            <td>{{ param.label }}</td>
+            <td [ngClass]="getValueStatus(getValue(test, param.key), param.key)">
+              {{ getValue(test, param.key) ?? '—' }}
+            </td>
+            <td>{{ referenceRanges[param.key].unit }}</td>
+            <td>{{ referenceRanges[param.key].min }}</td>
+            <td>{{ referenceRanges[param.key].max }}</td>
+            <td>
+              <div class="bar-container">
+                <div class="bar-bg">
+                  <div class="bar-fill" [ngStyle]="getBarStyle(getValue(test, param.key), param.key)"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div>
-       <div class="section">
-    <h4>Biochemia</h4>
-    <div class="row">
-      <div class="cell" [ngClass]="getValueStatus(test.glucose!, 'glucose')" *ngFor="let test of bloodTests">
-        <span class="label">Glukoza</span>
-        <span class="value">{{ test.glucose }}</span>
-        <small>{{ getRangeText('glucose') }}</small>
-      </div>
 
-      <div class="cell" [ngClass]="getValueStatus(test.urea!, 'urea')" *ngFor="let test of bloodTests">
-        <span class="label">Mocznik</span>
-        <span class="value">{{ test.urea }}</span>
-        <small>{{ getRangeText('urea') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.creatinine!, 'creatinine')" *ngFor="let test of bloodTests">
-        <span class="label">Kreatynina</span>
-        <span class="value">{{ test.creatinine }}</span>
-        <small>{{ getRangeText('creatinine') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.alt!, 'alt')" *ngFor="let test of bloodTests">
-        <span class="label">ALT (GPT)</span>
-        <span class="value">{{ test.alt }}</span>
-        <small>{{ getRangeText('alt') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.ast!, 'ast')" *ngFor="let test of bloodTests">
-        <span class="label">AST (GOT)</span>
-        <span class="value">{{ test.ast }}</span>
-        <small>{{ getRangeText('ast') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.alp!, 'alp')" *ngFor="let test of bloodTests">
-        <span class="label">ALP</span>
-        <span class="value">{{ test.alp }}</span>
-        <small>{{ getRangeText('alp') }}</small>
-      </div>
+    <!-- BIOCHEMIA -->
+    <div class="blood-table">
+      <h4>Biochemia</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>PARAMETR</th>
+            <th>WARTOŚĆ</th>
+            <th>J.M.</th>
+            <th>MIN</th>
+            <th>MAX</th>
+            <th>Zakres</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let param of biochemParams">
+            <td>{{ param.label }}</td>
+            <td [ngClass]="getValueStatus(getValue(test, param.key), param.key)">
+              {{ getValue(test, param.key) ?? '—' }}
+            </td>
+            <td>{{ referenceRanges[param.key].unit }}</td>
+            <td>{{ referenceRanges[param.key].min }}</td>
+            <td>{{ referenceRanges[param.key].max }}</td>
+            <td>
+              <div class="bar-container">
+                <div class="bar-bg">
+                  <div class="bar-fill" [ngStyle]="getBarStyle(getValue(test, param.key), param.key)"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div>
-      <div class="section">
-    <h4>Białka i Bilirubiny</h4>
-    <div class="row">
-      <div class="cell" [ngClass]="getValueStatus(test.totalProtein!, 'totalProtein')" *ngFor="let test of bloodTests">
-        <span class="label">Białko całkowite</span>
-        <span class="value">{{ test.totalProtein }}</span>
-        <small>{{ getRangeText('totalProtein') }}</small>
-      </div>
 
-      <div class="cell" [ngClass]="getValueStatus(test.albumin!, 'albumin')" *ngFor="let test of bloodTests">
-        <span class="label">Albuminy</span>
-        <span class="value">{{ test.albumin }}</span>
-        <small>{{ getRangeText('albumin') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.globulin!, 'globulin')" *ngFor="let test of bloodTests">
-        <span class="label">Globuliny</span>
-        <span class="value">{{ test.globulin }}</span>
-        <small>{{ getRangeText('globulin') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.bilirubinTotal!, 'bilirubinTotal')" *ngFor="let test of bloodTests">
-        <span class="label">Bilirubina całkowita</span>
-        <span class="value">{{ test.bilirubinTotal }}</span>
-        <small>{{ getRangeText('bilirubinTotal') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.bilirubinDirect!, 'bilirubinDirect')" *ngFor="let test of bloodTests">
-        <span class="label">Bilirubina bezpośrednia</span>
-        <span class="value">{{ test.bilirubinDirect }}</span>
-        <small>{{ getRangeText('bilirubinDirect') }}</small>
-      </div>
-
-      <div class="cell" [ngClass]="getValueStatus(test.bilirubinIndirect!, 'bilirubinIndirect')" *ngFor="let test of bloodTests">
-        <span class="label">Bilirubina pośrednia</span>
-        <span class="value">{{ test.bilirubinIndirect }}</span>
-        <small>{{ getRangeText('bilirubinIndirect') }}</small>
-      </div>
+    <!-- BIAŁKA I BILIRUBINY -->
+    <div class="blood-table">
+      <h4>Białka i Bilirubiny</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>PARAMETR</th>
+            <th>WARTOŚĆ</th>
+            <th>J.M.</th>
+            <th>MIN</th>
+            <th>MAX</th>
+            <th>Zakres</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let key of ['albumin','globulin','totalProtein','bilirubinTotal','bilirubinDirect','bilirubinIndirect']">
+            <td>{{ key | titlecase }}</td>
+            <td [ngClass]="getValueStatus(getValue(test, key), key)">
+              {{ getValue(test, key) ?? '—' }}
+            </td>
+            <td>{{ referenceRanges[key].unit }}</td>
+            <td>{{ referenceRanges[key].min }}</td>
+            <td>{{ referenceRanges[key].max }}</td>
+            <td>
+              <div class="bar-container">
+                <div class="bar-bg">
+                  <div class="bar-fill" [ngStyle]="getBarStyle(getValue(test, key), key)"></div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-  </div>
 
-      <div class="section">
-        <h4>Inne</h4>
-        <div class="row">
-          <div class="cell">
-            <span class="label">Komentarz</span>
-            <span class="value">{{ test.comments || '—' }}</span>
-          </div>
-        </div>
-      </div>
+    <!-- KOMENTARZ -->
+    <div class="blood-table">
+      <h4>Komentarz</h4>
+      <p class="comment">
+        {{ test.comments || 'Brak uwag do badania.' }}
+      </p>
     </div>
   </div>
 </div>

@@ -1,4 +1,3 @@
-<!-- meds-tab.component.html -->
 <h2>Plan leków</h2>
 
 <canvas #medsChart *ngIf="(sorted?.length ?? 0) > 0"></canvas>
@@ -19,18 +18,20 @@
   </thead>
   <tbody>
     <tr *ngFor="let m of sorted; trackBy: trackByIndex">
-      <td>{{ m.name }}</td>
-      <td>{{ m.dose }}</td>
-      <td>{{ m.frequency || '—' }}</td>
-      <td>{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
-      <td>{{ m.startDate }}</td>
-      <td>{{ m.endDate || '—' }}</td>
-      <td>
+      <td data-label="Nazwa">{{ m.name }}</td>
+      <td data-label="Dawka">{{ m.dose }}</td>
+      <td data-label="Częstotliwość">{{ m.frequency || '—' }}</td>
+      <td data-label="Godziny">{{ (m.timesOfDay || []).join(', ') || '—' }}</td>
+      <td data-label="Start">{{ m.startDate }}</td>
+      <td data-label="Koniec">{{ m.endDate || '—' }}</td>
+
+      <td data-label="Aktywna">
         <span class="pill" [ngClass]="m.isActive ? 'active' : 'inactive'">
           {{ m.isActive ? 'Tak' : 'Nie' }}
         </span>
       </td>
-      <td class="actions">
+
+      <td data-label="Akcje" class="actions">
         <button
           type="button"
           class="pill toggle"
@@ -48,11 +49,12 @@
           Usuń
         </button>
       </td>
-      <td>{{ m.notes || '—' }}</td>
+
+      <td data-label="Uwagi">{{ m.notes || '—' }}</td>
     </tr>
   </tbody>
 </table>
 
 <ng-template #noMeds>
-  <p>Brak leków.</p>
+  <p class="no-data">Brak leków.</p>
 </ng-template>

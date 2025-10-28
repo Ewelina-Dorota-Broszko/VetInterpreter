@@ -8,6 +8,7 @@
       <th>Typ</th>
       <th>Data</th>
       <th>Następny termin</th>
+      <th>Status</th>
       <th>Produkt</th>
       <th>Seria</th>
       <th>Lekarz</th>
@@ -16,17 +17,37 @@
   </thead>
   <tbody>
     <tr *ngFor="let v of sorted; trackBy: trackByIndex">
-      <td>{{ prettyType(v.type) }}</td>
-      <td>{{ v.date }}</td>
-      <td>{{ v.dueDate || '—' }}</td>
-      <td>{{ v.product || '—' }}</td>
-      <td>{{ v.batch || '—' }}</td>
-      <td>{{ v.vet || '—' }}</td>
-      <td>{{ v.notes || '—' }}</td>
+      <td data-label="Typ">{{ prettyType(v.type) }}</td>
+      <td data-label="Data">{{ v.date }}</td>
+      <td data-label="Następny termin">{{ v.dueDate || '—' }}</td>
+
+      <td data-label="Status">
+        <span
+          class="status"
+          [ngClass]="{
+            'ok': isUpcoming(v.dueDate),
+            'due': isSoon(v.dueDate),
+            'overdue': isOverdue(v.dueDate)
+          }"
+        >
+          {{
+            isOverdue(v.dueDate)
+              ? 'Przeterminowane'
+              : isSoon(v.dueDate)
+              ? 'Zbliża się'
+              : 'Aktualne'
+          }}
+        </span>
+      </td>
+
+      <td data-label="Produkt">{{ v.product || '—' }}</td>
+      <td data-label="Seria">{{ v.batch || '—' }}</td>
+      <td data-label="Lekarz">{{ v.vet || '—' }}</td>
+      <td data-label="Uwagi">{{ v.notes || '—' }}</td>
     </tr>
   </tbody>
 </table>
 
 <ng-template #noVacc>
-  <p>Brak szczepień.</p>
+  <p class="no-data">Brak szczepień.</p>
 </ng-template>

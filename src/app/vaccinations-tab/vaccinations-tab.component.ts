@@ -141,4 +141,23 @@ export class VaccinationsTabComponent implements OnChanges, AfterViewInit {
   }
 
   trackByIndex(i: number) { return i; }
+
+  isOverdue(date?: string): boolean {
+  if (!date) return false;
+  return new Date(date) < new Date();
+}
+
+isSoon(date?: string): boolean {
+  if (!date) return false;
+  const d = new Date(date);
+  const now = new Date();
+  const diff = d.getTime() - now.getTime();
+  return diff > 0 && diff < 1000 * 60 * 60 * 24 * 14; // < 14 dni
+}
+
+isUpcoming(date?: string): boolean {
+  if (!date) return false;
+  return new Date(date) >= new Date() && !this.isSoon(date);
+}
+
 }
