@@ -1,157 +1,126 @@
-.profile-wrapper {
-  padding: 20px;
-  // max-width: 1200px;
-  margin: 0 auto;
+h2 {
+  color: #e5e7eb;
+  font-size: 1.4rem;
+  margin-bottom: 1.2rem;
+  font-weight: 600;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 20px;
-  margin-bottom: 20px;
-  color: white;
+/* === Kontener wykresu === */
+.chart-container {
+  background: #1f2530;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 1.5rem;
 
-  .actions {
-      display: flex;
-      align-items: center;
-
-      button {
-          padding: 10px 16px;
-          background: #007acc;
-          color: #fff;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-
-          &:hover {
-              background: #005f9e;
-          }
-      }
+  canvas {
+    width: 100%;
+    max-height: 380px;
   }
 }
 
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin: 20px 0;
-
-  button {
-      padding: 8px 14px;
-      border: 1px solid #ccc;
-      background: #f5f5f5;
-      border-radius: 6px;
-      cursor: pointer;
-
-      &.active {
-          background: #007acc;
-          color: #fff;
-          border-color: #007acc;
-      }
-  }
-}
-
-.tab-content {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 20px;
-}
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 16px;
-
-  .card {
-      background: #fafafa;
-      border: 1px solid #eee;
-      border-radius: 6px;
-      padding: 16px;
-  }
-}
-
-table {
+/* === Tabela wagi === */
+.weight-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
+  background-color: #2b303a;
+  color: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  font-size: 0.95rem;
 
   thead {
-      background: #f5f5f5;
-  }
+    background: #374151;
+    color: #f9fafb;
+    text-transform: uppercase;
+    font-size: 0.85rem;
 
-  th,
-  td {
-      border: 1px solid #e0e0e0;
-      padding: 8px;
+    th {
+      padding: 12px;
+      border-bottom: 2px solid #4b5563;
       text-align: left;
-  }
-}
-
-
-.dashboard-menu-container {
-  // height: 100vh;
-  background-color: #1d222b;
- width: calc(100vw - 90px);
-  // height: 100vh;
-  position: absolute;
-  right: -10px;
-  top: 52px;
-  // display: flex;
-  // justify-content: center;
-  // align-items: center;
-  // overflow: auto;
-  // padding: 60px 0;
-
-}
-
-.container {
-  display: flex;
-  // width: 100%;
-  flex-direction: column;
-  padding: 40px 1.5rem;
-  // border: 1px solid #383c46;
-  margin: 60px;
-  height: auto;
-  background-color: #212631;
-}
-.visit-history {
-
-h3 {
-  margin-bottom: 20px;
-  color: #ccc;
-}
-
-.visit-card {
-  background-color: #2b303a;
-  border: 1px solid #444;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 20px;
-
-  .visit-summary {
-    font-weight: bold;
-    cursor: pointer;
-    color: #4db6ac;
-
-    &:hover {
-      text-decoration: underline;
     }
   }
 
-  .visit-details {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #ddd;
+  tbody {
+    tr {
+      border-bottom: 1px solid #3d4450;
+      transition: background 0.2s ease;
 
-    ul {
-      margin: 0;
-      padding-left: 18px;
-    }
+      &:hover {
+        background: #323844;
+      }
 
-    p {
-      margin: 8px 0;
+      td {
+        padding: 10px 12px;
+        text-align: left;
+      }
     }
   }
 }
+
+/* === Kolorowe etykiety BCS === */
+.bcs {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: center;
+  min-width: 40px;
+
+  &.low {
+    background: rgba(59, 130, 246, 0.15); /* niebieski */
+    color: #3b82f6;
+  }
+  &.normal {
+    background: rgba(34, 197, 94, 0.15); /* zielony */
+    color: #22c55e;
+  }
+  &.high {
+    background: rgba(234, 179, 8, 0.15); /* żółty */
+    color: #facc15;
+  }
+  &.obese {
+    background: rgba(239, 68, 68, 0.15); /* czerwony */
+    color: #ef4444;
+  }
+}
+
+/* === Brak danych === */
+p {
+  color: #9ca3af;
+  font-style: italic;
+  margin-top: 10px;
+}
+
+/* === Responsywność === */
+@media (max-width: 768px) {
+  .weight-table thead {
+    display: none;
+  }
+
+  .weight-table tbody tr {
+    display: block;
+    margin-bottom: 15px;
+    border: 1px solid #3d4450;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .weight-table tbody td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 10px;
+    border: none;
+
+    &::before {
+      content: attr(data-label);
+      font-weight: 600;
+      color: #9ca3af;
+    }
+  }
+
+  canvas {
+    display: none !important;
+  }
 }

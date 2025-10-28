@@ -15,16 +15,16 @@
   </thead>
   <tbody>
     <tr *ngFor="let s of sorted; trackBy: trackByIndex">
-      <td>{{ s.date }}</td>
-      <td>{{ s.symptomTags?.join(', ') || '—' }}</td>
-      <td>{{ s.painScore ?? '—' }}</td>
-      <td>{{ s.energy ?? '—' }}</td>
-      <td>{{ s.appetite ?? '—' }}</td>
-      <td>{{ s.notes || '—' }}</td>
+      <td data-label="Data">{{ s.date }}</td>
+      <td data-label="Objawy">{{ s.symptomTags?.join(', ') || '—' }}</td>
+      <td data-label="Ból">{{ s.painScore ?? '—' }}</td>
+      <td data-label="Energia">{{ s.energy ?? '—' }}</td>
+      <td data-label="Apetyt">{{ s.appetite ?? '—' }}</td>
+      <td data-label="Uwagi">{{ s.notes || '—' }}</td>
     </tr>
   </tbody>
 </table>
 
 <ng-template #noSymptoms>
-  <p>Brak wpisów objawów.</p>
+  <p class="no-data">Brak wpisów objawów.</p>
 </ng-template>

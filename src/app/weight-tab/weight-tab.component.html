@@ -1,8 +1,12 @@
 <h2>Waga i kondycja (BCS)</h2>
 
-<canvas #weightChart *ngIf="weightHistory?.length"></canvas>
+<!-- Wykres -->
+<div class="chart-container" *ngIf="sorted?.length">
+  <canvas #weightChart></canvas>
+</div>
 
-<table *ngIf="weightHistory?.length; else noWeight">
+<!-- Tabela -->
+<table *ngIf="sorted?.length; else noWeight" class="weight-table">
   <thead>
     <tr>
       <th>Data</th>
@@ -12,11 +16,23 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let w of weightHistory; trackBy: trackByIndex">
-      <td>{{ w.date }}</td>
-      <td>{{ w.weightKg }}</td>
-      <td>{{ w.bcs ?? '—' }}</td>
-      <td>{{ w.note || '—' }}</td>
+    <tr *ngFor="let w of sorted; trackBy: trackByIndex">
+      <td data-label="Data">{{ w.date }}</td>
+      <td data-label="Waga">{{ w.weightKg }}</td>
+      <td data-label="BCS">
+        <span
+          class="bcs"
+          [ngClass]="{
+            'low': (w.bcs ?? 0) < 4,
+            'normal': (w.bcs ?? 0) >= 4 && (w.bcs ?? 0) <= 6,
+            'high': (w.bcs ?? 0) >= 7 && (w.bcs ?? 0) <= 8,
+            'obese': (w.bcs ?? 0) > 8
+          }"
+        >
+          {{ w.bcs ?? '—' }}
+        </span>
+      </td>
+      <td data-label="Notatka">{{ w.note || '—' }}</td>
     </tr>
   </tbody>
 </table>

@@ -3,7 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { VetService } from '../services/vet.service';
 
 type DocType =
-  | 'blood' | 'urine' | 'temperature' | 'weight'
+  | 'overview' | 'blood' | 'urine' | 'stool'
+  | 'temperature' | 'diabetes' | 'weight'
   | 'vaccination' | 'meds' | 'symptoms';
 
 @Component({
@@ -18,14 +19,18 @@ export class VetAddDocumentComponent implements OnInit {
   loading = false;
   error = '';
 
+  /** Lista wszystkich możliwych typów dokumentów (zgodna z zakładkami dashboardu) */
   cards: Array<{ type: DocType; title: string; hint: string; route: string }> = [
-    { type: 'blood',        title: 'Badanie krwi',       hint: 'Morfologia + biochemia',       route: '/form/blood' },
-    { type: 'urine',        title: 'Badanie moczu',      hint: 'Parametry moczu',              route: '/form/urine' },
-    { type: 'temperature',  title: 'Temperatura',        hint: 'Pojedynczy pomiar',            route: '/form/temperature' },
-    { type: 'weight',       title: 'Waga & BCS',         hint: 'Masa ciała i kondycja',        route: '/form/weight' },
-    { type: 'vaccination',  title: 'Szczepienie',        hint: 'Typ, data, przypomnienie',     route: '/form/vaccination' },
-    { type: 'meds',         title: 'Lek',                hint: 'Dawka, częstość, okres',       route: '/form/meds' },
-    { type: 'symptoms',     title: 'Objaw',              hint: 'Opis, nasilenie, czas trwania', route: '/form/symptoms' },
+    { type: 'overview',     title: 'Podsumowanie',      hint: 'Szybki przegląd historii i badań', route: '/vet/overview' },
+    { type: 'blood',        title: 'Badanie krwi',      hint: 'Morfologia + biochemia',           route: '/form/blood' },
+    { type: 'urine',        title: 'Badanie moczu',     hint: 'Parametry fizykochemiczne',        route: '/form/urine' },
+    { type: 'stool',        title: 'Badanie kału',      hint: 'Pasożyty, bakterie, trawienie',    route: '/form/stool' },
+    { type: 'temperature',  title: 'Temperatura',       hint: 'Pojedynczy pomiar temperatury',    route: '/form/temperature' },
+    { type: 'diabetes',     title: 'Cukrzyca',          hint: 'Pomiar glukozy, insuliny, ketonów',route: '/form/diabetes' },
+    { type: 'weight',       title: 'Waga & BCS',        hint: 'Masa ciała i kondycja zwierzęcia', route: '/form/weight' },
+    { type: 'vaccination',  title: 'Szczepienie',       hint: 'Rodzaj, data, przypomnienie',      route: '/form/vaccination' },
+    { type: 'meds',         title: 'Leki',              hint: 'Dawkowanie i okres leczenia',      route: '/form/meds' },
+    { type: 'symptoms',     title: 'Objawy',            hint: 'Opis, nasilenie, czas trwania',    route: '/form/symptoms' },
   ];
 
   constructor(
@@ -57,6 +62,7 @@ export class VetAddDocumentComponent implements OnInit {
     });
   }
 
+  /** Otwiera wybrany formularz na podstawie typu dokumentu */
   open(type: DocType) {
     if (!this.animalId) {
       this.error = 'Podaj najpierw ID zwierzaka.';
@@ -66,8 +72,8 @@ export class VetAddDocumentComponent implements OnInit {
     this.router.navigate([card.route], { queryParams: { animalId: this.animalId } });
   }
 
+  /** Powrót do profilu zwierzaka lub listy pacjentów */
   goBack() {
-    // jeśli przyszliśmy z profilu zwierzaka – wróć tam; inaczej do listy pacjentów
     const backToAnimal = this.animal?._id;
     if (backToAnimal) {
       this.router.navigate(['/vet/animal', backToAnimal]);

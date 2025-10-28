@@ -15,16 +15,22 @@
   </thead>
   <tbody>
     <tr *ngFor="let t of temperatureLogs; trackBy: trackByIndex">
-      <td>{{ t.date }}</td>
-      <td>{{ t.time }}</td>
-      <td>{{ t.temperature }}</td>
-      <td>{{ t.behavior || '—' }}</td>
-      <td>{{ t.appetite || '—' }}</td>
-      <td>{{ t.comments || '—' }}</td>
+      <td data-label="Data">{{ t.date }}</td>
+      <td data-label="Godzina">{{ t.time }}</td>
+      <td data-label="Temperatura"
+          [class.low]="t.temperature < 37"
+          [class.normal]="t.temperature >= 37 && t.temperature <= 39"
+          [class.high]="t.temperature > 39 && t.temperature <= 40"
+          [class.very-high]="t.temperature > 40">
+        {{ t.temperature }}
+      </td>
+      <td data-label="Zachowanie">{{ t.behavior || '—' }}</td>
+      <td data-label="Apetyt">{{ t.appetite || '—' }}</td>
+      <td data-label="Komentarze">{{ t.comments || '—' }}</td>
     </tr>
   </tbody>
 </table>
 
 <ng-template #noTemp>
-  <p>Brak zapisów temperatury.</p>
+  <p class="no-data">Brak zapisów temperatury.</p>
 </ng-template>

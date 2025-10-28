@@ -8,7 +8,7 @@
       <!-- Pasek akcji -->
       <div class="bar">
         <button class="ghost" routerLink="/vet/patients">← Wróć</button>
-        <div class="right">
+        <!-- <div class="right">
           <button (click)="addDoc('blood')">+ Krew</button>
           <button (click)="addDoc('urine')">+ Mocz</button>
           <button (click)="addDoc('temperature')">+ Temp</button>
@@ -16,7 +16,7 @@
           <button (click)="addDoc('vaccination')">+ Szczep.</button>
           <button (click)="addDoc('meds')">+ Lek</button>
           <button (click)="addDoc('symptoms')">+ Objaw</button>
-        </div>
+        </div> -->
       </div>
 
       <!-- ===== Nagłówek profilu ===== -->
@@ -60,7 +60,7 @@
 
         <!-- ===== Zakładki ===== -->
         <nav class="tabs">
-          <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Podsumowanie</button>
+          <!-- <button [class.active]="activeTab === 'overview'" (click)="setTab('overview')">Podsumowanie</button> -->
           <button [class.active]="activeTab === 'blood'" (click)="setTab('blood')">Krew</button>
           <button [class.active]="activeTab === 'urine'" (click)="setTab('urine')">Mocz</button>
           <button [class.active]="activeTab === 'stool'" (click)="setTab('stool')">Kał</button>

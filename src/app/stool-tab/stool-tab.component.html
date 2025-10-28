@@ -15,20 +15,38 @@
       <th>Uwagi</th>
     </tr>
   </thead>
+
   <tbody>
     <tr *ngFor="let test of sorted; trackBy: trackByIndex">
-      <td>{{ test.date }}</td>
-      <td>{{ prettyConsistency(test.consistency) }}</td>
-      <td>{{ test.color }}</td>
-      <td>{{ test.blood ? 'tak' : 'nie' }}</td>
-      <td>{{ test.mucus ? 'tak' : 'nie' }}</td>
-      <td>{{ test.odor || '—' }}</td>
-      <td>{{ test.parasites ? 'tak' : 'nie' }}</td>
-      <td>{{ test.comments || '—' }}</td>
+      <td data-label="Data">{{ test.date }}</td>
+      <td data-label="Konsystencja">{{ prettyConsistency(test.consistency) }}</td>
+      <td data-label="Kolor">{{ test.color }}</td>
+
+      <td data-label="Krew"
+          [class.positive]="test.blood"
+          [class.negative]="!test.blood">
+        {{ test.blood ? 'tak' : 'nie' }}
+      </td>
+
+      <td data-label="Śluz"
+          [class.positive]="test.mucus"
+          [class.negative]="!test.mucus">
+        {{ test.mucus ? 'tak' : 'nie' }}
+      </td>
+
+      <td data-label="Zapach">{{ test.odor || '—' }}</td>
+
+      <td data-label="Pasożyty"
+          [class.positive]="test.parasites"
+          [class.negative]="!test.parasites">
+        {{ test.parasites ? 'tak' : 'nie' }}
+      </td>
+
+      <td data-label="Uwagi" [class.empty]="!test.comments">{{ test.comments || '—' }}</td>
     </tr>
   </tbody>
 </table>
 
 <ng-template #noStool>
-  <p>Brak badań kału.</p>
+  <p class="no-data">Brak badań kału.</p>
 </ng-template>
