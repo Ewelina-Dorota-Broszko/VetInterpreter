@@ -8,7 +8,7 @@
     <div class="menu-items">
       <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
-      <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
+      <!-- <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div> -->
       <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontakt</a></div>
       <div class="menu-item"><a routerLink="/login" [class.active]="isActive('/login')">Logowanie</a></div>
       <div class="menu-item"><a routerLink="/register" [class.active]="isActive('/register')">Rejestracja</a></div>
@@ -26,7 +26,7 @@
     <div class="menu-items">
       <div class="menu-item"><a routerLink="/" [class.active]="isActive('/')">Strona główna</a></div>
       <div class="menu-item"><a routerLink="/about" [class.active]="isActive('/about')">O nas</a></div>
-      <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div>
+      <!-- <div class="menu-item"><a routerLink="/blog" [class.active]="isActive('/blog')">Blog</a></div> -->
       <div class="menu-item"><a routerLink="/contact" [class.active]="isActive('/contact')">Kontakt</a></div>
 
       <div *ngIf="!(auth.user$ | async)?.isVet" class="menu-item"><a routerLink="/dashboard" [class.active]="isActive('/dashboard')">Dashboard</a></div>
