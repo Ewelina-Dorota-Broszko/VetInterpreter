@@ -59,13 +59,9 @@ router.patch('/:id', async (req: AuthedRequest, res) => {
 router.patch('/me', async (req: AuthedRequest, res) => {
   let owner = await Owner.findOne({ userId: req.user!.id });
   if (!owner) {
-    owner = await Owner.create({
-      userId: req.user!.id,
-      name: 'Nowy właściciel',
-      email: '',
-      phone: ''
-    });
-  }
+  return res.status(404).json({ error: 'Owner profile not found' });
+}
+
   owner.set(req.body);
   await owner.save();
   res.json(owner);

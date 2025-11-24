@@ -3,6 +3,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import User from '../models/user';
 import Owner from '../models/owner';
+import Vet from '../models/vet'; // ⬅️ DODANE
 import { auth, AuthedRequest, signToken } from '../middleware/auth';
 
 const router = Router();
@@ -25,7 +26,9 @@ async function ensureOwnerForUser(user: any) {
   return owner;
 }
 
-/** POST /auth/register */
+/* =========================================================
+ *  REGISTER
+ * ======================================================= */
 router.post('/register', async (req, res) => {
   try {
     const { email, password, firstName, lastName, phone, isVet } = req.body;
@@ -37,88 +40,162 @@ router.post('/register', async (req, res) => {
     if (!isPhone(phone)) return res.status(400).json({ error: 'Nieprawidłowy numer telefonu' });
     if (String(password).length < 6) return res.status(400).json({ error: 'Hasło musi mieć min. 6 znaków' });
 
-    // ✅ duplikaty e-mail — case-insensitive
+    // duplikaty email
     const exists = await User.findOne({ email: ciEmail(email) });
     if (exists) return res.status(409).json({ error: 'Email już zarejestrowany' });
 
     const passwordHash = await bcrypt.hash(password, 12);
     const role = Boolean(isVet) ? 'vet' : 'owner';
 
+    // ➤ ZAPIS lastLoginAt przy rejestracji
+    const now = new Date();
+
     const user = await User.create({
-      email, passwordHash, firstName, lastName, phone,
+      email,
+      passwordHash,
+      firstName,
+      lastName,
+      phone,
       isVet: Boolean(isVet),
-      role
+      role,
+      lastLoginAt: now
     });
 
     const owner = await ensureOwnerForUser(user);
-    const token = signToken({ id: user._id.toString(), email: user.email, role: user.role });
+
+    // ➤ jeśli wet – zapisz lastLoginAt również w Vet
+    if (user.role === 'vet') {
+      await Vet.updateOne(
+        { userId: user._id },
+        { $set: { lastLoginAt: now } },
+        { upsert: true }
+      );
+    }
+
+    const token = signToken({
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role
+    });
 
     res.status(201).json({
       token,
       user: {
-        id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName,
-        phone: user.phone, isVet: user.isVet, role: user.role, lastLoginAt: user.lastLoginAt || null
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        isVet: user.isVet,
+        role: user.role,
+        lastLoginAt: now
       },
-      owner: { id: owner._id, name: owner.name, email: owner.email, phone: owner.phone }
+      owner: {
+        id: owner._id,
+        name: owner.name,
+        email: owner.email,
+        phone: owner.phone
+      }
     });
   } catch (e: any) {
     res.status(400).json({ error: e.message });
   }
 });
 
-/** POST /auth/login */
+/* =========================================================
+ *  LOGIN
+ * ======================================================= */
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    if (!email || !password) return res.status(400).json({ error: 'email i password są wymagane' });
 
-    // ✅ login — case-insensitive
+    if (!email || !password) {
+      return res.status(400).json({ error: 'email i password są wymagane' });
+    }
+
     const user = await User.findOne({ email: ciEmail(email) });
     if (!user) return res.status(401).json({ error: 'Nieprawidłowe dane logowania' });
 
     const ok = await bcrypt.compare(password, user.passwordHash);
     if (!ok) return res.status(401).json({ error: 'Nieprawidłowe dane logowania' });
 
-    // ✅ lastLoginAt
-    await User.updateOne({ _id: user._id }, { $set: { lastLoginAt: new Date() } });
+    const now = new Date();
+
+    // ➤ zapis lastLoginAt w User
+    await User.updateOne({ _id: user._id }, { $set: { lastLoginAt: now } });
+
+    // ➤ zapis lastLoginAt w Vet
+    if (user.role === 'vet' || user.isVet === true) {
+      await Vet.updateOne(
+        { userId: user._id },
+        { $set: { lastLoginAt: now } }
+      );
+    }
 
     const owner = await ensureOwnerForUser(user);
-    const token = signToken({ id: user._id.toString(), email: user.email, role: user.role });
+
+    const token = signToken({
+      id: user._id.toString(),
+      email: user.email,
+      role: user.role
+    });
 
     res.json({
       token,
       user: {
-        id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName,
-        phone: user.phone, isVet: user.isVet, role: user.role, lastLoginAt: user.lastLoginAt
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        isVet: user.isVet,
+        role: user.role,
+        lastLoginAt: now
       },
-      owner: { id: owner._id, name: owner.name, email: owner.email, phone: owner.phone }
+      owner: {
+        id: owner._id,
+        name: owner.name,
+        email: owner.email,
+        phone: owner.phone
+      }
     });
   } catch (e: any) {
     res.status(400).json({ error: e.message });
   }
 });
 
-/** GET /auth/me */
+/* =========================================================
+ *  AUTH /me
+ * ======================================================= */
 router.get('/me', auth, async (req: AuthedRequest, res) => {
   const user = await User.findById(req.user!.id);
   if (!user) return res.status(404).json({ error: 'User not found' });
   const owner = await ensureOwnerForUser(user);
   res.json({
-    id: user._id, email: user.email, firstName: user.firstName, lastName: user.lastName,
-    phone: user.phone, isVet: user.isVet, role: user.role, lastLoginAt: user.lastLoginAt || null,
-    ownerId: owner._id, createdAt: user.createdAt
+    id: user._id,
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    phone: user.phone,
+    isVet: user.isVet,
+    role: user.role,
+    lastLoginAt: user.lastLoginAt || null,
+    ownerId: owner._id,
+    createdAt: user.createdAt
   });
 });
 
-/** POST /auth/logout */
 router.post('/logout', (_req, res) => res.json({ message: 'Logged out' }));
 
-/** POST /auth/check-email */
+/* =========================================================
+ *  CHECK EMAIL
+ * ======================================================= */
 router.post('/check-email', async (req, res) => {
   try {
     const { email } = req.body || {};
-    if (!email || !isEmail(email)) return res.status(400).json({ error: 'Podaj prawidłowy email' });
-    // ✅ case-insensitive
+    if (!email || !isEmail(email)) {
+      return res.status(400).json({ error: 'Podaj prawidłowy email' });
+    }
     const exists = await User.findOne({ email: ciEmail(email) }).lean();
     return res.json({ available: !exists });
   } catch (e: any) {
@@ -126,7 +203,9 @@ router.post('/check-email', async (req, res) => {
   }
 });
 
-/** POST /auth/change-password */
+/* =========================================================
+ *  CHANGE PASSWORD
+ * ======================================================= */
 router.post('/change-password', auth, async (req: AuthedRequest, res) => {
   try {
     const { oldPassword, newPassword } = req.body || {};
@@ -152,7 +231,9 @@ router.post('/change-password', auth, async (req: AuthedRequest, res) => {
   }
 });
 
-/** POST /auth/refresh */
+/* =========================================================
+ *  REFRESH
+ * ======================================================= */
 router.post('/refresh', auth, async (req: AuthedRequest, res) => {
   try {
     const user = await User.findById(req.user!.id).lean();

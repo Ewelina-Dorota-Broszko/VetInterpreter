@@ -65,7 +65,7 @@ export class DashboardComponent implements OnInit {
     private animalsSvc: AnimalsService,
     private vetSvc: VetService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.load();
@@ -83,8 +83,8 @@ export class DashboardComponent implements OnInit {
     const ensureOwnerId$ = ownerIdVal
       ? of(ownerIdVal)
       : this.auth.fetchMe().pipe(
-          map(() => (typeof (this.auth as any).getOwnerId === 'function' ? (this.auth as any).getOwnerId() : null))
-        );
+        map(() => (typeof (this.auth as any).getOwnerId === 'function' ? (this.auth as any).getOwnerId() : null))
+      );
 
     ensureOwnerId$
       .pipe(
@@ -166,11 +166,12 @@ export class DashboardComponent implements OnInit {
   private computeVaccinationsSoon() {
     const out: Array<{ animalName: string; v: any; daysLeft: number }> = [];
     const now = new Date();
+
     for (const a of this.animals) {
       const vaccs = (a as any).vaccinations || [];
       for (const v of vaccs) {
-        if (!v?.nextDueDate) continue;
-        const due = new Date(v.nextDueDate);
+        if (!v?.dueDate) continue;   
+        const due = new Date(v.dueDate); 
         const daysLeft = Math.floor((due.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
         if (daysLeft <= 30) {
           out.push({ animalName: (a as any).name, v, daysLeft });
@@ -179,6 +180,7 @@ export class DashboardComponent implements OnInit {
     }
     this.vaccSoon = out.sort((a, b) => a.daysLeft - b.daysLeft).slice(0, 10);
   }
+
 
   private computeLatestResults() {
     const latestOf = <T extends { date: string }>(arr: T[] | undefined) => {
@@ -267,5 +269,5 @@ export class DashboardComponent implements OnInit {
   }
 
   trackEvent = (_: number, e: CalendarEvent) => e._id || `${e.date}-${e.title}`;
-  trackVet   = (_: number, v: VetLite) => v._id;
+  trackVet = (_: number, v: VetLite) => v._id;
 }

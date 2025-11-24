@@ -91,7 +91,6 @@ export class VetAnimalProfileComponent implements OnInit {
       next: (animal) => {
         this.animal = animal;
         this.loading = false;
-        // start od krwi, a dane ładujemy wg wybranego filtra
         this.activeTab = 'blood';
         this.reloadActiveTab();
       },
@@ -112,7 +111,7 @@ export class VetAnimalProfileComponent implements OnInit {
     this.reloadActiveTab();
   }
 
-  /** Wywoływane przy zmianie scope i przy przełączaniu zakładek */
+  /** Wywoływane przy zmianie scope i zakładek */
   reloadActiveTab() {
     if (!this.animal?._id) return;
     switch (this.activeTab) {
@@ -129,58 +128,76 @@ export class VetAnimalProfileComponent implements OnInit {
     }
   }
 
+  /* ===== UNIWERSALNY SORTER ===== */
+  private sortByDatetime<T>(list: T[]): T[] {
+    return list.sort((a: any, b: any) => {
+      const da = new Date(a.createdAt || a.date).getTime();
+      const db = new Date(b.createdAt || b.date).getTime();
+      return da - db; // kolejność rosnąca → poprawne wykresy
+    });
+  }
+
   /* ===== ŁADOWANIE DANYCH WG SCOPE ===== */
+
   private loadBlood() {
     this.animals.getBloodTests(this.animal._id, this.scope).subscribe({
-      next: rows => this.bloodTestsVet = [...(rows || [])],
+      next: rows => this.bloodTestsVet = this.sortByDatetime(rows || []),
       error: () => this.bloodTestsVet = []
     });
   }
+
   private loadUrine() {
     this.animals.getUrineTests(this.animal._id, this.scope).subscribe({
-      next: rows => this.urineTestsVet = [...(rows || [])],
+      next: rows => this.urineTestsVet = this.sortByDatetime(rows || []),
       error: () => this.urineTestsVet = []
     });
   }
+
   private loadStool() {
     this.animals.getStoolTests(this.animal._id, this.scope).subscribe({
-      next: rows => this.stoolTestsVet = [...(rows || [])],
+      next: rows => this.stoolTestsVet = this.sortByDatetime(rows || []),
       error: () => this.stoolTestsVet = []
     });
   }
+
   private loadTemperature() {
     this.animals.getTemperatureLogs(this.animal._id, this.scope).subscribe({
-      next: (rows: TemperatureLog[]) => this.temperatureLogsVet = [...(rows || [])],
+      next: rows => this.temperatureLogsVet = this.sortByDatetime(rows || []),
       error: () => this.temperatureLogsVet = []
     });
   }
+
   private loadDiabetes() {
     this.animals.getDiabetesLogs(this.animal._id, this.scope).subscribe({
-      next: rows => this.diabetesLogsVet = [...(rows || [])],
+      next: rows => this.diabetesLogsVet = this.sortByDatetime(rows || []),
       error: () => this.diabetesLogsVet = []
     });
   }
+
   private loadWeight() {
     this.animals.getWeightHistory(this.animal._id, this.scope).subscribe({
-      next: rows => this.weightHistoryVet = [...(rows || [])],
+      next: rows => this.weightHistoryVet = this.sortByDatetime(rows || []),
       error: () => this.weightHistoryVet = []
     });
   }
+
   private loadVaccinations() {
     this.animals.getVaccinations(this.animal._id, this.scope).subscribe({
-      next: rows => this.vaccinationsVet = [...(rows || [])],
+      next: rows => this.vaccinationsVet = this.sortByDatetime(rows || []),
       error: () => this.vaccinationsVet = []
     });
   }
+
   private loadMeds() {
     this.animals.getMedications(this.animal._id, this.scope).subscribe({
-      next: rows => this.medicationsVet = [...(rows || [])],
+      next: rows => this.medicationsVet = this.sortByDatetime(rows || []),
       error: () => this.medicationsVet = []
     });
   }
+
   private loadSymptoms() {
     this.animals.getSymptoms(this.animal._id, this.scope).subscribe({
-      next: rows => this.symptomsVet = [...(rows || [])],
+      next: rows => this.symptomsVet = this.sortByDatetime(rows || []),
       error: () => this.symptomsVet = []
     });
   }
