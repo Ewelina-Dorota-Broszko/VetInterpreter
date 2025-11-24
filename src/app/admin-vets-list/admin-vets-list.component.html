@@ -53,7 +53,7 @@
             <td>{{ r.lastLoginAt ? (r.lastLoginAt | date:'yyyy-MM-dd HH:mm') : '—' }}</td>
             <td class="center">
               <div class="row-actions">
-                <button class="ghost" (click)="togglePass(r)">{{ r._editingPass ? 'Anuluj' : 'Zmień hasło' }}</button>
+                <!-- <button class="ghost" (click)="togglePass(r)">{{ r._editingPass ? 'Anuluj' : 'Zmień hasło' }}</button> -->
                 <button class="danger" (click)="deleteVet(r)" [disabled]="r._busy">Usuń</button>
               </div>
 

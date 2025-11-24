@@ -21,7 +21,7 @@ export class VetAddDocumentComponent implements OnInit {
 
   /** Lista wszystkich możliwych typów dokumentów (zgodna z zakładkami dashboardu) */
   cards: Array<{ type: DocType; title: string; hint: string; route: string }> = [
-    { type: 'overview',     title: 'Podsumowanie',      hint: 'Szybki przegląd historii i badań', route: '/vet/overview' },
+    // { type: 'overview',     title: 'Podsumowanie',      hint: 'Szybki przegląd historii i badań', route: '/vet/overview' },
     { type: 'blood',        title: 'Badanie krwi',      hint: 'Morfologia + biochemia',           route: '/form/blood' },
     { type: 'urine',        title: 'Badanie moczu',     hint: 'Parametry fizykochemiczne',        route: '/form/urine' },
     { type: 'stool',        title: 'Badanie kału',      hint: 'Pasożyty, bakterie, trawienie',    route: '/form/stool' },
