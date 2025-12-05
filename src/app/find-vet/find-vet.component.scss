@@ -1,7 +1,7 @@
 .dashboard-menu-container {
   height: 100%;
   background-color: #1d222b;
- width: calc(100vw - 90px);
+  width: calc(100vw - 90px);
   height: 100vh;
   position: absolute;
   right: -8px;
@@ -9,6 +9,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  
+    position: fixed;
+    top: 52px;
+    right: 0;
+    width: calc(100vw - 90px);
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+    align-items: flex-start;
+    box-sizing: border-box;
+
 }
 
 .container {
